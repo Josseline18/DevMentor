@@ -23,7 +23,7 @@ const advisors = [
   }
 ];
 
-export default function Advisors() {
+export default function Asesores() {
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
