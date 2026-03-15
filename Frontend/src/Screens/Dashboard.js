@@ -24,15 +24,12 @@ export default function Dashboard({ navigation }) {
 
   return (
     <View style={styles.container}>
-
-      <Text style={styles.title}>DevMentor</Text>
-
       <ScrollView>
 
         {materias.map((m, index) => (
           <TouchableOpacity
             key={index}
-            onPress={() => navigation.navigate("Advisors")}
+            onPress={() => navigation.navigate("Asesores")}
           >
             <Card style={styles.card}>
 

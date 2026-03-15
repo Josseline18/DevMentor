@@ -31,7 +31,10 @@ export default function Login({ navigation }) {
           ¿Olvidaste la contraseña?
         </Text>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={() => navigation.navigate("DevMentor")}
+        >
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
 

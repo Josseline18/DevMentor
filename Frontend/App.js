@@ -15,8 +15,14 @@ export default function App() {
 
       <Stack.Navigator>
 
+        <Stack.Screen 
+          name="Login" 
+          component={Login} 
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen
-          name="Dashboard"
+          name="DevMentor"
           component={Dashboard}
           options={({ navigation }) => ({
             headerRight: () => (
@@ -41,15 +47,11 @@ export default function App() {
         />
 
         <Stack.Screen 
-          name="Advisors" 
+          name="Asesores" 
           component={Advisors} 
         />
 
-        <Stack.Screen 
-          name="Login" 
-          component={Login} 
-          options={{ headerShown: false }}
-        />
+        
 
         <Stack.Screen 
           name="Register" 
