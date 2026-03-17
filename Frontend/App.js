@@ -7,6 +7,7 @@ import Advisors from "./src/Screens/Advisors";
 import Login from "./src/Screens/Login";
 import Register from "./src/Screens/Register";
 import AdvisorProfile from "./src/Screens/AdvisorProfile";
+import ReviewScreen from "./src/Screens/ReviewScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +58,12 @@ export default function App() {
           name="AdvisorProfile" 
           component={AdvisorProfile} 
           options={{ title: "Perfil del Asesor" }}
+        />
+
+        <Stack.Screen
+          name="ReviewScreen"
+          component={ReviewScreen}
+          options={{ headerShown: false }}
         />
         
 

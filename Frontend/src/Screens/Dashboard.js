@@ -24,7 +24,7 @@ export default function Dashboard({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
 
         {materias.map((m, index) => (
           <TouchableOpacity
@@ -46,7 +46,13 @@ export default function Dashboard({ navigation }) {
 
       </ScrollView>
 
-
+      <TouchableOpacity
+        style={styles.reviewsButton}
+        activeOpacity={0.85}
+        onPress={() => navigation.navigate("ReviewScreen")}
+      >
+        <Text style={styles.reviewsButtonText}>Reseñas</Text>
+      </TouchableOpacity>
 
     </View>
   );
