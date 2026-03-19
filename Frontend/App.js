@@ -8,6 +8,7 @@ import Login from "./src/Screens/Login";
 import Register from "./src/Screens/Register";
 import AdvisorProfile from "./src/Screens/AdvisorProfile";
 import ReviewScreen from "./src/Screens/ReviewScreen";
+import Admin from "./src/Screens/Admin";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,6 +47,12 @@ export default function App() {
               </TouchableOpacity>
             )
           })}
+        />
+
+        <Stack.Screen
+          name="Admin"
+          component={Admin}
+          options={{ title: "Admin" }}
         />
 
         <Stack.Screen 

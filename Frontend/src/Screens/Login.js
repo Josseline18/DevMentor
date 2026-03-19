@@ -33,7 +33,7 @@ export default function Login({ navigation }) {
 
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => navigation.navigate("DevMentor")}
+          onPress={() => navigation.navigate("Admin")}
         >
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>

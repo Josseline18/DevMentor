@@ -1,0 +1,142 @@
+import { StyleSheet } from "react-native";
+
+export const colors = {
+    primary: '#0077b6',
+    primaryLight: '#e6f3ff',
+    secondary: '#f8fafc',
+    white: '#ffffff',
+    text: {
+        primary: '#0f172a',
+        secondary: '#64748b',
+        light: '#334155',
+    },
+    border: '#e0e0e0',
+    borderLight: '#e2e8f0',
+    borderLighter: '#f1f5f9',
+    success: '#4CAF50',
+    warning: '#FFD700',
+    pending: '#FF9800',
+    danger: '#dc2626',
+};
+
+export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+    },
+    scrollContent: {
+        padding: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: colors.text.primary,
+        paddingHorizontal: 20,
+        paddingTop: 16,
+        paddingBottom: 12,
+    },
+    searchInput: {
+        marginHorizontal: 20,
+        marginBottom: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 12,
+        backgroundColor: colors.white,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: colors.borderLight,
+        fontSize: 14,
+        color: colors.text.primary,
+    },
+    filterContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        paddingHorizontal: 20,
+        marginBottom: 16,
+        gap: 8,
+    },
+    filterButton: {
+        flex: 1,
+        paddingVertical: 10,
+        paddingHorizontal: 12,
+        borderRadius: 8,
+        backgroundColor: colors.white,
+        borderWidth: 1,
+        borderColor: colors.borderLight,
+        alignItems: 'center',
+    },
+    filterButtonActive: {
+        backgroundColor: colors.primary,
+        borderColor: colors.primary,
+    },
+    filterButtonText: {
+        fontSize: 12,
+        fontWeight: '600',
+        color: colors.text.primary,
+    },
+    filterButtonTextActive: {
+        color: colors.white,
+    },
+    reportCard: {
+        backgroundColor: colors.white,
+        borderRadius: 12,
+        marginBottom: 12,
+        borderWidth: 1,
+        borderColor: colors.borderLight,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    reportHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    reportType: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: colors.text.primary,
+        flex: 1,
+    },
+    reportStatus: {
+        fontSize: 12,
+        fontWeight: '600',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 6,
+    },
+    statusPending: {
+        backgroundColor: '#FFE0B2',
+        color: '#E65100',
+    },
+    statusResolved: {
+        backgroundColor: '#C8E6C9',
+        color: '#2E7D32',
+    },
+    reportUser: {
+        fontSize: 14,
+        color: colors.text.secondary,
+        marginBottom: 8,
+        fontWeight: '500',
+    },
+    reportDate: {
+        fontSize: 12,
+        color: colors.text.secondary,
+        marginBottom: 12,
+    },
+    viewButton: {
+        marginTop: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        backgroundColor: colors.primary,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    viewButtonText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: colors.white,
+    },
+});
