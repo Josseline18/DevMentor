@@ -23,3 +23,19 @@ class UserRepositoryMySQL:
 
         db.commit()
         db.close()
+
+
+    def get_user_by_correo(self, correo):
+
+        db = SessionLocal()
+
+        query = text("SELECT * FROM usuarios WHERE correo = :correo")
+
+        result = db.execute(query, {"correo": correo}).fetchone()
+
+        db.close()
+
+        if result:
+            return dict(result._mapping)
+
+        return None

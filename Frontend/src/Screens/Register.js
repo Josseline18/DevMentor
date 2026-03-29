@@ -41,7 +41,9 @@ export default function Register({ navigation }) {
 
     try {
 
-      const response = await fetch("http://10.33.27.59:8000/auth/register", {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+      const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

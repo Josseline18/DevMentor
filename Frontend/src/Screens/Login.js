@@ -1,8 +1,51 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, Image, Alert } from "react-native";
 import styles from "../Styles/RegistroStyle";
 
 export default function Login({ navigation }) {
+
+  const [correo, setCorreo] = useState("");
+  const [password, setPassword] = useState("");
+
+  const iniciarSesion = async () => {
+
+    if (!correo || !password) {
+      Alert.alert("Error", "Todos los campos son obligatorios");
+      return;
+    }
+
+    try {
+      const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          correo,
+          contrasena: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        Alert.alert("Error", data.detail || "Credenciales incorrectas");
+        return;
+      }
+
+      Alert.alert("Éxito", "Bienvenido");
+
+      navigation.navigate("DevMentor");
+
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "No se pudo iniciar sesión");
+    }
+
+  };
+
   return (
     <View style={styles.container}>
 
@@ -19,21 +62,21 @@ export default function Login({ navigation }) {
         <TextInput
           style={styles.input}
           placeholder="Correo"
+          value={correo}
+          onChangeText={setCorreo}
         />
 
         <TextInput
           style={styles.input}
           placeholder="Contraseña"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
-
-        <Text style={styles.link}>
-          ¿Olvidaste la contraseña?
-        </Text>
 
         <TouchableOpacity 
           style={styles.button} 
-          onPress={() => navigation.navigate("DevMentor")}
+          onPress={iniciarSesion}
         >
           <Text style={styles.buttonText}>Iniciar sesión</Text>
         </TouchableOpacity>
