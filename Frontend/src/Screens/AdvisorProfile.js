@@ -56,20 +56,8 @@ export default function AdvisorProfile({ route, navigation }) {
           <View style={styles.divider} />
 
           <View style={styles.detailsContainer}>
-            <View style={styles.detailItem}>
-              <Ionicons name="star" size={20} color={colors.warning} />
-              <Text style={styles.detailText}>
-                <Text style={styles.detailLabel}>Especialidad: </Text>
-                {advisor.especialidad}
-              </Text>
-            </View>
-            <View style={styles.detailItem}>
-              <Ionicons name="time" size={20} color={colors.success} />
-              <Text style={styles.detailText}>
-                <Text style={styles.detailLabel}>Experiencia: </Text>
-                {advisor.experiencia} años
-              </Text>
-            </View>
+            
+            
             <View style={styles.detailItem}>
               <Ionicons name="book" size={20} color={colors.info} />
               <Text style={styles.detailText}>
@@ -127,33 +115,6 @@ export default function AdvisorProfile({ route, navigation }) {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.card}>
-          <TouchableOpacity 
-            style={styles.expandableHeader} 
-            onPress={() => toggleSection('materias')}
-            activeOpacity={0.7}
-          >
-            <View style={styles.sectionTitle}>
-              <Ionicons name="library" size={24} color={colors.primary} />
-              <Text style={styles.sectionTitleText}>Materias que imparte</Text>
-            </View>
-            <Ionicons 
-              name={expandedSection === 'materias' ? 'chevron-up' : 'chevron-down'} 
-              size={24} 
-              color={colors.text.secondary} 
-            />
-          </TouchableOpacity>
-
-          {expandedSection === 'materias' && (
-            <View style={styles.expandableContent}>
-              {materias.map((materia) => (
-                <View key={materia.id} style={styles.materiaItem}>
-                  <Text style={styles.materiaNombre}>{materia.nombre}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-        </View>
 
         <View style={styles.card}>
           <TouchableOpacity 

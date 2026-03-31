@@ -1,12 +1,16 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
+
+const { width } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
 
   container: {
     flex: 1,
     backgroundColor: "#F5F6FA",
-    paddingTop: 60,
-    paddingHorizontal: 20
+    paddingTop: 0,
+  },
+  contentConteiner: {
+    paddingHorizontal: 10
   },
 
   scrollContent: {
@@ -19,14 +23,32 @@ export const styles = StyleSheet.create({
     marginBottom: 20
   },
 
+  carouselContainer: {
+    marginTop: 0,
+    marginBottom: 30,
+  },
+
+  carouselItem: {
+    width: width,
+    height: 200,
+    overflow: "hidden",
+  },
+
+  carouselImage: {
+    width: "100%",
+    height: "100%",
+  },
+
   card: {
+    width: 350,
+    marginRight: 15,
     marginBottom: 20,
     borderRadius: 12,
     overflow: "hidden"
   },
 
   image: {
-    height: 200
+    height: 130
   },
 
   subject: {

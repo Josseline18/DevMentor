@@ -37,7 +37,8 @@ export default function App() {
                   paddingVertical: 5,
                   borderRadius: 6,
                   justifyContent: "center",
-                  alignItems: "center"
+                  alignItems: "center",
+    
                 }}
               >
                 <Text style={{ color: "#1E5BE0", fontWeight: "bold" }}>
