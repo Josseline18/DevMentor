@@ -1,4 +1,20 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+
+const { width: screenWidth } = Dimensions.get("window");
+const BASE_WIDTH = 390;
+
+const scaleByWidth = (size) => (screenWidth / BASE_WIDTH) * size;
+const clampScale = (size, min, max) => {
+	const scaled = scaleByWidth(size);
+	return Math.min(Math.max(scaled, min), max);
+};
+
+export const ui = {
+	iconBack: clampScale(28, 24, 32),
+	iconHome: clampScale(23, 20, 27),
+	iconWrite: clampScale(18, 16, 22),
+	star: clampScale(24, 20, 28)
+};
 
 export const styles = StyleSheet.create({
 	safeArea: {
@@ -9,26 +25,26 @@ export const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#F3F4F8",
-		paddingHorizontal: 16
+		paddingHorizontal: "4.5%"
 	},
 
 	header: {
-		paddingTop: 25,   //aqui
-		paddingBottom: 10,
+		paddingTop: 8,
+		paddingBottom: "2.5%",
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center"
 	},
 
 	headerIconButton: {
-		width: 36,
-		height: 36,
+		width: clampScale(38, 34, 44),
+		height: clampScale(38, 34, 44),
 		alignItems: "center",
 		justifyContent: "center"
 	},
 
 	headerTitle: {
-		fontSize: 22,
+		fontSize: clampScale(22, 19, 26),
 		fontWeight: "700",
 		color: "#121826"
 	},
@@ -38,16 +54,17 @@ export const styles = StyleSheet.create({
 	},
 
 	listContent: {
-		paddingTop: 8,
-		paddingBottom: 24,
+		paddingTop: "2%",
+		paddingBottom: "5%",
 		gap: 14
 	},
 
 	reviewCard: {
+		width: "100%",
 		backgroundColor: "#FFFFFF",
 		borderRadius: 12,
-		paddingVertical: 14,
-		paddingHorizontal: 12,
+		paddingVertical: "4%",
+		paddingHorizontal: "3.8%",
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.06,
@@ -64,7 +81,7 @@ export const styles = StyleSheet.create({
 		width: 52,
 		height: 52,
 		borderRadius: 26,
-		marginRight: 10,
+		marginRight: "3%",
 		backgroundColor: "#E8EBF2"
 	},
 
@@ -73,19 +90,19 @@ export const styles = StyleSheet.create({
 	},
 
 	studentName: {
-		fontSize: 17,
+		fontSize: clampScale(17, 15, 21),
 		fontWeight: "700",
 		color: "#182033"
 	},
 
 	timeAgo: {
 		marginTop: 2,
-		fontSize: 14,
+		fontSize: clampScale(14, 12, 17),
 		color: "#8C94A8"
 	},
 
 	middleRow: {
-		marginTop: 10,
+		marginTop: "3%",
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "flex-end"
@@ -103,43 +120,44 @@ export const styles = StyleSheet.create({
 	advisorMeta: {
 		flexShrink: 1,
 		alignItems: "flex-start",
-		marginLeft: 10
+		marginLeft: "2.5%"
 	},
 
 	advisorLabel: {
-		fontSize: 14,
+		fontSize: clampScale(14, 12, 17),
 		color: "#8C94A8"
 	},
 
 	advisorName: {
 		marginTop: 2,
-		fontSize: 17,
+		fontSize: clampScale(17, 15, 21),
 		color: "#141D2F",
 		fontWeight: "700"
 	},
 
 	commentText: {
-		marginTop: 12,
-		fontSize: 17,
-		lineHeight: 22,
+		marginTop: "3.5%",
+		fontSize: clampScale(17, 15, 21),
+		lineHeight: clampScale(23, 20, 28),
 		color: "#80889B"
 	},
 
 	footer: {
-		paddingTop: 8,
-		paddingBottom: 35   //aqui
+		paddingTop: "2.5%",
+		paddingBottom: 12
 	},
 
 	footerMessage: {
-		fontSize: 26,
-		lineHeight: 34,
+		fontSize: clampScale(22, 18, 26),
+		lineHeight: clampScale(32, 27, 38),
 		fontWeight: "500",
 		color: "#737A8D",
-		marginBottom: 14
+		marginBottom: "3.5%"
 	},
 
 	writeButton: {
 		backgroundColor: "#1E5BE0",
+		width: "100%",
 		minHeight: 56,
 		borderRadius: 12,
 		flexDirection: "row",
@@ -155,7 +173,7 @@ export const styles = StyleSheet.create({
 
 	writeButtonText: {
 		color: "#FFFFFF",
-		fontSize: 18,
+		fontSize: clampScale(18, 15, 22),
 		fontWeight: "700"
 	}
 });

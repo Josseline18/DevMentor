@@ -1,7 +1,8 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../Styles/reviewStyles";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { styles, ui } from "../Styles/reviewStyles";
 
 const reviews = [
 	{
@@ -37,7 +38,7 @@ function Stars({ rating }) {
 				<Ionicons
 					key={value}
 					name={value <= rating ? "star" : "star-outline"}
-					size={24}
+					size={ui.star}
 					color={value <= rating ? "#1E5BE0" : "#C8CDD8"}
 					style={styles.starIcon}
 				/>
@@ -47,16 +48,18 @@ function Stars({ rating }) {
 }
 
 export default function ReviewScreen({ navigation }) {
+	const insets = useSafeAreaInsets();
+
 	return (
 		<SafeAreaView style={styles.safeArea}>
 			<View style={styles.container}>
-				<View style={styles.header}>
+				<View style={[styles.header, { paddingTop: insets.top + 6 }]}>
 					<TouchableOpacity
 						activeOpacity={0.8}
 						onPress={() => (navigation.canGoBack() ? navigation.goBack() : navigation.navigate("DevMentor"))}
 						style={styles.headerIconButton}
 					>
-						<Ionicons name="chevron-back" size={28} color="#1E5BE0" />
+							<Ionicons name="chevron-back" size={ui.iconBack} color="#1E5BE0" />
 					</TouchableOpacity>
 
 					<Text style={styles.headerTitle}>Reseñas</Text>
@@ -66,7 +69,7 @@ export default function ReviewScreen({ navigation }) {
 						onPress={() => navigation.navigate("DevMentor")}
 						style={styles.headerIconButton}
 					>
-						<Ionicons name="home-outline" size={23} color="#1E5BE0" />
+							<Ionicons name="home-outline" size={ui.iconHome} color="#1E5BE0" />
 					</TouchableOpacity>
 				</View>
 
@@ -101,12 +104,12 @@ export default function ReviewScreen({ navigation }) {
 					))}
 				</ScrollView>
 
-				<View style={styles.footer}>
+				<View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
 					<Text style={styles.footerMessage}>
 						¡Programa una asesoría para habilitar la opción de escribir una reseña!
 					</Text>
 					<TouchableOpacity style={styles.writeButton} activeOpacity={0.85}>
-						<Ionicons name="create-outline" size={18} color="#FFFFFF" />
+						<Ionicons name="create-outline" size={ui.iconWrite} color="#FFFFFF" />
 						<Text style={styles.writeButtonText}>Escribir una reseña</Text>
 					</TouchableOpacity>
 				</View>
