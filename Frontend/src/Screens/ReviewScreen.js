@@ -108,7 +108,11 @@ export default function ReviewScreen({ navigation }) {
 					<Text style={styles.footerMessage}>
 						¡Programa una asesoría para habilitar la opción de escribir una reseña!
 					</Text>
-					<TouchableOpacity style={styles.writeButton} activeOpacity={0.85}>
+					<TouchableOpacity
+						style={styles.writeButton}
+						activeOpacity={0.85}
+						onPress={() => navigation.navigate("WriteReviewScreen")}
+					>
 						<Ionicons name="create-outline" size={ui.iconWrite} color="#FFFFFF" />
 						<Text style={styles.writeButtonText}>Escribir una reseña</Text>
 					</TouchableOpacity>

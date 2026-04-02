@@ -8,6 +8,7 @@ import Login from "./src/Screens/Login";
 import Register from "./src/Screens/Register";
 import AdvisorProfile from "./src/Screens/AdvisorProfile";
 import ReviewScreen from "./src/Screens/ReviewScreen";
+import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -64,6 +65,12 @@ export default function App() {
         <Stack.Screen
           name="ReviewScreen"
           component={ReviewScreen}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="WriteReviewScreen"
+          component={WriteReviewScreen}
           options={{ headerShown: false }}
         />
         
