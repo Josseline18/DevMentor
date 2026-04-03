@@ -1,17 +1,10 @@
-import React, { useRef, useEffect } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  FlatList,
-  Dimensions,
-  Image
-} from "react-native";
+import React, { useRef, useEffect, useState } from "react";
+import { View,Text,ScrollView,TouchableOpacity,FlatList,Dimensions,Image} from "react-native";
 import { Card } from "react-native-paper";
 import { styles } from "../Styles/DashboardStyle";
 
 const { width } = Dimensions.get("window");
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Dashboard({ navigation }) {
 
@@ -21,38 +14,19 @@ export default function Dashboard({ navigation }) {
     require("../../assets/images/tutorias3.jpg")
   ];
 
-  const materias = [
-    {
-      nombre: "Compiladores",
-      descripcion: "Compiladores",
-      imagen: require("../../assets/images/POO.jpg")
-    },
-    {
-      nombre: "Redes",
-      descripcion: "Protocolo de enrutamiento",
-      imagen: require("../../assets/images/redes.jpg")
-    },
-    {
-      nombre: "Contabilidad",
-      descripcion: "Contabilidad",
-      imagen: require("../../assets/images/sql.jpg")
-    },
-    {
-      nombre: "Modelos y metodología",
-      descripcion: "Metodologías de desarrollo",
-      imagen: require("../../assets/images/sql.jpg")
-    },
-    {
-      nombre: "Taller de desarrollo IV",
-      descripcion: "Desarrollo avanzado",
-      imagen: require("../../assets/images/sql.jpg")
-    },
-    {
-      nombre: "Inglés",
-      descripcion: "Inglés 5",
-      imagen: require("../../assets/images/sql.jpg")
-    }
-  ];
+  const [materias, setMaterias] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/materias`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("DATA MATERIAS: ", data)
+        setMaterias(data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener materias", error);
+      });
+  }, []);
 
   const lenguajes = [
     {
@@ -84,7 +58,7 @@ export default function Dashboard({ navigation }) {
         x: width * currentIndex.current,
         animated: true
       });
-    }, 5000); // 🔥 cambia aquí la velocidad
+    }, 5000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -133,7 +107,9 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover 
+                      source={require("../../assets/images/redes.jpg")} 
+                      style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>

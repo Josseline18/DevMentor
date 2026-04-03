@@ -41,6 +41,21 @@ yarn-error.*
 /android
 
 .env
-backend/auth_service/usuarios/
+
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+env/
+.venv/
+ENV/
+*_env/
+
+# FastAPI / logs
+*.log
 
 

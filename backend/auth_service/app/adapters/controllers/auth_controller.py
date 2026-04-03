@@ -4,7 +4,7 @@ from app.application.register_user_service import RegisterUserService
 from app.application.login_user_service import LoginUserService
 
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 class RegisterRequest(BaseModel):
     nombre: str
