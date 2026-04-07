@@ -17,7 +17,7 @@ class LoginRequest(BaseModel):
     correo: str
     contrasena: str
 
-@router.post("/auth/register")
+@router.post("/register")
 def register_user(data: RegisterRequest):
 
     service = RegisterUserService()
@@ -30,7 +30,7 @@ def register_user(data: RegisterRequest):
         data.rol
     )
 
-@router.post("/auth/login")
+@router.post("/login")
 def login(data: LoginRequest):
 
     service = LoginUserService()

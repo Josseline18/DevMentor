@@ -2,9 +2,9 @@ import React, { useRef, useEffect, useState } from "react";
 import { View,Text,ScrollView,TouchableOpacity,FlatList,Dimensions,Image} from "react-native";
 import { Card } from "react-native-paper";
 import { styles } from "../Styles/DashboardStyle";
+import { API_URL } from "../config/api";
 
 const { width } = Dimensions.get("window");
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export default function Dashboard({ navigation }) {
 

@@ -25,6 +25,11 @@ class RegisterUserService:
             rol
         )
 
-        self.repository.create_user(user)
+        user_id = self.repository.create_user(user)
 
-        return {"message": "Usuario registrado correctamente"}
+        return {
+            "message": "Usuario registrado correctamente",
+            "id_usuario": user_id,
+            "nombre": nombre,
+            "rol": rol
+        }

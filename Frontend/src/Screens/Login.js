@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from "react-native";
 import styles from "../Styles/RegistroStyle";
+import { API_URL } from "../config/api";
 
 export default function Login({ navigation }) {
 
@@ -15,8 +16,6 @@ export default function Login({ navigation }) {
     }
 
     try {
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
       const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: {

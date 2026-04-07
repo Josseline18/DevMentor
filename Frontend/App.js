@@ -1,3 +1,4 @@
+import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { TouchableOpacity, Text } from "react-native";
@@ -7,6 +8,7 @@ import Advisors from "./src/Screens/Advisors";
 import Login from "./src/Screens/Login";
 import Register from "./src/Screens/Register";
 import AdvisorProfile from "./src/Screens/AdvisorProfile";
+import AdvisorProfileSetup from "./src/Screens/AdvisorProfileSetup";
 import ReviewScreen from "./src/Screens/ReviewScreen";
 import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 
@@ -60,6 +62,12 @@ export default function App() {
           name="AdvisorProfile" 
           component={AdvisorProfile} 
           options={{ title: "Perfil del Asesor" }}
+        />
+
+        <Stack.Screen
+          name="AdvisorProfileSetup" 
+          component={AdvisorProfileSetup} 
+          options={{ title: "Configurar Perfil de Asesor", headerShown: false }}
         />
 
         <Stack.Screen

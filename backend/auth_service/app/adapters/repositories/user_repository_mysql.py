@@ -13,7 +13,7 @@ class UserRepositoryMySQL:
         VALUES (:nombre, :correo, :telefono, :contrasena, :rol)
         """)
 
-        db.execute(query, {
+        result = db.execute(query, {
             "nombre": user.nombre,
             "correo": user.correo,
             "telefono": user.telefono,
@@ -22,7 +22,13 @@ class UserRepositoryMySQL:
         })
 
         db.commit()
+        
+        # Obtener el ID del usuario creado
+        user_id = result.lastrowid
+        
         db.close()
+        
+        return user_id
 
 
     def get_user_by_correo(self, correo):

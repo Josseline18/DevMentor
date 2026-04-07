@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
 import Checkbox from "expo-checkbox";
 import styles from "../Styles/RegistroStyle";
+import { API_URL } from "../config/api";
 
 export default function Register({ navigation }) {
 
@@ -40,9 +41,6 @@ export default function Register({ navigation }) {
     const rol = estudiante ? "Estudiante" : "Asesor";
 
     try {
-
-      const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
       const response = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         headers: {
@@ -69,7 +67,16 @@ export default function Register({ navigation }) {
 
       Alert.alert("Éxito", data.message);
 
-      navigation.navigate("Login");
+      // Si es asesor, redirigir a completar perfil
+      if (asesor) {
+        navigation.navigate("AdvisorProfileSetup", {
+          userId: data.id_usuario || data.usuario_id || 0,
+          nombre: nombre,
+        });
+      } else {
+        // Si es estudiante, ir a login
+        navigation.navigate("Login");
+      }
 
     } catch (error) {
 
