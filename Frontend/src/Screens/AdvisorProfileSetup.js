@@ -32,7 +32,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
 
   const cargarMaterias = async () => {
     try {
-      const response = await fetch(`${API_URL}/materias/`);
+      const response = await fetch(`${API_URL}/materias`);
       const data = await response.json();
 
       if (response.ok && Array.isArray(data)) {
@@ -78,7 +78,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
     setSaving(true);
 
     try {
-      const response = await fetch(`${API_URL}/advisors/`, {
+      const response = await fetch(`${API_URL}/advisors`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

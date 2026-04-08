@@ -10,6 +10,12 @@ export default function Login({ navigation }) {
 
   const iniciarSesion = async () => {
 
+    // TEMPORAL PARA PRUEBAS
+    navigation.navigate("DevMentor");
+    return;
+
+    // Código original (se ignora)
+
     if (!correo || !password) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;

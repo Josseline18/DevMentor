@@ -1,2 +1,15 @@
-auth_service/usuarios/
-review-service/resenas/
+# Ignorar todos los entornos virtuales
+**/bin/
+**/lib/
+**/include/
+**/pyvenv.cfg
+
+# Ignorar carpetas de entornos virtuales por nombre
+usuarios/
+materias/
+advisors/
+apiGw/
+
+# Python
+__pycache__/
+*.pyc

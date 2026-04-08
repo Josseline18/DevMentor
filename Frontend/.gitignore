@@ -58,4 +58,5 @@ ENV/
 # FastAPI / logs
 *.log
 
-
+# Configuración local de API
+src/config/api.js
