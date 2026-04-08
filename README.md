@@ -58,7 +58,7 @@ python3 -m venv apiGw
 source apiGw/bin/activate
 pip install -r requirements.txt
 
-4-----------------------------------------------------------------------------------------------------
+4-------------------------------------------------------------------------------------
 cd backend/advisor-service
 python3 -m venv advisors
 source advisors/bin/activate
@@ -77,14 +77,36 @@ pip install -r requirements.txt
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
 
-5---------------------------------------------------------------------------------
+5 ------------------------ Microservicio reseñas ---------------------------------
+# Base de datos 
+CREATE DATABASE resenas_db;
+USE resenas_db;
+
+CREATE TABLE resenas (
+    id_resena INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario INT NOT NULL,
+    id_asesor INT NOT NULL,
+    id_materia INT NOT NULL,
+    calificacion TINYINT NOT NULL CHECK (calificacion BETWEEN 1 AND 5),
+    comentario TEXT NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+# Pasos para este microservicio 
+cd backend/review-service
+python3 -m venv resenas
+source resenas/bin/activate
+pip install -r requirements.txt
+
+
+6 ---------------------------------------------------------------------------------
 En el .env que se creo en Frontend deben de remplazar lo que tengan por lo siguiente:
  
 cd /home/""/DevMentor/Frontendct } from "react";c.ngrok-free.devexport const API_URL =  "https://unvoluble-pei-subrhombic.ngrok-free.dev";
 
 Donde estan las comillas van a remplazar por la carpeta donde tengan el proyecto, y van a remplazar su url de ngrok
 
-6---------------------------------------------------------------------------------
+7 ---------------------------------------------------------------------------------
 Deben crear en Frontend/src/config el archivo api.js
 Ahí colocan lo siguiete: 
 
@@ -98,7 +120,7 @@ export const API_URL =
 
 Igualmente remplazan por su url de ngrok
 
-7--------------------------------------------------------------------------------------------------
+8 ------------------------------------------------------------------------------------
 Tienen que dirigirse al archivo app.json que esta en /Frontend
 Ahí editan en la parte inferior lo siguiente:
 

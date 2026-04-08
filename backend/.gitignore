@@ -1,6 +1,7 @@
 # Ignorar todos los entornos virtuales
 **/bin/
 **/lib/
+**/lib64
 **/include/
 **/pyvenv.cfg
 
@@ -8,6 +9,7 @@
 usuarios/
 materias/
 advisors/
+resenas/
 apiGw/
 
 # Python
