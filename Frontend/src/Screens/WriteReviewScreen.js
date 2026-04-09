@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -16,6 +17,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { styles, ui } from "../Styles/writeReviewStyles";
+import { createResena } from "../services/reviewService";
 
 const usuarioActual = {
   id: 1,
@@ -94,6 +96,7 @@ export default function WriteReviewScreen({ navigation }) {
   const [calificacion, setCalificacion] = useState(0);
   const [comentario, setComentario] = useState("");
   const [modalType, setModalType] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const modalTitle = useMemo(() => {
     if (modalType === "materia") return "Selecciona materia";
@@ -123,10 +126,38 @@ export default function WriteReviewScreen({ navigation }) {
     idAsesor: asesor?.id,
     idMateria: materia?.id,
     calificacion,
-    comentario,
+    comentario: comentario.trim(),
   };
 
-  void payloadPreview;
+  const saveReview = async () => {
+    if (isSaving) return;
+
+    if (!payloadPreview.idMateria || !payloadPreview.idAsesor) {
+      Alert.alert("Error", "Selecciona materia y asesor");
+      return;
+    }
+
+    if (payloadPreview.calificacion < 1 || payloadPreview.calificacion > 5) {
+      Alert.alert("Error", "Selecciona una calificacion entre 1 y 5");
+      return;
+    }
+
+    if (payloadPreview.comentario.length < 3) {
+      Alert.alert("Error", "El comentario debe tener al menos 3 caracteres");
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      await createResena(payloadPreview);
+      Alert.alert("Exito", "Reseña guardada correctamente");
+      navigation.navigate("ReviewScreen");
+    } catch (error) {
+      Alert.alert("Error", error.message || "No se pudo guardar la reseña");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -206,8 +237,8 @@ export default function WriteReviewScreen({ navigation }) {
           </ScrollView>
 
           <View style={[styles.footer, { paddingBottom: insets.bottom + 10 }]}> 
-            <TouchableOpacity activeOpacity={1} style={styles.saveButton}>
-              <Text style={styles.saveButtonText}>Guardar reseña</Text>
+            <TouchableOpacity activeOpacity={0.9} style={styles.saveButton} onPress={saveReview}>
+              <Text style={styles.saveButtonText}>{isSaving ? "Guardando..." : "Guardar reseña"}</Text>
               <Ionicons name="checkmark" size={ui.iconSave} color="#FFFFFF" />
             </TouchableOpacity>
           </View>

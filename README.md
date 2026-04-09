@@ -130,7 +130,7 @@ Ahí editan en la parte inferior lo siguiente:
 
 -Remplzan por su url de ngrok-
 
--------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 Terminal 1
 cd backend/auth_service
 source usuarios/bin/activate
@@ -146,16 +146,21 @@ cd backend/advisor-service
 source advisors/bin/activate
 uvicorn app.main:app --port 8003 --reload
 
-Terminal 4
+Terminal 4 (reseñas)
+cd backend/review-service
+source resenas/bin/activate
+uvicorn app.main:app --port 8004 --reload
+
+Terminal 5
 cd backend/api-gateway
 source apiGw/bin/activate
 uvicorn app:app --port 8000 --reload
 
-Terminal 5:
+Terminal 6:
 cd Frontend
 npx expo start --tunnel
 
-Terminal 6:
+Terminal 7:
 ngrok http 8000
 
 -----------------------------------------------------------------------------------------------------
