@@ -81,6 +81,28 @@ export const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "700"
-  }
+  },
+
+  sectionHeader: {
+  flexDirection: "row",
+  alignItems: "center",
+  marginTop: 20,
+  marginBottom: 10,
+},
+
+line: {
+  width: 4,
+  height: 22,
+  backgroundColor: "#7B2CBF", // morado moderno
+  borderRadius: 5,
+  marginRight: 10,
+},
+
+sectionTitle: {
+  fontSize: 20,
+  fontWeight: "700",
+  color: "#1E1E1E",
+  letterSpacing: 0.5,
+},
 
 });

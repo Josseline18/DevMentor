@@ -59,6 +59,11 @@ async def get_materias():
     response = requests.get(f"{MATERIA_SERVICE_URL}/materias")
     return forward_response(response)
 
+@app.get("/lenguajes")
+async def get_lenguajes():
+    response = requests.get(f"{MATERIA_SERVICE_URL}/lenguajes/")
+    return forward_response(response)
+
 
 # advisor_service
 

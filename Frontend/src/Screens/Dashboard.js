@@ -3,6 +3,7 @@ import { View,Text,ScrollView,TouchableOpacity,FlatList,Dimensions,Image} from "
 import { Card } from "react-native-paper";
 import { styles } from "../Styles/DashboardStyle";
 import { API_URL } from "../config/api";
+import { use } from "react/cjs/react.production";
 
 const { width } = Dimensions.get("window");
 
@@ -15,12 +16,35 @@ export default function Dashboard({ navigation }) {
   ];
 
   const [materias, setMaterias] = useState([]);
+  const materias9 = materias.filter(m => m.semestre === 9);
+  const materias8 = materias.filter(m => m.semestre === 8);
+  const materias7 = materias.filter(m => m.semestre === 7);
+  const materias6 = materias.filter(m => m.semestre === 6);
+  const materias5 = materias.filter(m => m.semestre === 5);
+  const materias4 = materias.filter(m => m.semestre === 4);
+  const materias3 = materias.filter(m => m.semestre === 3);
+  const materias2 = materias.filter(m => m.semestre === 2);
+  const materias1 = materias.filter(m => m.semestre === 1);
+
+  const [lenguajes, setLenguajes] = useState([]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/lenguajes`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("RESPUESTA COMPLETA:", data);
+        console.log("ES ARRAY?", Array.isArray(data));
+        setLenguajes(data);
+      })
+      .catch((error) => {
+        console.error("Error al obtener lenguajes", error);
+      });
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/materias`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("DATA MATERIAS: ", data)
         setMaterias(data);
       })
       .catch((error) => {
@@ -28,7 +52,8 @@ export default function Dashboard({ navigation }) {
       });
   }, []);
 
-  const lenguajes = [
+
+  /*const lenguajes = [
     {
       nombre: "Python",
       descripcion: "Lenguaje versátil",
@@ -44,7 +69,7 @@ export default function Dashboard({ navigation }) {
       descripcion: "Alto rendimiento",
       imagen: require("../../assets/images/c++.png")
     }
-  ];
+  ];*/
 
   const scrollRef = useRef(null);
   const currentIndex = useRef(0);
@@ -94,32 +119,10 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.contentConteiner}>
 
-            <Text style={styles.title}>Materias 6to semestre</Text>
-
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
-            >
-              {materias.map((m, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => navigation.navigate("Asesores")}
-                >
-                  <Card style={styles.card}>
-                    <Card.Cover 
-                      source={require("../../assets/images/redes.jpg")} 
-                      style={styles.image} />
-                    <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
-                      <Text style={styles.description}>{m.descripcion}</Text>
-                    </Card.Content>
-                  </Card>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
-
-            <Text style={styles.title}>Lenguajes de programación</Text>
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Lenguajes de programación</Text>
+            </View>
 
             <ScrollView
               horizontal
@@ -141,6 +144,163 @@ export default function Dashboard({ navigation }) {
                 </TouchableOpacity>
               ))}
             </ScrollView>
+            
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 6° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias6.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 5° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias5.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 4° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias4.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 3° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias3.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 2° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias2.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 1° semestre</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias1.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores")}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Content>
+                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
             </View>
           </>      
         }
