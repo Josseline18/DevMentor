@@ -32,8 +32,6 @@ export default function Dashboard({ navigation }) {
     fetch(`${API_URL}/lenguajes`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("RESPUESTA COMPLETA:", data);
-        console.log("ES ARRAY?", Array.isArray(data));
         setLenguajes(data);
       })
       .catch((error) => {
