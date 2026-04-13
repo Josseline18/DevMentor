@@ -16,6 +16,7 @@ app.add_middleware(
 AUTH_SERVICE_URL = "http://localhost:8001"
 MATERIA_SERVICE_URL = "http://localhost:8002"
 ADVISOR_SERVICE_URL = "http://localhost:8003"
+REVIEW_SERVICE_URL = "http://localhost:8004"
 
 
 # auth_service
@@ -112,5 +113,29 @@ async def update_advisor(id_perfil: int, request: Request):
 @app.delete("/advisors/{id_perfil}")
 async def delete_advisor(id_perfil: int):
     response = requests.delete(f"{ADVISOR_SERVICE_URL}/advisors/{id_perfil}")
+    return forward_response(response)
+
+
+# review_service
+
+@app.post("/resenas")
+async def create_resena(request: Request):
+    body = await request.json()
+
+    response = requests.post(
+        f"{REVIEW_SERVICE_URL}/resenas",
+        json=body
+    )
+
+    return forward_response(response)
+
+
+@app.get("/resenas")
+async def list_resenas(request: Request):
+    response = requests.get(
+        f"{REVIEW_SERVICE_URL}/resenas",
+        params=dict(request.query_params)
+    )
+
     return forward_response(response)
 
