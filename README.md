@@ -245,3 +245,20 @@ ENV/
 
 # Configuración local de API
 src/config/api.js
+
+-------------------------------------------------------------------------------------------------------------
+# crear base de datos de lenguajes para mostrar en el dashboard
+CREATE TABLE lenguajes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion VARCHAR(255),
+    imagen VARCHAR(255),
+    activo BOOLEAN DEFAULT TRUE
+);
+
+# insertar datos para mostrar algo en el dashboar 
+INSERT INTO lenguajes (nombre, descripcion, imagen)
+    VALUES 
+    ('Python', 'Lenguaje versátil y muy usado en backend', 'python.png'),
+    ('Java', 'Programación orientada a objetos', 'java.png'),
+    ('C++', 'Alto rendimiento y bajo nivel', 'c++.png');
