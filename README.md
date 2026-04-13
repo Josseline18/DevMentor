@@ -247,7 +247,7 @@ ENV/
 src/config/api.js
 
 -------------------------------------------------------------------------------------------------------------
-# crear base de datos de lenguajes para mostrar en el dashboard
+# crear TABLA DENTRO DE LA BASE DE DATOS DE BD_materias de datos de lenguajes para mostrar en el dashboard
 CREATE TABLE lenguajes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
