@@ -4,91 +4,132 @@ from app.infrastructure.database import SessionLocal
 
 
 class ResenaRepositoryMySQL:
-	def create_resena(self, resena):
-		db = SessionLocal()
+    def user_exists(self, id_usuario):
+        db = SessionLocal()
 
-		try:
-			query = text(
-				"""
-				INSERT INTO resenas (id_usuario, id_asesor, id_materia, calificacion, comentario)
-				VALUES (:id_usuario, :id_asesor, :id_materia, :calificacion, :comentario)
-				"""
-			)
+        try:
+            query = text(
+                """
+                SELECT 1
+                FROM asesorias.usuarios
+                WHERE id_usuario = :id_usuario
+                LIMIT 1
+                """
+            )
+            row = db.execute(query, {"id_usuario": id_usuario}).fetchone()
+            return row is not None
+        finally:
+            db.close()
 
-			result = db.execute(
-				query,
-				{
-					"id_usuario": resena.id_usuario,
-					"id_asesor": resena.id_asesor,
-					"id_materia": resena.id_materia,
-					"calificacion": resena.calificacion,
-					"comentario": resena.comentario,
-				},
-			)
+    def create_resena(self, resena):
+        db = SessionLocal()
 
-			id_resena = result.lastrowid
-			db.commit()
+        try:
+            query = text(
+                """
+                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario)
+                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario)
+                """
+            )
 
-			return self.get_resena_by_id(id_resena)
-		finally:
-			db.close()
+            result = db.execute(
+                query,
+                {
+                    "id_usuario": resena.id_usuario,
+                    "id_usuario_auth": resena.id_usuario_auth,
+                    "id_materia": resena.id_materia,
+                    "calificacion": resena.calificacion,
+                    "comentario": resena.comentario,
+                },
+            )
 
-	def get_resena_by_id(self, id_resena):
-		db = SessionLocal()
+            id_resena = result.lastrowid
+            db.commit()
 
-		try:
-			query = text(
-				"""
-				SELECT id_resena, id_usuario, id_asesor, id_materia, calificacion, comentario, fecha_creacion
-				FROM resenas
-				WHERE id_resena = :id_resena
-				"""
-			)
+            return self.get_resena_by_id(id_resena)
+        finally:
+            db.close()
 
-			row = db.execute(query, {"id_resena": id_resena}).fetchone()
+    def get_resena_by_id(self, id_resena):
+        db = SessionLocal()
 
-			if row:
-				return dict(row._mapping)
+        try:
+            query = text(
+                f"""
+                SELECT
+                    r.id_resena,
+                    r.id_usuario,
+                    r.id_usuario_auth,
+                    r.id_usuario_auth AS id_asesor,
+                    r.id_materia,
+                    r.calificacion,
+                    r.comentario,
+                    r.fecha_creacion,
+                    u.nombre AS nombre_usuario,
+                    a.nombre AS nombre_asesor
+                FROM resenas r
+                LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
+                WHERE r.id_resena = :id_resena
+                """
+            )
 
-			return None
-		finally:
-			db.close()
+            row = db.execute(query, {"id_resena": id_resena}).fetchone()
 
-	def list_resenas(self, id_usuario=None, id_asesor=None, id_materia=None):
-		db = SessionLocal()
+            if row:
+                return dict(row._mapping)
 
-		try:
-			conditions = []
-			params = {}
+            return None
+        finally:
+            db.close()
 
-			if id_usuario is not None:
-				conditions.append("id_usuario = :id_usuario")
-				params["id_usuario"] = id_usuario
+    def list_resenas(self, id_usuario=None, id_usuario_auth=None, id_materia=None):
+        db = SessionLocal()
 
-			if id_asesor is not None:
-				conditions.append("id_asesor = :id_asesor")
-				params["id_asesor"] = id_asesor
+        try:
+            conditions = []
+            params = {}
 
-			if id_materia is not None:
-				conditions.append("id_materia = :id_materia")
-				params["id_materia"] = id_materia
+            if id_usuario is not None:
+                conditions.append("r.id_usuario = :id_usuario")
+                params["id_usuario"] = id_usuario
 
-			where_clause = ""
-			if conditions:
-				where_clause = "WHERE " + " AND ".join(conditions)
+            if id_usuario_auth is not None:
+                conditions.append("r.id_usuario_auth = :id_usuario_auth")
+                params["id_usuario_auth"] = id_usuario_auth
 
-			query = text(
-				f"""
-				SELECT id_resena, id_usuario, id_asesor, id_materia, calificacion, comentario, fecha_creacion
-				FROM resenas
-				{where_clause}
-				ORDER BY fecha_creacion DESC, id_resena DESC
-				"""
-			)
+            if id_materia is not None:
+                conditions.append("r.id_materia = :id_materia")
+                params["id_materia"] = id_materia
 
-			rows = db.execute(query, params).fetchall()
+            where_clause = ""
+            if conditions:
+                where_clause = "WHERE " + " AND ".join(conditions)
 
-			return [dict(row._mapping) for row in rows]
-		finally:
-			db.close()
+            query = text(
+                f"""
+                SELECT
+                    r.id_resena,
+                    r.id_usuario,
+                    r.id_usuario_auth,
+                    r.id_usuario_auth AS id_asesor,
+                    r.id_materia,
+                    r.calificacion,
+                    r.comentario,
+                    r.fecha_creacion,
+                    u.nombre AS nombre_usuario,
+                    a.nombre AS nombre_asesor
+                FROM resenas r
+                LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
+                {where_clause}
+                ORDER BY r.fecha_creacion DESC, r.id_resena DESC
+                """
+            )
+
+            rows = db.execute(query, params).fetchall()
+
+            return [dict(row._mapping) for row in rows]
+        finally:
+            db.close()
 

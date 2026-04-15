@@ -34,10 +34,10 @@ const toTimeAgo = (isoDate) => {
 
 const normalizeReview = (review) => ({
 	id: String(review.idResena),
-	studentName: `Usuario #${review.idUsuario}`,
+	studentName: review.nombreUsuario || `Usuario #${review.idUsuario}`,
 	timeAgo: toTimeAgo(review.fechaCreacion),
 	rating: Number(review.calificacion || 0),
-	advisorName: `Asesor #${review.idAsesor}`,
+	advisorName: review.nombreAsesor || `Asesor #${review.idUsuarioAuth || review.idAsesor}`,
 	comment: review.comentario || "Sin comentario",
 });
 

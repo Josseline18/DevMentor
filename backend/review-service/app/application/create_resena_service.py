@@ -8,7 +8,7 @@ class CreateResenaService:
     def __init__(self):
         self.repository = ResenaRepositoryMySQL()
 
-    def execute(self, id_usuario, id_asesor, id_materia, calificacion, comentario):
+    def execute(self, id_usuario, id_usuario_auth, id_materia, calificacion, comentario):
         normalized_comment = comentario.strip()
         if not normalized_comment:
             raise HTTPException(status_code=400, detail="El comentario es obligatorio")
@@ -16,9 +16,15 @@ class CreateResenaService:
         if calificacion < 1 or calificacion > 5:
             raise HTTPException(status_code=400, detail="La calificacion debe estar entre 1 y 5")
 
+        if not self.repository.user_exists(id_usuario):
+            raise HTTPException(status_code=400, detail="El usuario que escribe la resena no existe")
+
+        if not self.repository.user_exists(id_usuario_auth):
+            raise HTTPException(status_code=400, detail="El asesor seleccionado no existe")
+
         resena = Resena(
             id_usuario=id_usuario,
-            id_asesor=id_asesor,
+            id_usuario_auth=id_usuario_auth,
             id_materia=id_materia,
             calificacion=calificacion,
             comentario=normalized_comment,

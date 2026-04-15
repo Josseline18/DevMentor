@@ -18,11 +18,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { styles, ui } from "../Styles/writeReviewStyles";
 import { createResena } from "../services/reviewService";
-
-const usuarioActual = {
-  id: 1,
-  nombre: "Camila Yazmin Coutiño",
-};
+import { getCurrentUser } from "../services/sessionService";
 
 const materias = [
   { id: 1, nombre: "Calculo Integral" },
@@ -90,6 +86,7 @@ function RatingStars({ rating, onChange }) {
 
 export default function WriteReviewScreen({ navigation }) {
   const insets = useSafeAreaInsets();
+  const usuarioActual = getCurrentUser();
 
   const [materia, setMateria] = useState(materias[0]);
   const [asesor, setAsesor] = useState(asesores[0]);
@@ -122,8 +119,8 @@ export default function WriteReviewScreen({ navigation }) {
   };
 
   const payloadPreview = {
-    idUsuario: usuarioActual.id,
-    idAsesor: asesor?.id,
+    idUsuario: usuarioActual?.id,
+    idUsuarioAuth: asesor?.id,
     idMateria: materia?.id,
     calificacion,
     comentario: comentario.trim(),
@@ -132,7 +129,13 @@ export default function WriteReviewScreen({ navigation }) {
   const saveReview = async () => {
     if (isSaving) return;
 
-    if (!payloadPreview.idMateria || !payloadPreview.idAsesor) {
+    if (!usuarioActual?.id) {
+      Alert.alert("Error", "Debes iniciar sesion para escribir una reseña");
+      navigation.navigate("Login");
+      return;
+    }
+
+    if (!payloadPreview.idMateria || !payloadPreview.idUsuarioAuth) {
       Alert.alert("Error", "Selecciona materia y asesor");
       return;
     }
@@ -196,7 +199,7 @@ export default function WriteReviewScreen({ navigation }) {
             <View style={styles.formSection}>
               <Text style={styles.label}>Usuario</Text>
               <View style={styles.readOnlyInput}>
-                <Text style={styles.readOnlyText}>{usuarioActual.nombre}</Text>
+                <Text style={styles.readOnlyText}>{usuarioActual?.nombre || "Usuario no identificado"}</Text>
               </View>
 
               <Text style={styles.label}>Materia</Text>

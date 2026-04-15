@@ -100,15 +100,15 @@ pip install -r requirements.txt
 
 
 6 ---------------------------------------------------------------------------------
-En el .env que se creo en Frontend deben de remplazar lo que tengan por lo siguiente:
+# En el .env que se creo en Frontend deben de remplazar lo que tengan por lo siguiente:
  
 cd /home/""/DevMentor/Frontendct } from "react";c.ngrok-free.devexport const API_URL =  "https://unvoluble-pei-subrhombic.ngrok-free.dev";
 
-Donde estan las comillas van a remplazar por la carpeta donde tengan el proyecto, y van a remplazar su url de ngrok
+- En las primeras comillas van a remplazar por la carpeta donde tengan el proyecto(wsl), y al final reemplazaran por su url de ngrok
 
 7 ---------------------------------------------------------------------------------
-Deben crear en Frontend/src/config el archivo api.js
-Ahí colocan lo siguiete: 
+# Deben crear en Frontend/src/config el archivo api.js
+- Ahí colocan lo siguiente: 
 
 import Constants from "expo-constants";
 
@@ -118,49 +118,47 @@ export const API_URL =
   expoConfig?.extra?.API_URL ||
   "https://splendent-johana-gelatinous.ngrok-free.dev";
 
-Igualmente remplazan por su url de ngrok
+- Igualmente remplazan por su url de ngrok
 
 8 ------------------------------------------------------------------------------------
-Tienen que dirigirse al archivo app.json que esta en /Frontend
-Ahí editan en la parte inferior lo siguiente:
+# Tienen que dirigirse al archivo app.json que esta en /Frontend
+- Ahí solamente reemplazan ese url por el de ngrok:
 
     "extra": {
       "API_URL": "https://splendent-johana-gelatinous.ngrok-free.dev"
     }
 
--Remplzan por su url de ngrok-
-
 -----------------------------------------------------------------------------------------
-Terminal 1
+# Terminal 1
 cd backend/auth_service
 source usuarios/bin/activate
 uvicorn app.main:app --port 8001 --reload
 
-Terminal 2
+# Terminal 2
 cd backend/materia-service
 source materias/bin/activate
 uvicorn app:app --port 8002 --reload
 
-Terminal 3
+# Terminal 3
 cd backend/advisor-service
 source advisors/bin/activate
 uvicorn app.main:app --port 8003 --reload
 
-Terminal 4 (reseñas)
+# Terminal 4 (reseñas)
 cd backend/review-service
 source resenas/bin/activate
 uvicorn app.main:app --port 8004 --reload
 
-Terminal 5
+# Terminal 5
 cd backend/api-gateway
 source apiGw/bin/activate
 uvicorn app:app --port 8000 --reload
 
-Terminal 6:
+# Terminal 6:
 cd Frontend
 npx expo start --tunnel
 
-Terminal 7:
+# Terminal 7:
 ngrok http 8000
 
 -----------------------------------------------------------------------------------------------------

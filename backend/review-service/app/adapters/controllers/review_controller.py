@@ -14,7 +14,7 @@ class CreateResenaRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id_usuario: int = Field(gt=0, alias="idUsuario")
-    id_asesor: int = Field(gt=0, alias="idAsesor")
+    id_usuario_auth: int = Field(gt=0, alias="idUsuarioAuth")
     id_materia: int = Field(gt=0, alias="idMateria")
     calificacion: int = Field(ge=1, le=5)
     comentario: str = Field(min_length=3, max_length=2000)
@@ -33,10 +33,16 @@ def _format_fecha(fecha_creacion):
 
 
 def _format_resena(resena):
+    id_usuario_auth = resena.get("id_usuario_auth", resena.get("id_asesor"))
+
     return {
         "idResena": resena["id_resena"],
         "idUsuario": resena["id_usuario"],
-        "idAsesor": resena["id_asesor"],
+        "idUsuarioAuth": id_usuario_auth,
+        # Compatibilidad temporal con clientes que aun leen idAsesor.
+        "idAsesor": id_usuario_auth,
+        "nombreUsuario": resena.get("nombre_usuario"),
+        "nombreAsesor": resena.get("nombre_asesor"),
         "idMateria": resena["id_materia"],
         "calificacion": resena["calificacion"],
         "comentario": resena["comentario"],
@@ -50,7 +56,7 @@ def create_resena(data: CreateResenaRequest):
 
     created = service.execute(
         id_usuario=data.id_usuario,
-        id_asesor=data.id_asesor,
+        id_usuario_auth=data.id_usuario_auth,
         id_materia=data.id_materia,
         calificacion=data.calificacion,
         comentario=data.comentario,
@@ -65,11 +71,15 @@ def create_resena(data: CreateResenaRequest):
 @router.get("")
 def list_resenas(
     id_usuario: Optional[int] = Query(default=None, gt=0, alias="idUsuario"),
-    id_asesor: Optional[int] = Query(default=None, gt=0, alias="idAsesor"),
+    id_usuario_auth: Optional[int] = Query(default=None, gt=0, alias="idUsuarioAuth"),
     id_materia: Optional[int] = Query(default=None, gt=0, alias="idMateria"),
 ):
     service = ListResenasService()
-    rows = service.execute(id_usuario=id_usuario, id_asesor=id_asesor, id_materia=id_materia)
+    rows = service.execute(
+        id_usuario=id_usuario,
+        id_usuario_auth=id_usuario_auth,
+        id_materia=id_materia,
+    )
 
     return {
         "resenas": [_format_resena(row) for row in rows],

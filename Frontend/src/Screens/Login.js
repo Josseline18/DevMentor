@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image, Alert } from "react-native";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
+import { setCurrentUser } from "../services/sessionService";
 
 export default function Login({ navigation }) {
 
@@ -9,13 +10,6 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("");
 
   const iniciarSesion = async () => {
-
-    // TEMPORAL PARA PRUEBAS
-    navigation.navigate("DevMentor");
-    return;
-
-    // Código original (se ignora)
-
     if (!correo || !password) {
       Alert.alert("Error", "Todos los campos son obligatorios");
       return;
@@ -39,6 +33,19 @@ export default function Login({ navigation }) {
         Alert.alert("Error", data.detail || "Credenciales incorrectas");
         return;
       }
+
+      const usuario = data?.usuario;
+      if (!usuario?.id || !usuario?.nombre || !usuario?.correo) {
+        Alert.alert("Error", "El login no devolvio los datos del usuario");
+        return;
+      }
+
+      setCurrentUser({
+        id: Number(usuario.id),
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        rol: usuario.rol,
+      });
 
       Alert.alert("Éxito", "Bienvenido");
 

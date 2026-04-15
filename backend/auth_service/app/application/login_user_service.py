@@ -22,6 +22,7 @@ class LoginUserService:
         return {
             "message": "Login exitoso",
             "usuario": {
+                "id": user["id_usuario"],
                 "nombre": user["nombre"],
                 "correo": user["correo"],
                 "rol": user["rol"]
