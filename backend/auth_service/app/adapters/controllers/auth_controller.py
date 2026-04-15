@@ -2,6 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 from app.application.register_user_service import RegisterUserService
 from app.application.login_user_service import LoginUserService
+from app.application.get_user_service import GetUserService
 
 
 router = APIRouter(prefix="/auth")
@@ -39,3 +40,11 @@ def login(data: LoginRequest):
         data.correo,
         data.contrasena
     )
+
+
+@router.get("/users/{id_usuario}")
+def get_user_by_id(id_usuario: int):
+
+    service = GetUserService()
+
+    return service.execute(id_usuario)

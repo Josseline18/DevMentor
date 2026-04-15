@@ -53,6 +53,12 @@ async def register(request: Request):
     return forward_response(response)
 
 
+@app.get("/auth/users/{id_usuario}")
+async def get_user_by_id(id_usuario: int):
+    response = requests.get(f"{AUTH_SERVICE_URL}/auth/users/{id_usuario}")
+    return forward_response(response)
+
+
 # materias_service
 
 @app.get("/materias")

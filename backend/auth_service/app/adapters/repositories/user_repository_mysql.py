@@ -45,3 +45,21 @@ class UserRepositoryMySQL:
             return dict(result._mapping)
 
         return None
+
+    def get_user_by_id(self, id_usuario):
+
+        db = SessionLocal()
+
+        query = text(
+            "SELECT id_usuario, nombre, correo, telefono, rol "
+            "FROM usuarios WHERE id_usuario = :id_usuario"
+        )
+
+        result = db.execute(query, {"id_usuario": id_usuario}).fetchone()
+
+        db.close()
+
+        if result:
+            return dict(result._mapping)
+
+        return None
