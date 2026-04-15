@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -19,20 +19,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles, ui } from "../Styles/writeReviewStyles";
 import { createResena } from "../services/reviewService";
 import { getCurrentUser } from "../services/sessionService";
+import { API_URL } from "../config/api";
 
-const materias = [
-  { id: 1, nombre: "Calculo Integral" },
-  { id: 2, nombre: "Programacion Orientada a Objetos" },
-  { id: 3, nombre: "Bases de Datos" },
-  { id: 4, nombre: "Redes de Computadoras" },
-];
-
-const asesores = [
-  { id: 1, nombre: "Cesar Ivan Jimenez" },
-  { id: 2, nombre: "Limber de Jesus Morales" },
-  { id: 3, nombre: "Monserrat Garcia" },
-  { id: 4, nombre: "Edgar Alejandro Rodriguez" },
-];
+const EMPTY_LIST = [];
 
 function SelectorModal({ visible, title, options, onClose, onSelect }) {
   return (
@@ -88,8 +77,12 @@ export default function WriteReviewScreen({ navigation }) {
   const insets = useSafeAreaInsets();
   const usuarioActual = getCurrentUser();
 
-  const [materia, setMateria] = useState(materias[0]);
-  const [asesor, setAsesor] = useState(asesores[0]);
+  const [materiasDisponibles, setMateriasDisponibles] = useState(EMPTY_LIST);
+  const [asesoresDisponibles, setAsesoresDisponibles] = useState(EMPTY_LIST);
+  const [isLoadingMaterias, setIsLoadingMaterias] = useState(true);
+  const [isLoadingAsesores, setIsLoadingAsesores] = useState(true);
+  const [materia, setMateria] = useState(null);
+  const [asesor, setAsesor] = useState(null);
   const [calificacion, setCalificacion] = useState(0);
   const [comentario, setComentario] = useState("");
   const [modalType, setModalType] = useState(null);
@@ -102,10 +95,75 @@ export default function WriteReviewScreen({ navigation }) {
   }, [modalType]);
 
   const modalData = useMemo(() => {
-    if (modalType === "materia") return materias;
-    if (modalType === "asesor") return asesores;
+    if (modalType === "materia") return materiasDisponibles;
+    if (modalType === "asesor") return asesoresDisponibles;
     return [];
-  }, [modalType]);
+  }, [modalType, materiasDisponibles, asesoresDisponibles]);
+
+  useEffect(() => {
+    const cargarMaterias = async () => {
+      try {
+        const response = await fetch(`${API_URL}/materias`);
+        const data = await response.json();
+        if (response.ok && Array.isArray(data)) {
+          setMateriasDisponibles(data);
+          if (data.length > 0) {
+            setMateria(data[0]);
+          }
+        } else {
+          setMateriasDisponibles([]);
+        }
+      } catch (_error) {
+        setMateriasDisponibles([]);
+      } finally {
+        setIsLoadingMaterias(false);
+      }
+    };
+
+    const getUserById = async (idUsuario) => {
+      try {
+        const response = await fetch(`${API_URL}/auth/users/${idUsuario}`);
+        if (!response.ok) return null;
+        return response.json();
+      } catch (_error) {
+        return null;
+      }
+    };
+
+    const cargarAsesores = async () => {
+      try {
+        const response = await fetch(`${API_URL}/advisors`);
+        const data = await response.json();
+
+        if (!response.ok || !Array.isArray(data)) {
+          setAsesoresDisponibles([]);
+          return;
+        }
+
+        const advisorsWithUser = await Promise.all(
+          data.map(async (advisor) => {
+            const user = await getUserById(advisor.id_usuario_auth);
+            return {
+              id: advisor.id_usuario_auth,
+              nombre: user?.nombre || `Asesor #${advisor.id_usuario_auth}`,
+            };
+          })
+        );
+
+        setAsesoresDisponibles(advisorsWithUser);
+        if (advisorsWithUser.length > 0) {
+          setAsesor(advisorsWithUser[0]);
+        }
+      } catch (_error) {
+        setAsesoresDisponibles([]);
+      } finally {
+        setIsLoadingAsesores(false);
+      }
+    };
+
+    cargarMaterias();
+    cargarAsesores();
+  }, []);
 
   const handleSelect = (item) => {
     if (modalType === "materia") {
@@ -208,7 +266,9 @@ export default function WriteReviewScreen({ navigation }) {
                 style={styles.selectorInput}
                 onPress={() => setModalType("materia")}
               >
-                <Text style={styles.selectorText}>{materia?.nombre}</Text>
+                <Text style={styles.selectorText}>
+                  {isLoadingMaterias ? "Cargando materias..." : materia?.nombre || "Sin materias"}
+                </Text>
                 <Ionicons name="chevron-down" size={ui.iconSelect} color="#8D93A3" />
               </TouchableOpacity>
 
@@ -218,7 +278,9 @@ export default function WriteReviewScreen({ navigation }) {
                 style={styles.selectorInput}
                 onPress={() => setModalType("asesor")}
               >
-                <Text style={styles.selectorText}>{asesor?.nombre}</Text>
+                <Text style={styles.selectorText}>
+                  {isLoadingAsesores ? "Cargando asesores..." : asesor?.nombre || "Sin asesores"}
+                </Text>
                 <Ionicons name="chevron-down" size={ui.iconSelect} color="#8D93A3" />
               </TouchableOpacity>
 
