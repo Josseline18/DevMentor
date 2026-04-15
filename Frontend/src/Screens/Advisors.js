@@ -1,79 +1,90 @@
-import { View, Text, StyleSheet, Image, FlatList, TouchableOpacity } from "react-native";
-
-const advisors = [
-  {
-    id: "1",
-    name: "Josseline Coutiño",
-    role: "Estudiante del 6° M",
-    especialidad: "Ciencias de la Computación",
-    experiencia: 2,
-    materias: ["Programación", "Base de Datos"],
-    correo: "josseline@unach.mx",
-    telefono: "961-123-4567",
-    estadisticas: {
-      alumnosAtendidos: 45,
-      calificacionPromedio: 4.5,
-      horasAsesoradas: 120
-    }
-  },
-  {
-    id: "2",
-    name: "Limber de Jesús",
-    role: "Profesor de la facultad de sistemas",
-    especialidad: "Ingeniería de Software",
-    experiencia: 10,
-    materias: ["Arquitectura de Software", "Patrones de Diseño"],
-    correo: "limber@unach.mx",
-    telefono: "961-234-5678",
-    estadisticas: {
-      alumnosAtendidos: 200,
-      calificacionPromedio: 4.9,
-      horasAsesoradas: 500
-    }
-  },
-  {
-    id: "3",
-    name: "César Iván",
-    role: "Estudiante del 6° M",
-    especialidad: "Redes de Computadoras",
-    experiencia: 3,
-    materias: ["Redes", "Seguridad Informática"],
-    correo: "cesar@unach.mx",
-    telefono: "961-345-6789",
-    estadisticas: {
-      alumnosAtendidos: 60,
-      calificacionPromedio: 4.6,
-      horasAsesoradas: 150
-    }
-  },
-  {
-    id: "4",
-    name: "Monserrat Garcia",
-    role: "Estudiante del 6° M",
-    especialidad: "Bases de Datos",
-    experiencia: 3,
-    materias: ["SQL", "NoSQL", "Modelado de Datos"],
-    correo: "monserrat@unach.mx",
-    telefono: "961-456-7890",
-    estadisticas: {
-      alumnosAtendidos: 55,
-      calificacionPromedio: 4.7,
-      horasAsesoradas: 130
-    }
-  }
-];
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+import { API_URL } from "../config/api";
 
 export default function Advisors({ navigation }) {
+  const [advisors, setAdvisors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    cargarAsesores();
+  }, []);
+
+  const getUserById = async (idUsuario) => {
+    try {
+      const response = await fetch(`${API_URL}/auth/users/${idUsuario}`);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log(
+          `[Advisors] auth/users/${idUsuario} fallo: ${response.status} - ${errorText}`
+        );
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.log(`[Advisors] auth/users/${idUsuario} error de red:`, error);
+      return null;
+    }
+  };
+
+  const cargarAsesores = async () => {
+    try {
+      const response = await fetch(`${API_URL}/advisors`);
+      const data = await response.json();
+
+      if (!response.ok || !Array.isArray(data)) {
+        console.log("[Advisors] /advisors respuesta invalida:", response.status, data);
+        setAdvisors([]);
+        return;
+      }
+
+      const advisorsWithUser = await Promise.all(
+        data.map(async (advisor) => {
+          const user = await getUserById(advisor.id_usuario_auth);
+
+          if (!user) {
+            console.log(
+              `[Advisors] Sin datos de auth para id_usuario_auth=${advisor.id_usuario_auth}`
+            );
+          }
+
+          return {
+            ...advisor,
+            id: advisor.id_perfil?.toString() || String(advisor.id_usuario_auth),
+            name: user?.nombre || `Asesor #${advisor.id_usuario_auth}`,
+            correo: user?.correo || "No disponible",
+            telefono: user?.telefono || "No disponible",
+            role: user?.rol || advisor?.area_especialidad || "Asesor",
+          };
+        })
+      );
+
+      setAdvisors(advisorsWithUser);
+    } catch (error) {
+      console.log("[Advisors] Error cargando asesores:", error);
+      setAdvisors([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate('AdvisorProfile', { advisor: item })}
+      onPress={() => navigation.navigate("AdvisorProfile", { advisor: item })}
       activeOpacity={0.7}
     >
-      <Image
-        source={require("../../assets/icons/user.png")}
-        style={styles.avatar}
-      />
+      <Image source={require("../../assets/icons/user.png")} style={styles.avatar} />
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.role}>{item.role}</Text>
@@ -84,12 +95,19 @@ export default function Advisors({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Asesores</Text>
-      <FlatList
-        data={advisors}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#1E5BE0" />
+      ) : (
+        <FlatList
+          data={advisors}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>No hay asesores disponibles por ahora.</Text>
+          }
+        />
+      )}
     </View>
   );
 }
@@ -99,25 +117,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F5F6FA",
     paddingTop: 20,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: '#0f172a',
+    color: "#0f172a",
   },
   card: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 15,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     borderRadius: 12,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    shadowColor: '#000',
+    borderColor: "#e0e0e0",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
@@ -128,7 +146,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginRight: 15,
-    backgroundColor: '#e6f3ff',
+    backgroundColor: "#e6f3ff",
   },
   info: {
     flex: 1,
@@ -136,11 +154,16 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: "600",
-    color: '#0f172a',
+    color: "#0f172a",
   },
   role: {
     color: "#64748b",
     marginTop: 3,
     fontSize: 13,
-  }
+  },
+  emptyText: {
+    color: "#64748b",
+    textAlign: "center",
+    marginTop: 24,
+  },
 });
