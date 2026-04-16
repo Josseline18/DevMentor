@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -25,9 +25,19 @@ export default function AdvisorProfileSetup({ route, navigation }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [expandedMaterias, setExpandedMaterias] = useState(false);
+  const [profileCompleted, setProfileCompleted] = useState(false);
+  const redirectTimeoutRef = useRef(null);
 
   useEffect(() => {
     cargarMaterias();
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
   }, []);
 
   const cargarMaterias = async () => {
@@ -76,6 +86,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
     }
 
     setSaving(true);
+    let completed = false;
 
     try {
       const response = await fetch(`${API_URL}/advisors`, {
@@ -94,16 +105,12 @@ export default function AdvisorProfileSetup({ route, navigation }) {
       const data = await response.json();
 
       if (response.ok) {
-        Alert.alert(
-          "Éxito",
-          "Perfil de asesor completado exitosamente",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.navigate("DevMentor"),
-            },
-          ]
-        );
+        completed = true;
+        setProfileCompleted(true);
+        redirectTimeoutRef.current = setTimeout(() => {
+          navigation.navigate("DevMentor");
+        }, 3000);
+        return;
       } else {
         Alert.alert("Error", data.detail || "Error al guardar el perfil");
       }
@@ -111,7 +118,9 @@ export default function AdvisorProfileSetup({ route, navigation }) {
       console.error("Error guardando perfil:", error);
       Alert.alert("Error", "No se pudo guardar el perfil");
     } finally {
-      setSaving(false);
+      if (!completed) {
+        setSaving(false);
+      }
     }
   };
 
@@ -137,6 +146,17 @@ export default function AdvisorProfileSetup({ route, navigation }) {
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color="#2196F3" />
           <Text style={styles.loadingText}>Cargando materias...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (profileCompleted) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={styles.loadingText}>Perfil de asesor completado</Text>
         </View>
       </SafeAreaView>
     );

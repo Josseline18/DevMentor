@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, Alert } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
 import { setCurrentUser } from "../services/sessionService";
@@ -8,6 +16,16 @@ export default function Login({ navigation }) {
 
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const redirectTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const iniciarSesion = async () => {
     if (!correo || !password) {
@@ -47,9 +65,10 @@ export default function Login({ navigation }) {
         rol: usuario.rol,
       });
 
-      Alert.alert("Éxito", "Bienvenido");
-
-      navigation.navigate("DevMentor");
+      setLoginSuccess(true);
+      redirectTimeoutRef.current = setTimeout(() => {
+        navigation.navigate("DevMentor");
+      }, 2500);
 
     } catch (error) {
       console.log(error);
@@ -57,6 +76,18 @@ export default function Login({ navigation }) {
     }
 
   };
+
+  if (loginSuccess) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.formContainer}>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={[styles.title, { marginTop: 16 }]}>Bienvenido</Text>
+          <Text style={styles.registerText}>Cargando tu panel...</Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

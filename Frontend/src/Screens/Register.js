@@ -1,5 +1,13 @@
-import React, { useState } from "react";
-import { SafeAreaView, View, Text, TextInput, TouchableOpacity, Alert } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import Checkbox from "expo-checkbox";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
@@ -11,9 +19,19 @@ export default function Register({ navigation }) {
   const [telefono, setTelefono] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const redirectTimeoutRef = useRef(null);
 
   const [estudiante, setEstudiante] = useState(false);
   const [asesor, setAsesor] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, []);
 
 
   const registrarUsuario = async () => {
@@ -65,18 +83,19 @@ export default function Register({ navigation }) {
         return;
       }
 
-      Alert.alert("Éxito", data.message);
+      setRegisterSuccess(true);
 
-      // Si es asesor, redirigir a completar perfil
-      if (asesor) {
-        navigation.navigate("AdvisorProfileSetup", {
-          userId: data.id_usuario || data.usuario_id || 0,
-          nombre: nombre,
-        });
-      } else {
-        // Si es estudiante, ir a login
-        navigation.navigate("Login");
-      }
+      const nextScreen = asesor ? "AdvisorProfileSetup" : "Login";
+      const nextParams = asesor
+        ? {
+            userId: data.id_usuario || data.usuario_id || 0,
+            nombre: nombre,
+          }
+        : undefined;
+
+      redirectTimeoutRef.current = setTimeout(() => {
+        navigation.navigate(nextScreen, nextParams);
+      }, 2500);
 
     } catch (error) {
 
@@ -86,6 +105,18 @@ export default function Register({ navigation }) {
     }
 
   };
+
+  if (registerSuccess) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.formContainer}>
+          <ActivityIndicator size="large" color="#2196F3" />
+          <Text style={[styles.title, { marginTop: 16 }]}>Registro completado</Text>
+          <Text style={styles.label}>Preparando tu acceso...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
 
   return (
