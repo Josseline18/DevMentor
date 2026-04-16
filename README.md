@@ -260,3 +260,40 @@ INSERT INTO lenguajes (nombre, descripcion, imagen)
     ('Python', 'Lenguaje versátil y muy usado en backend', 'python.png'),
     ('Java', 'Programación orientada a objetos', 'java.png'),
     ('C++', 'Alto rendimiento y bajo nivel', 'c++.png');
+
+# ------------------------------------------------------------------    
+
+# Código de app.json 
+- Este es el Relative path: Frontend/app.json
+{
+  "expo": {
+    "name": "Frontend",
+    "slug": "Frontend",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icons/home.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/icons/home.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/icons/home.png"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "API_URL": "https://967b-187-244-118-51.ngrok-free.app"
+    }
+  }
+}
+
+# ----------------------------------------------------------------------
