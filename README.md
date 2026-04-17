@@ -150,15 +150,20 @@ source resenas/bin/activate
 uvicorn app.main:app --port 8004 --reload
 
 # Terminal 5
+cd backend/content-service
+source contenidos/bin/activate
+uvicorn main:app --port 8005 --reload
+
+# Terminal 6
 cd backend/api-gateway
 source apiGw/bin/activate
 uvicorn app:app --port 8000 --reload
 
-# Terminal 6:
+# Terminal 7:
 cd Frontend
 npx expo start --tunnel
 
-# Terminal 7:
+# Terminal 8:
 ngrok http 8000
 
 -----------------------------------------------------------------------------------------------------
@@ -297,3 +302,45 @@ INSERT INTO lenguajes (nombre, descripcion, imagen)
 }
 
 # ----------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+# content-service
+CREATE DATABASE content_db;
+
+USE content_db;
+
+CREATE TABLE contenidos (
+    id_contenido INT AUTO_INCREMENT PRIMARY KEY,
+
+    id_perfil INT NOT NULL,    
+    id_materia INT NOT NULL,    
+
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500) NOT NULL,
+
+    tipo VARCHAR(50),
+    tamaño INT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
+);
+
+# crear entorno virtual e instalar dependencias
+cd backend/content-service
+python3 -m venv contenidos
+source contenidos/bin/activate
+
+pip install -r requirements.txt
+
+# ejecutar npm install en Frontend
+o instalar: 
+cd Frontend
+npx expo install expo-document-picker
+npx expo install expo-linking
+
+# instalar python-multipart en apiGw
+cd backend/api-gateway
+source apiGw/bin/activate
+pip install python-multipart

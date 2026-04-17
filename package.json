@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "expo": "^55.0.9"
+    "expo": "^55.0.9",
+    "expo-document-picker": "~55.0.13"
   }
 }

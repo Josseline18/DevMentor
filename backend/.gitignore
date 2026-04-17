@@ -11,7 +11,11 @@ materias/
 advisors/
 resenas/
 apiGw/
+contenidos/
 
 # Python
 __pycache__/
 *.pyc
+
+# Ignorar archivos subidos 
+content-service/uploads/

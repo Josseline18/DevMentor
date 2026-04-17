@@ -8,11 +8,12 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from "react-native";
+import * as Linking from "expo-linking";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { styles, colors } from "../Styles/AdvisorProfileStyle";
 import { API_URL } from "../config/api";
 
-export default function AdvisorProfile({ route }) {
+export default function AdvisorProfile({ route, navigation }) {
   const [expandedSection, setExpandedSection] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,6 +26,7 @@ export default function AdvisorProfile({ route }) {
     materias: Array.isArray(advisorParam.materias) ? advisorParam.materias : [],
     correo: advisorParam.correo || "No disponible",
     telefono: advisorParam.telefono || "No disponible",
+    materiales: [],
     estadisticas: advisorParam.estadisticas || {
       alumnosAtendidos: 0,
       calificacionPromedio: 0,
@@ -71,6 +73,44 @@ export default function AdvisorProfile({ route }) {
     }, {});
   };
 
+  const getMaterialesPorPerfil = async (idPerfil) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/contents/perfil/${idPerfil}`
+      );
+
+      if (!response.ok) return [];
+
+      return await response.json();
+    } catch (error) {
+      return [];
+    }
+  };
+
+  const descargarArchivo = (idContenido) => {
+
+    const url =
+      `${API_URL}/contents/download/${idContenido}`;
+
+    Linking.openURL(url);
+  };
+
+  const eliminarArchivo = async (idContenido) => {
+
+    try {
+      await fetch(
+        `${API_URL}/contents/${idContenido}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      // Recargar datos
+      cargarDatosAsesor();
+
+    } catch (error) {}
+  };
+
   const cargarDatosAsesor = async () => {
     try {
       const advisorProfile = await getAdvisorProfile();
@@ -80,9 +120,10 @@ export default function AdvisorProfile({ route }) {
         return;
       }
 
-      const [user, materiasMap] = await Promise.all([
+      const [user, materiasMap, materiales] = await Promise.all([
         getUserById(advisorProfile.id_usuario_auth),
         getMateriasMap(),
+        getMaterialesPorPerfil(advisorProfile.id_perfil),
       ]);
 
       const materiasNombres = Array.isArray(advisorProfile.materias)
@@ -104,6 +145,7 @@ export default function AdvisorProfile({ route }) {
         materias: materiasNombres.length > 0 ? materiasNombres : prev.materias,
         correo: user?.correo || prev.correo,
         telefono: user?.telefono || prev.telefono,
+        materiales: materiales, // nuevo
       }));
     } catch (error) {
       // Si falla la API, se mantienen los datos de fallback.
@@ -235,6 +277,26 @@ export default function AdvisorProfile({ route }) {
             <Ionicons name="chatbubble" size={20} color={colors.primary} />
             <Text style={styles.actionButtonText}>Mensaje</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() =>
+              navigation.navigate(
+                "UploadMaterialScreen",
+                { advisor: advisor }
+              )
+            }
+          >
+            <Ionicons
+              name="cloud-upload"
+              size={20}
+              color={colors.primary}
+            />
+            <Text style={styles.actionButtonText}>
+              Subir material
+            </Text>
+          </TouchableOpacity>
+
         </View>
 
         <View style={styles.card}>
@@ -256,23 +318,74 @@ export default function AdvisorProfile({ route }) {
 
           {expandedSection === "materiales" && (
             <View style={styles.expandableContent}>
-              {Object.entries(archivosPorMateria).map(([materia, archivos]) => (
-                <View key={materia} style={styles.archivosMateria}>
-                  <Text style={styles.archivosMateriaTitle}>{materia}</Text>
-                  <View style={styles.archivosLista}>
-                    {archivos.map((archivo) => (
-                      <View key={archivo.id} style={styles.archivoItem}>
-                        <Text style={styles.archivoNombre} numberOfLines={1}>
-                          {archivo.nombre}
-                        </Text>
-                        <TouchableOpacity style={styles.iconButton}>
-                          <Ionicons name="download" size={18} color={colors.primary} />
-                        </TouchableOpacity>
-                      </View>
-                    ))}
+              {advisor.materiales && advisor.materiales.length > 0 ? (
+
+                advisor.materiales.map((archivo) => (
+
+                  <View
+                    key={archivo.id_contenido}
+                    style={styles.archivoItem}
+                  >
+
+                    <Text
+                      style={styles.archivoNombre}
+                      numberOfLines={1}
+                    >
+                      {archivo.nombre_archivo}
+                    </Text>
+
+                    <View style={{ flexDirection: "row" }}>
+
+                      {/* Descargar */}
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                          descargarArchivo(
+                            archivo.id_contenido
+                          )
+                        }
+                      >
+                        <Ionicons
+                          name="download"
+                          size={18}
+                          color={colors.primary}
+                        />
+                      </TouchableOpacity>
+
+                      {/* Eliminar */}
+                      <TouchableOpacity
+                        style={styles.iconButton}
+                        onPress={() =>
+                          eliminarArchivo(
+                            archivo.id_contenido
+                          )
+                        }
+                      >
+                        <Ionicons
+                          name="trash"
+                          size={18}
+                          color="red"
+                        />
+                      </TouchableOpacity>
+
+                    </View>
+
                   </View>
-                </View>
-              ))}
+
+                ))
+
+              ) : (
+
+                <Text
+                  style={{
+                    color: colors.text.secondary,
+                    marginTop: 10,
+                  }}
+                >
+                  No hay materiales disponibles.
+                </Text>
+
+              )}
             </View>
           )}
         </View>

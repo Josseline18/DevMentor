@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import UploadFile, File
 import requests
 
 app = FastAPI()
@@ -17,7 +18,7 @@ AUTH_SERVICE_URL = "http://localhost:8001"
 MATERIA_SERVICE_URL = "http://localhost:8002"
 ADVISOR_SERVICE_URL = "http://localhost:8003"
 REVIEW_SERVICE_URL = "http://localhost:8004"
-
+CONTENT_SERVICE_URL = "http://localhost:8005"
 
 # auth_service
 
@@ -145,3 +146,71 @@ async def list_resenas(request: Request):
 
     return forward_response(response)
 
+# content_service
+@app.post("/contents/upload/")
+async def upload_content(
+    request: Request,
+    id_perfil: int,
+    id_materia: int
+):
+
+    form = await request.form()
+
+    file = form["file"]
+
+    files = {
+        "file": (
+            file.filename,
+            file.file,
+            file.content_type
+        )
+    }
+
+    data = {
+        "id_perfil": id_perfil,
+        "id_materia": id_materia
+    }
+
+    response = requests.post(
+        f"{CONTENT_SERVICE_URL}/contents/upload/",
+        files=files,
+        data=data
+    )
+
+    return forward_response(response)
+
+@app.get("/contents/materia/{id_materia}")
+async def get_contents_by_materia(id_materia: int):
+
+    response = requests.get(
+        f"{CONTENT_SERVICE_URL}/contents/materia/{id_materia}"
+    )
+
+    return forward_response(response)
+
+@app.get("/contents/perfil/{id_perfil}")
+async def get_contents_by_perfil(id_perfil: int):
+
+    response = requests.get(
+        f"{CONTENT_SERVICE_URL}/contents/perfil/{id_perfil}"
+    )
+
+    return forward_response(response)
+
+@app.get("/contents/download/{id_contenido}")
+async def download_content(id_contenido: int):
+
+    response = requests.get(
+        f"{CONTENT_SERVICE_URL}/contents/download/{id_contenido}"
+    )
+
+    return forward_response(response)
+
+@app.delete("/contents/{id_contenido}")
+async def delete_content(id_contenido: int):
+
+    response = requests.delete(
+        f"{CONTENT_SERVICE_URL}/contents/{id_contenido}"
+    )
+
+    return forward_response(response)

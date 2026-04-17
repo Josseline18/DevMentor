@@ -11,6 +11,7 @@ import AdvisorProfile from "./src/Screens/AdvisorProfile";
 import AdvisorProfileSetup from "./src/Screens/AdvisorProfileSetup";
 import ReviewScreen from "./src/Screens/ReviewScreen";
 import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
+import UploadMaterialScreen from "./src/Screens/UploadMaterialScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -81,8 +82,13 @@ export default function App() {
           component={WriteReviewScreen}
           options={{ headerShown: false }}
         />
-        
 
+        <Stack.Screen
+          name="UploadMaterialScreen"
+          component={UploadMaterialScreen}
+          options={{ title: "Subir Material" }}
+        />
+        
         <Stack.Screen 
           name="Register" 
           component={Register} 
