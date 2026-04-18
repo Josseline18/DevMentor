@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app.application.register_user_service import RegisterUserService
 from app.application.login_user_service import LoginUserService
 from app.application.get_user_service import GetUserService
+from app.application.update_user_service import UpdateUserService
 
 
 router = APIRouter(prefix="/auth")
@@ -17,6 +18,13 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     correo: str
     contrasena: str
+
+
+class UpdateUserRequest(BaseModel):
+    nombre: str | None = None
+    correo: str | None = None
+    telefono: str | None = None
+    contrasena: str | None = None
 
 @router.post("/register")
 def register_user(data: RegisterRequest):
@@ -48,3 +56,17 @@ def get_user_by_id(id_usuario: int):
     service = GetUserService()
 
     return service.execute(id_usuario)
+
+
+@router.put("/users/{id_usuario}")
+def update_user(id_usuario: int, data: UpdateUserRequest):
+
+    service = UpdateUserService()
+
+    return service.execute(
+        id_usuario=id_usuario,
+        nombre=data.nombre,
+        correo=data.correo,
+        telefono=data.telefono,
+        contrasena=data.contrasena,
+    )

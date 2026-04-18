@@ -60,6 +60,18 @@ async def get_user_by_id(id_usuario: int):
     return forward_response(response)
 
 
+@app.put("/auth/users/{id_usuario}")
+async def update_user(id_usuario: int, request: Request):
+    body = await request.json()
+
+    response = requests.put(
+        f"{AUTH_SERVICE_URL}/auth/users/{id_usuario}",
+        json=body
+    )
+
+    return forward_response(response)
+
+
 # materias_service
 
 @app.get("/materias")

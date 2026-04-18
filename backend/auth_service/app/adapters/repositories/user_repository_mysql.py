@@ -63,3 +63,40 @@ class UserRepositoryMySQL:
             return dict(result._mapping)
 
         return None
+
+    def update_user(self, id_usuario, nombre=None, correo=None, telefono=None, contrasena=None):
+
+        db = SessionLocal()
+
+        set_clauses = []
+        params = {"id_usuario": id_usuario}
+
+        if nombre is not None:
+            set_clauses.append("nombre = :nombre")
+            params["nombre"] = nombre
+
+        if correo is not None:
+            set_clauses.append("correo = :correo")
+            params["correo"] = correo
+
+        if telefono is not None:
+            set_clauses.append("telefono = :telefono")
+            params["telefono"] = telefono
+
+        if contrasena is not None:
+            set_clauses.append("contrasena = :contrasena")
+            params["contrasena"] = contrasena
+
+        if not set_clauses:
+            db.close()
+            return self.get_user_by_id(id_usuario)
+
+        query = text(
+            f"UPDATE usuarios SET {', '.join(set_clauses)} WHERE id_usuario = :id_usuario"
+        )
+
+        db.execute(query, params)
+        db.commit()
+        db.close()
+
+        return self.get_user_by_id(id_usuario)
