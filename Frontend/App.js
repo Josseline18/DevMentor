@@ -332,9 +332,9 @@ const appStyles = StyleSheet.create({
     padding: 8,
     borderRadius: 999,
   },
-  reviewsIcon: {
-    width: 24,
-    height: 24,
+  reviewsIcon: { //tamaño del icono de reseñas
+    width: 27,
+    height: 27,
     resizeMode: "contain",
   },
 });
