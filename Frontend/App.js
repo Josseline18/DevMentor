@@ -26,7 +26,7 @@ import ReviewScreen from "./src/Screens/ReviewScreen";
 import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 import UploadMaterialScreen from "./src/Screens/UploadMaterialScreen";
 import MyAccount from "./src/Screens/MyAccount";
-import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService";
+import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService"
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();

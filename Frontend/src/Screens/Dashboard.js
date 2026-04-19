@@ -145,7 +145,7 @@ export default function Dashboard({ navigation }) {
             
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 6° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 6° semestre LIDTS</Text>
             </View>
 
             <ScrollView

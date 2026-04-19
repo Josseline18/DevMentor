@@ -7,15 +7,42 @@ import {
   Image,
   SafeAreaView,
   ActivityIndicator,
+  Modal,
+  StyleSheet
 } from "react-native";
+import {Calendar, LocaleConfig}  from "react-native-calendars";
 import * as Linking from "expo-linking";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { styles, colors } from "../Styles/AdvisorProfileStyle";
 import { API_URL } from "../config/api";
 
+LocaleConfig.locales["es"] = {
+  monthNames: [
+    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+  ],
+  monthNamesShort: [
+    'Ene','Feb','Mar','Abr','May','Jun',
+    'Jul','Ago','Sep','Oct','Nov','Dic'
+  ],
+  dayNames: [
+    'Domingo','Lunes','Martes','Miércoles',
+    'Jueves','Viernes','Sábado'
+  ],
+  dayNamesShort: [
+    'Dom','Lun','Mar','Mié','Jue','Vie','Sáb'
+  ],
+  today: 'Hoy'
+};
+
+LocaleConfig.defaultLocale = "es";
+
 export default function AdvisorProfile({ route, navigation }) {
   const [expandedSection, setExpandedSection] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [ modalVisible, setModalVisible] = useState(false);
+  const [ selectedDate, setSelectedDate] = useState('');
 
   const advisorParam = route?.params?.advisor || {};
 
@@ -269,10 +296,44 @@ export default function AdvisorProfile({ route, navigation }) {
         </View>
 
         <View style={styles.quickActions}>
-          <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
+          <TouchableOpacity 
+            style={styles.actionButton} 
+            activeOpacity={0.7} 
+            onPress={() => setModalVisible(true)}
+          >
             <Ionicons name="calendar" size={20} color={colors.primary} />
             <Text style={styles.actionButtonText}>Agendar</Text>
           </TouchableOpacity>
+
+          <Modal
+            visible={modalVisible}
+            transparent={true}
+            animationType = "fade"
+          >
+            <View style = {styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Selecciona una fecha</Text>
+                <Calendar
+                  onDayPress={(day) => {
+                    setSelectedDate(day.dateString);
+                  }}
+                  markedDates={{
+                    [selectedDate]: {
+                      selected: true,
+                      selectedColor: '#6C63FF'
+                    }
+                  }}
+                />
+                <TouchableOpacity
+                style={styles.closeButton}
+                onPress={()=> setModalVisible(false)}
+                >
+                  <Text style={{color: 'white'}}>Cerrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
           <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
             <Ionicons name="chatbubble" size={20} color={colors.primary} />
             <Text style={styles.actionButtonText}>Mensaje</Text>

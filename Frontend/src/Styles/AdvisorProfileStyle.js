@@ -203,4 +203,35 @@ export const styles = StyleSheet.create({
   iconButton: {
     padding: 8,
   },
+
+    // Parte del Calendario
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalContent: {
+    width: '90%',
+    backgroundColor: colors.white,
+    borderRadius: 20,
+    padding: 20,
+    elevation: 5
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+    color: colors.text.primary
+  },
+  closeButton: {
+    marginTop: 15,
+    backgroundColor: colors.primary,
+    padding: 10,
+    borderRadius: 10,
+    alignItems: 'center'
+  }
+
 });

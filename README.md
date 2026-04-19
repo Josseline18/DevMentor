@@ -342,3 +342,6 @@ npx expo install expo-linking
 cd backend/api-gateway
 source apiGw/bin/activate
 pip install python-multipart
+
+# Instalar libreria del calendario dentro de Frontend
+npx expo install react-native-calendars
