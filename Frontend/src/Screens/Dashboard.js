@@ -304,14 +304,6 @@ export default function Dashboard({ navigation }) {
         }
       />
 
-      <TouchableOpacity
-        style={styles.reviewsButton}
-        activeOpacity={0.85}
-        onPress={() => navigation.navigate("ReviewScreen")}
-      >
-        <Text style={styles.reviewsButtonText}>Reseñas</Text>
-      </TouchableOpacity>
-
     </View>
   );
 }

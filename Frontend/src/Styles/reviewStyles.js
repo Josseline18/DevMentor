@@ -11,7 +11,6 @@ const clampScale = (size, min, max) => {
 
 export const ui = {
 	iconBack: clampScale(28, 24, 32),
-	iconHome: clampScale(23, 20, 27),
 	iconWrite: clampScale(18, 16, 22),
 	star: clampScale(24, 20, 28)
 };
@@ -41,6 +40,11 @@ export const styles = StyleSheet.create({
 		height: clampScale(38, 34, 44),
 		alignItems: "center",
 		justifyContent: "center"
+	},
+
+	headerSpacer: {
+		width: clampScale(38, 34, 44),
+		height: clampScale(38, 34, 44)
 	},
 
 	headerTitle: {

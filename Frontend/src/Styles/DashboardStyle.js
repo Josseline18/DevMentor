@@ -63,26 +63,6 @@ export const styles = StyleSheet.create({
     marginTop: 5
   },
 
-  reviewsButton: {
-    backgroundColor: "#1E5BE0",
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 14,
-    marginBottom: 22,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3
-  },
-
-  reviewsButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "700"
-  },
-
   sectionHeader: {
   flexDirection: "row",
   alignItems: "center",

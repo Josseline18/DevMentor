@@ -1,7 +1,7 @@
 vscode_lsp_terminal_prompt_tracker= {}
 
 Los pasos que ya hayan realizado anteriormente como algunos entornos ya creados o bases de datos ya no tienen que repetirlos.
-1-------------------------------------------------------------------------------------------------------
+1--------------------------------------------------------------------------------
 cd backend/auth_service
 python3 -m venv usuarios
 source usuarios/bin/activate
@@ -20,7 +20,7 @@ CREATE DATABASE asesorias;
 		fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 
-2-------------------------------------------------------------------------------------------------------
+2--------------------------------------------------------------------------------
 cd backend/materia-service
 python3 -m venv materias
 source materias/bin/activate
@@ -52,7 +52,7 @@ pip install -r requirements.txt
     INSERT INTO materias (nombre, descripcion, semestre, carrera_id, activa)
     VALUES ('Economía', 'Fundamentos de economía ', 6, 1, 1);
 
-3------------------------------------------------------------------------------------------------------
+3-------------------------------------------------------------------------------------
 cd backend/api-gateway 
 python3 -m venv apiGw
 source apiGw/bin/activate
@@ -303,8 +303,6 @@ INSERT INTO lenguajes (nombre, descripcion, imagen)
 
 # ----------------------------------------------------------------------
 
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 # content-service
 CREATE DATABASE content_db;
 

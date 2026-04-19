@@ -88,28 +88,14 @@ export default function ReviewScreen({ navigation }) {
 				<View style={[styles.header, { paddingTop: insets.top + 6 }]}>
 					<TouchableOpacity
 						activeOpacity={0.8}
-						onPress={() => {
-							if (navigation.canGoBack()) {
-								navigation.goBack();
-								return;
-							}
-
-							navigation.navigate("DevMentor");
-						}}
+						onPress={() => navigation.navigate("DevMentor")}
 						style={styles.headerIconButton}
 					>
 							<Ionicons name="chevron-back" size={ui.iconBack} color="#1E5BE0" />
 					</TouchableOpacity>
 
 					<Text style={styles.headerTitle}>Reseñas</Text>
-
-					<TouchableOpacity
-						activeOpacity={0.8}
-						onPress={loadReviews}
-						style={styles.headerIconButton}
-					>
-							<Ionicons name="refresh" size={ui.iconHome} color="#1E5BE0" />
-					</TouchableOpacity>
+					<View style={styles.headerSpacer} />
 				</View>
 
 				<ScrollView

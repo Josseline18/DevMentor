@@ -135,14 +135,25 @@ export default function App() {
         <Stack.Screen
           name="DevMentor"
           component={Dashboard}
-          options={{
+          options={() => ({
             title: "DevMentor",
             headerLeft: () => (
               <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
                 <Ionicons name="menu" size={24} color="#1E5BE0" />
               </TouchableOpacity>
             ),
-          }}
+            headerRight: () => (
+              <TouchableOpacity
+                onPress={() => navigationRef.navigate("ReviewScreen")}
+                style={appStyles.reviewsIconButton}
+              >
+                <Image
+                  source={require("./assets/icons/resenas_usuario.png")}
+                  style={appStyles.reviewsIcon}
+                />
+              </TouchableOpacity>
+            ),
+          })}
         />
 
         <Stack.Screen 
@@ -315,5 +326,15 @@ const appStyles = StyleSheet.create({
     marginLeft: 8,
     padding: 8,
     borderRadius: 999,
+  },
+  reviewsIconButton: {
+    marginRight: 8,
+    padding: 8,
+    borderRadius: 999,
+  },
+  reviewsIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
 });
