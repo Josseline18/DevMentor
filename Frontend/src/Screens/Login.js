@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ImageBackground,
   Alert,
   ActivityIndicator,
 } from "react-native";
@@ -79,64 +80,69 @@ export default function Login({ navigation }) {
 
   if (loginSuccess) {
     return (
-      <View style={styles.container}>
-        <View style={styles.formContainer}>
-          <ActivityIndicator size="large" color="#2196F3" />
-          <Text style={[styles.title, { marginTop: 16 }]}>Bienvenido</Text>
-          <Text style={styles.registerText}>Cargando tu panel...</Text>
+      <ImageBackground
+        source={require("../../assets/icons/img_login.png")}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay}>
+          <View style={styles.formContainer}>
+            <ActivityIndicator size="large" color="#1E5BE0" />
+            <Text style={[styles.title, { marginTop: 16 }]}>Bienvenido</Text>
+            <Text style={styles.registerText}>Cargando tu panel...</Text>
+          </View>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={require("../../assets/icons/img_login.png")}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Bienvenido!</Text>
 
-      <View style={styles.header}>
-        <Image
-          source={require("../../assets/images/POO.jpg")}
-          style={styles.headerImage}
-        />
-      </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Correo"
+            placeholderTextColor="#3B4B64"
+            value={correo}
+            onChangeText={setCorreo}
+          />
 
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Bienvenido!</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#3B4B64"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Correo"
-          value={correo}
-          onChangeText={setCorreo}
-        />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={iniciarSesion}
+          >
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={iniciarSesion}
-        >
-          <Text style={styles.buttonText}>Iniciar sesión</Text>
-        </TouchableOpacity>
-
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>
-            No tienes una cuenta?{" "}
-            <Text
-              style={styles.registerLink}
-              onPress={() => navigation.navigate("Register")}
-            >
-              Registrarse ahora
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>
+              No tienes una cuenta?{" "}
+              <Text
+                style={styles.registerLink}
+                onPress={() => navigation.navigate("Register")}
+              >
+                Registrarse ahora
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
-
       </View>
-    </View>
+    </ImageBackground>
   );
 }
