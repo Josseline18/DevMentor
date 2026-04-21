@@ -9,24 +9,28 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { Asset } from "expo-asset";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
 import { setCurrentUser } from "../services/sessionService";
 
 export default function Login({ navigation }) {
 
+  const backgroundSource = require("../../assets/icons/img_login.png");
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const redirectTimeoutRef = useRef(null);
 
   useEffect(() => {
+    Asset.loadAsync([backgroundSource]);
+
     return () => {
       if (redirectTimeoutRef.current) {
         clearTimeout(redirectTimeoutRef.current);
       }
     };
-  }, []);
+  }, [backgroundSource]);
 
   const iniciarSesion = async () => {
     if (!correo || !password) {
@@ -81,9 +85,10 @@ export default function Login({ navigation }) {
   if (loginSuccess) {
     return (
       <ImageBackground
-        source={require("../../assets/icons/img_login.png")}
+        source={backgroundSource}
         style={styles.background}
         resizeMode="cover"
+        fadeDuration={0}
       >
         <View style={styles.overlay}>
           <View style={styles.formContainer}>
@@ -98,9 +103,10 @@ export default function Login({ navigation }) {
 
   return (
     <ImageBackground
-      source={require("../../assets/icons/img_login.png")}
+      source={backgroundSource}
       style={styles.background}
       resizeMode="cover"
+      fadeDuration={0}
     >
       <View style={styles.overlay}>
         <View style={styles.formContainer}>
