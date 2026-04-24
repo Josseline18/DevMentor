@@ -14,7 +14,7 @@ import {Calendar, LocaleConfig}  from "react-native-calendars";
 import * as Linking from "expo-linking";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { styles, colors } from "../Styles/AdvisorProfileStyle";
-import { API_URL } from "../config/api";
+import { API_URL, apiFetch } from "../config/api";
 
 LocaleConfig.locales["es"] = {
   monthNames: [
@@ -67,12 +67,12 @@ export default function AdvisorProfile({ route, navigation }) {
 
   const getAdvisorProfile = async () => {
     if (advisorParam.id_perfil) {
-      const response = await fetch(`${API_URL}/advisors/${advisorParam.id_perfil}`);
+      const response = await apiFetch(`/advisors/${advisorParam.id_perfil}`);
       if (response.ok) return response.json();
     }
 
     if (advisorParam.id_usuario_auth) {
-      const response = await fetch(`${API_URL}/advisors/user/${advisorParam.id_usuario_auth}`);
+      const response = await apiFetch(`/advisors/user/${advisorParam.id_usuario_auth}`);
       if (response.ok) return response.json();
     }
 
@@ -82,13 +82,13 @@ export default function AdvisorProfile({ route, navigation }) {
   const getUserById = async (idUsuario) => {
     if (!idUsuario) return null;
 
-    const response = await fetch(`${API_URL}/auth/users/${idUsuario}`);
+    const response = await apiFetch(`/auth/users/${idUsuario}`);
     if (!response.ok) return null;
     return response.json();
   };
 
   const getMateriasMap = async () => {
-    const response = await fetch(`${API_URL}/materias`);
+    const response = await apiFetch("/materias");
     if (!response.ok) return {};
 
     const materias = await response.json();
@@ -102,8 +102,8 @@ export default function AdvisorProfile({ route, navigation }) {
 
   const getMaterialesPorPerfil = async (idPerfil) => {
     try {
-      const response = await fetch(
-        `${API_URL}/contents/perfil/${idPerfil}`
+      const response = await apiFetch(
+        `/contents/perfil/${idPerfil}`
       );
 
       if (!response.ok) return [];
@@ -125,8 +125,8 @@ export default function AdvisorProfile({ route, navigation }) {
   const eliminarArchivo = async (idContenido) => {
 
     try {
-      await fetch(
-        `${API_URL}/contents/${idContenido}`,
+      await apiFetch(
+        `/contents/${idContenido}`,
         {
           method: "DELETE",
         }
@@ -333,12 +333,7 @@ export default function AdvisorProfile({ route, navigation }) {
               </View>
             </View>
           </Modal>
-
-          <TouchableOpacity style={styles.actionButton} activeOpacity={0.7}>
-            <Ionicons name="chatbubble" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Mensaje</Text>
-          </TouchableOpacity>
-
+          
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() =>

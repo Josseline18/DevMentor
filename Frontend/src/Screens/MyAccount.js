@@ -15,7 +15,7 @@ import Checkbox from "expo-checkbox";
 import * as DocumentPicker from "expo-document-picker";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 import {
   getCurrentUser,
   updateCurrentUser,
@@ -56,8 +56,8 @@ export default function MyAccount() {
 
       try {
         const [userResponse, materiasResponse] = await Promise.all([
-          fetch(`${API_URL}/auth/users/${currentUser.id}`),
-          isAdvisor ? fetch(`${API_URL}/materias`) : Promise.resolve(null),
+          apiFetch(`/auth/users/${currentUser.id}`),
+          isAdvisor ? apiFetch("/materias") : Promise.resolve(null),
         ]);
 
         if (userResponse?.ok) {
@@ -81,8 +81,8 @@ export default function MyAccount() {
         }
 
         if (isAdvisor) {
-          const advisorResponse = await fetch(
-            `${API_URL}/advisors/user/${currentUser.id}`
+          const advisorResponse = await apiFetch(
+            `/advisors/user/${currentUser.id}`
           );
 
           if (advisorResponse.ok) {
@@ -176,7 +176,7 @@ export default function MyAccount() {
         userPayload.contrasena = password;
       }
 
-      const userResponse = await fetch(`${API_URL}/auth/users/${currentUser.id}`, {
+      const userResponse = await apiFetch(`/auth/users/${currentUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -198,8 +198,8 @@ export default function MyAccount() {
         };
 
         if (advisorProfileId) {
-          const updateAdvisorResponse = await fetch(
-            `${API_URL}/advisors/${advisorProfileId}`,
+          const updateAdvisorResponse = await apiFetch(
+            `/advisors/${advisorProfileId}`,
             {
               method: "PUT",
               headers: {
@@ -218,7 +218,7 @@ export default function MyAccount() {
             return;
           }
         } else {
-          const createAdvisorResponse = await fetch(`${API_URL}/advisors`, {
+          const createAdvisorResponse = await apiFetch("/advisors", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

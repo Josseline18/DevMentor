@@ -11,6 +11,7 @@ import {
 import Checkbox from "expo-checkbox";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
+import { setAccessToken, setCurrentUser } from "../services/sessionService";
 
 export default function Register({ navigation }) {
 
@@ -85,13 +86,51 @@ export default function Register({ navigation }) {
 
       setRegisterSuccess(true);
 
-      const nextScreen = asesor ? "AdvisorProfileSetup" : "Login";
-      const nextParams = asesor
-        ? {
-            userId: data.id_usuario || data.usuario_id || 0,
-            nombre: nombre,
+      let nextScreen = "Login";
+      let nextParams;
+
+      if (asesor) {
+        try {
+          const loginResponse = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              correo,
+              contrasena: password,
+            }),
+          });
+
+          const loginData = await loginResponse.json();
+
+          if (loginResponse.ok && loginData?.access_token && loginData?.usuario?.id) {
+            setCurrentUser({
+              id: Number(loginData.usuario.id),
+              nombre: loginData.usuario.nombre,
+              correo: loginData.usuario.correo,
+              rol: loginData.usuario.rol,
+            });
+            setAccessToken(loginData.access_token);
+
+            nextScreen = "AdvisorProfileSetup";
+            nextParams = {
+              userId: Number(loginData.usuario.id),
+              nombre: loginData.usuario.nombre || nombre,
+            };
+          } else {
+            Alert.alert(
+              "Aviso",
+              "Registro exitoso. Inicia sesion para completar tu perfil de asesor."
+            );
           }
-        : undefined;
+        } catch (_error) {
+          Alert.alert(
+            "Aviso",
+            "Registro exitoso. Inicia sesion para completar tu perfil de asesor."
+          );
+        }
+      }
 
       redirectTimeoutRef.current = setTimeout(() => {
         navigation.navigate(nextScreen, nextParams);

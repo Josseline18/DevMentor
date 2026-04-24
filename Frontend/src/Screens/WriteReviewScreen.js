@@ -19,7 +19,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles, ui } from "../Styles/writeReviewStyles";
 import { createResena } from "../services/reviewService";
 import { getCurrentUser } from "../services/sessionService";
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 
 const EMPTY_LIST = [];
 
@@ -103,7 +103,7 @@ export default function WriteReviewScreen({ navigation }) {
   useEffect(() => {
     const cargarMaterias = async () => {
       try {
-        const response = await fetch(`${API_URL}/materias`);
+        const response = await apiFetch("/materias");
         const data = await response.json();
         if (response.ok && Array.isArray(data)) {
           setMateriasDisponibles(data);
@@ -122,7 +122,7 @@ export default function WriteReviewScreen({ navigation }) {
 
     const getUserById = async (idUsuario) => {
       try {
-        const response = await fetch(`${API_URL}/auth/users/${idUsuario}`);
+        const response = await apiFetch(`/auth/users/${idUsuario}`);
         if (!response.ok) return null;
         return response.json();
       } catch (_error) {
@@ -132,7 +132,7 @@ export default function WriteReviewScreen({ navigation }) {
 
     const cargarAsesores = async () => {
       try {
-        const response = await fetch(`${API_URL}/advisors`);
+        const response = await apiFetch("/advisors");
         const data = await response.json();
 
         if (!response.ok || !Array.isArray(data)) {

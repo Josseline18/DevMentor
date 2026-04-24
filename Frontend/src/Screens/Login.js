@@ -12,7 +12,7 @@ import {
 import { Asset } from "expo-asset";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
-import { setCurrentUser } from "../services/sessionService";
+import { setAccessToken, setCurrentUser } from "../services/sessionService";
 
 export default function Login({ navigation }) {
 
@@ -56,10 +56,16 @@ export default function Login({ navigation }) {
         Alert.alert("Error", data.detail || "Credenciales incorrectas");
         return;
       }
-
+      //el token se guarda aquí
       const usuario = data?.usuario;
+      const accessToken = data?.access_token;
       if (!usuario?.id || !usuario?.nombre || !usuario?.correo) {
         Alert.alert("Error", "El login no devolvio los datos del usuario");
+        return;
+      }
+
+      if (!accessToken) {
+        Alert.alert("Error", "El login no devolvio el token de acceso");
         return;
       }
 
@@ -69,6 +75,7 @@ export default function Login({ navigation }) {
         correo: usuario.correo,
         rol: usuario.rol,
       });
+      setAccessToken(accessToken);
 
       setLoginSuccess(true);
       redirectTimeoutRef.current = setTimeout(() => {
