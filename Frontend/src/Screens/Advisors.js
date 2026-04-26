@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 
 export default function Advisors({ navigation }) {
   const [advisors, setAdvisors] = useState([]);
@@ -20,7 +20,7 @@ export default function Advisors({ navigation }) {
 
   const getUserById = async (idUsuario) => {
     try {
-      const response = await fetch(`${API_URL}/auth/users/${idUsuario}`);
+      const response = await apiFetch(`/auth/users/${idUsuario}`);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -39,7 +39,7 @@ export default function Advisors({ navigation }) {
 
   const cargarAsesores = async () => {
     try {
-      const response = await fetch(`${API_URL}/advisors`);
+      const response = await apiFetch("/advisors");
       const data = await response.json();
 
       if (!response.ok || !Array.isArray(data)) {

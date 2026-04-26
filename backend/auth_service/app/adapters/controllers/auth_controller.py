@@ -1,9 +1,11 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app.application.register_user_service import RegisterUserService
-from app.application.login_user_service import LoginUserService
+from app.application.authenticate_user import AuthenticateUser
 from app.application.get_user_service import GetUserService
 from app.application.update_user_service import UpdateUserService
+from app.adapters.repositories.user_repository_mysql import UserRepositoryMySQL
+from app.infrastructure.jose_token_provider import JoseTokenProvider
 
 
 router = APIRouter(prefix="/auth")
@@ -45,9 +47,12 @@ def register_user(data: RegisterRequest):
 @router.post("/login")
 def login(data: LoginRequest):
 
-    service = LoginUserService()
+    use_case = AuthenticateUser(
+        user_repository=UserRepositoryMySQL(),
+        token_provider=JoseTokenProvider(),
+    )
 
-    return service.execute(
+    return use_case.execute(
         data.correo,
         data.contrasena
     )

@@ -345,3 +345,16 @@ pip install python-multipart
 
 # Instalar libreria del calendario dentro de Frontend
 npx expo install react-native-calendars
+
+# ----------------------------------
+- Pasos que deben ejecutar para lo de JWT:
+# api-gateway
+cd /home/DevMentor/backend/api-gateway
+source apiGw/bin/activate
+pip install -r requirements.txt
+# auth_service
+cd /home/DevMentor/backend/auth_service
+source usuarios/bin/activate
+pip install -r app/requirements.txt
+
+- Si tienen algun error en una libreria que no les carga, deben elegir o verifica que el intérprete activo sea el del servicio, es decir, elegir python.

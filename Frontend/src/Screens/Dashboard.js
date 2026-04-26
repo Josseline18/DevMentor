@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { View,Text,ScrollView,TouchableOpacity,FlatList,Dimensions,Image} from "react-native";
 import { Card } from "react-native-paper";
 import { styles } from "../Styles/DashboardStyle";
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 import { use } from "react/cjs/react.production";
 
 const { width } = Dimensions.get("window");
@@ -29,7 +29,7 @@ export default function Dashboard({ navigation }) {
   const [lenguajes, setLenguajes] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/lenguajes`)
+    apiFetch("/lenguajes")
       .then((response) => response.json())
       .then((data) => {
         setLenguajes(data);
@@ -40,7 +40,7 @@ export default function Dashboard({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/materias`)
+    apiFetch("/materias")
       .then((response) => response.json())
       .then((data) => {
         setMaterias(data);

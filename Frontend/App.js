@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   NavigationContainer,
   createNavigationContainerRef,
@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Asset } from "expo-asset";
 
 import Dashboard from "./src/Screens/Dashboard";
 import Advisors from "./src/Screens/Advisors";
@@ -116,6 +117,10 @@ function AppDrawer({ visible, onClose }) {
 
 export default function App() {
   const [drawerVisible, setDrawerVisible] = useState(false);
+
+  useEffect(() => {
+    Asset.loadAsync([require("./assets/icons/img_login.png")]);
+  }, []);
 
   const openDrawer = () => setDrawerVisible(true);
   const closeDrawer = () => setDrawerVisible(false);

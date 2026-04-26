@@ -105,6 +105,12 @@ export const styles = StyleSheet.create({
 		color: "#8C94A8"
 	},
 
+	exactTime: {
+		marginTop: 2,
+		fontSize: clampScale(13, 11, 16),
+		color: "#A0A7B8"
+	},
+
 	middleRow: {
 		marginTop: "3%",
 		flexDirection: "row",

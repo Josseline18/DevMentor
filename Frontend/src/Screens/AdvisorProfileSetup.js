@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
 import { MaterialIcons } from "@expo/vector-icons";
 import styles from "../Styles/AdvisorProfileSetupStyle";
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 
 export default function AdvisorProfileSetup({ route, navigation }) {
   const { userId, nombre } = route.params;
@@ -42,7 +42,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
 
   const cargarMaterias = async () => {
     try {
-      const response = await fetch(`${API_URL}/materias`);
+      const response = await apiFetch("/materias");
       const data = await response.json();
 
       if (response.ok && Array.isArray(data)) {
@@ -89,7 +89,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
     let completed = false;
 
     try {
-      const response = await fetch(`${API_URL}/advisors`, {
+      const response = await apiFetch("/advisors", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

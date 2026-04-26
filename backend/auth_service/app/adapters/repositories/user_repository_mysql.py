@@ -1,7 +1,9 @@
 from sqlalchemy import text
 from app.infrastructure.database import SessionLocal
+from app.domain.user_repository import UserRepository
 
-class UserRepositoryMySQL:
+
+class UserRepositoryMySQL(UserRepository):
 
     def create_user(self, user):
 

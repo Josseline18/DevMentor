@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Button, Alert } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 
-import { API_URL } from "../config/api";
+import { apiFetch } from "../config/api";
 
 export default function UploadMaterialScreen({ route }) {
 
@@ -33,9 +33,9 @@ export default function UploadMaterialScreen({ route }) {
         type: "application/pdf",
       });
 
-      const response = await fetch(
+      const response = await apiFetch(
 
-        `${API_URL}/contents/upload/?id_perfil=${advisor.id_perfil}&id_materia=${materiaSeleccionada}`,
+        `/contents/upload/?id_perfil=${advisor.id_perfil}&id_materia=${materiaSeleccionada}`,
 
         {
           method: "POST",

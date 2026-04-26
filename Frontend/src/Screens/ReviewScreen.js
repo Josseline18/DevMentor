@@ -6,11 +6,36 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { styles, ui } from "../Styles/reviewStyles";
 import { getResenas } from "../services/reviewService";
 
-const toTimeAgo = (isoDate) => {
-	if (!isoDate) return "fecha no disponible";
+const parseReviewDate = (value) => {
+	if (!value) return null;
 
-	const createdAt = new Date(isoDate);
-	if (Number.isNaN(createdAt.getTime())) return "fecha no disponible";
+	if (value instanceof Date) return value;
+
+	const raw = String(value).trim();
+	if (!raw) return null;
+
+	const hasTimezone = /[zZ]|[+-]\d{2}:?\d{2}$/.test(raw);
+	const normalized = raw.replace(" ", "T");
+
+	if (hasTimezone) {
+		const parsed = new Date(normalized);
+		return Number.isNaN(parsed.getTime()) ? null : parsed;
+	}
+
+	const parts = normalized.split("T");
+	const datePart = parts[0];
+	const timePart = parts[1] || "00:00:00";
+	const [year, month, day] = datePart.split("-").map(Number);
+	const [hours = 0, minutes = 0, seconds = 0] = timePart.split(":").map(Number);
+
+	if (!year || !month || !day) return null;
+
+	return new Date(year, month - 1, day, hours, minutes, seconds);
+};
+
+const toTimeAgo = (isoDate) => {
+	const createdAt = parseReviewDate(isoDate);
+	if (!createdAt) return "fecha no disponible";
 
 	const diffInSeconds = Math.max(0, Math.floor((Date.now() - createdAt.getTime()) / 1000));
 
@@ -32,10 +57,36 @@ const toTimeAgo = (isoDate) => {
 	return `hace ${diffInYears} ano${diffInYears === 1 ? "" : "s"}`;
 };
 
+const toExactTime = (isoDate) => {
+	const createdAt = parseReviewDate(isoDate);
+	if (!createdAt) return "fecha no disponible";
+
+	const months = [
+		"ene",
+		"feb",
+		"mar",
+		"abr",
+		"may",
+		"jun",
+		"jul",
+		"ago",
+		"sep",
+		"oct",
+		"nov",
+		"dic"
+	];
+
+	const day = createdAt.getDate();
+	const month = months[createdAt.getMonth()] || "";
+	const year = createdAt.getFullYear();
+
+	return `${day} ${month} ${year}`;
+};
+
 const normalizeReview = (review) => ({
 	id: String(review.idResena),
 	studentName: review.nombreUsuario || `Usuario #${review.idUsuario}`,
-	timeAgo: toTimeAgo(review.fechaCreacion),
+	createdAt: review.fechaCreacion,
 	rating: Number(review.calificacion || 0),
 	advisorName: review.nombreAsesor || `Asesor #${review.idUsuarioAuth || review.idAsesor}`,
 	comment: review.comentario || "Sin comentario",
@@ -62,6 +113,7 @@ export default function ReviewScreen({ navigation }) {
 	const [reviews, setReviews] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadError, setLoadError] = useState("");
+	const [timeTick, setTimeTick] = useState(Date.now());
 
 	const loadReviews = useCallback(async () => {
 		try {
@@ -80,6 +132,16 @@ export default function ReviewScreen({ navigation }) {
 			setIsLoading(true);
 			loadReviews();
 		}, [loadReviews])
+	);
+
+	useFocusEffect(
+		useCallback(() => {
+			const intervalId = setInterval(() => {
+				setTimeTick(Date.now());
+			}, 60000);
+
+			return () => clearInterval(intervalId);
+		}, [])
 	);
 
 	return (
@@ -122,7 +184,7 @@ export default function ReviewScreen({ navigation }) {
 								/>
 								<View style={styles.userMeta}>
 									<Text style={styles.studentName}>{review.studentName}</Text>
-									<Text style={styles.timeAgo}>{review.timeAgo}</Text>
+									<Text style={styles.exactTime}>{toExactTime(review.createdAt)}</Text>
 								</View>
 							</View>
 

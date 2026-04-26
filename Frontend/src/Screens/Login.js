@@ -5,27 +5,32 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
+  ImageBackground,
   Alert,
   ActivityIndicator,
 } from "react-native";
+import { Asset } from "expo-asset";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
-import { setCurrentUser } from "../services/sessionService";
+import { setAccessToken, setCurrentUser } from "../services/sessionService";
 
 export default function Login({ navigation }) {
 
+  const backgroundSource = require("../../assets/icons/img_login.png");
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const redirectTimeoutRef = useRef(null);
 
   useEffect(() => {
+    Asset.loadAsync([backgroundSource]);
+
     return () => {
       if (redirectTimeoutRef.current) {
         clearTimeout(redirectTimeoutRef.current);
       }
     };
-  }, []);
+  }, [backgroundSource]);
 
   const iniciarSesion = async () => {
     if (!correo || !password) {
@@ -51,10 +56,16 @@ export default function Login({ navigation }) {
         Alert.alert("Error", data.detail || "Credenciales incorrectas");
         return;
       }
-
+      //el token se guarda aquí
       const usuario = data?.usuario;
+      const accessToken = data?.access_token;
       if (!usuario?.id || !usuario?.nombre || !usuario?.correo) {
         Alert.alert("Error", "El login no devolvio los datos del usuario");
+        return;
+      }
+
+      if (!accessToken) {
+        Alert.alert("Error", "El login no devolvio el token de acceso");
         return;
       }
 
@@ -64,6 +75,7 @@ export default function Login({ navigation }) {
         correo: usuario.correo,
         rol: usuario.rol,
       });
+      setAccessToken(accessToken);
 
       setLoginSuccess(true);
       redirectTimeoutRef.current = setTimeout(() => {
@@ -79,64 +91,71 @@ export default function Login({ navigation }) {
 
   if (loginSuccess) {
     return (
-      <View style={styles.container}>
-        <View style={styles.formContainer}>
-          <ActivityIndicator size="large" color="#2196F3" />
-          <Text style={[styles.title, { marginTop: 16 }]}>Bienvenido</Text>
-          <Text style={styles.registerText}>Cargando tu panel...</Text>
+      <ImageBackground
+        source={backgroundSource}
+        style={styles.background}
+        resizeMode="cover"
+        fadeDuration={0}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.formContainer}>
+            <ActivityIndicator size="large" color="#1E5BE0" />
+            <Text style={[styles.title, { marginTop: 16 }]}>Bienvenido</Text>
+            <Text style={styles.registerText}>Cargando tu panel...</Text>
+          </View>
         </View>
-      </View>
+      </ImageBackground>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ImageBackground
+      source={backgroundSource}
+      style={styles.background}
+      resizeMode="cover"
+      fadeDuration={0}
+    >
+      <View style={styles.overlay}>
+        <View style={styles.formContainer}>
+          <Text style={styles.title}>Bienvenido!</Text>
 
-      <View style={styles.header}>
-        <Image
-          source={require("../../assets/images/POO.jpg")}
-          style={styles.headerImage}
-        />
-      </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Correo"
+            placeholderTextColor="#3B4B64"
+            value={correo}
+            onChangeText={setCorreo}
+          />
 
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Bienvenido!</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Contraseña"
+            placeholderTextColor="#3B4B64"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Correo"
-          value={correo}
-          onChangeText={setCorreo}
-        />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={iniciarSesion}
+          >
+            <Text style={styles.buttonText}>Iniciar sesión</Text>
+          </TouchableOpacity>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Contraseña"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={iniciarSesion}
-        >
-          <Text style={styles.buttonText}>Iniciar sesión</Text>
-        </TouchableOpacity>
-
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>
-            No tienes una cuenta?{" "}
-            <Text
-              style={styles.registerLink}
-              onPress={() => navigation.navigate("Register")}
-            >
-              Registrarse ahora
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>
+              No tienes una cuenta?{" "}
+              <Text
+                style={styles.registerLink}
+                onPress={() => navigation.navigate("Register")}
+              >
+                Registrarse ahora
+              </Text>
             </Text>
-          </Text>
+          </View>
         </View>
-
       </View>
-    </View>
+    </ImageBackground>
   );
 }

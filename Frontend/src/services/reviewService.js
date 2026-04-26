@@ -1,6 +1,4 @@
-import { API_URL } from "../config/api";
-
-const RESENAS_URL = `${API_URL}/resenas`;
+import { apiFetch } from "../config/api";
 
 const parseErrorMessage = async (response, fallbackMessage) => {
   try {
@@ -12,7 +10,7 @@ const parseErrorMessage = async (response, fallbackMessage) => {
 };
 
 export const getResenas = async () => {
-  const response = await fetch(RESENAS_URL);
+  const response = await apiFetch("/resenas");
 
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response, "No se pudieron cargar las reseñas"));
@@ -23,7 +21,7 @@ export const getResenas = async () => {
 };
 
 export const createResena = async (payload) => {
-  const response = await fetch(RESENAS_URL, {
+  const response = await apiFetch("/resenas", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
