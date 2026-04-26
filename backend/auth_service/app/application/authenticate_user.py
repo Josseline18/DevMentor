@@ -20,6 +20,10 @@ class AuthenticateUser:
         if not user:
             raise HTTPException(status_code=401, detail="Credenciales invalidas")
 
+        # NUEVA VALIDACIÓN: Bloqueo de usuarios suspendidos
+        if user.get("estado") == "Suspendido":
+            raise HTTPException(status_code=403, detail="Tu cuenta ha sido suspendida. Contacta al administrador.")
+
         if not pwd_context.verify(contrasena, user["contrasena"]):
             raise HTTPException(status_code=401, detail="Credenciales invalidas")
 

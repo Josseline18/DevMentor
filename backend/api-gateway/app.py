@@ -157,6 +157,24 @@ async def update_user(id_usuario: int, request: Request):
 
     return forward_response(response)
 
+@app.get("/auth/users")
+async def get_all_users(request: Request):
+    response = requests.get(
+        f"{AUTH_SERVICE_URL}/auth/users",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+@app.put("/auth/users/{id_usuario}/status")
+async def update_user_status(id_usuario: int, request: Request):
+    body = await request.json()
+    response = requests.put(
+        f"{AUTH_SERVICE_URL}/auth/users/{id_usuario}/status",
+        json=body,
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
 
 # materias_service
 
@@ -267,6 +285,14 @@ async def list_resenas(request: Request):
 
     return forward_response(response)
 
+@app.delete("/resenas/{id_resena}")
+async def delete_resena(id_resena: int, request: Request):
+    response = requests.delete(
+        f"{REVIEW_SERVICE_URL}/resenas/{id_resena}",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
 # content_service
 @app.post("/contents/upload/")
 async def upload_content(
@@ -341,6 +367,7 @@ async def delete_content(id_contenido: int, request: Request):
 
     return forward_response(response)
 
+# report_service
 @app.post("/reportes")
 async def create_report(request: Request):
     body = await request.json()
@@ -355,6 +382,24 @@ async def create_report(request: Request):
 async def get_all_reports(request: Request):
     response = requests.get(
         f"{REPORT_SERVICE_URL}/reportes",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+@app.get("/reportes/usuario/{id_usuario}")
+async def get_reports_by_user(id_usuario: int, request: Request):
+    response = requests.get(
+        f"{REPORT_SERVICE_URL}/reportes/usuario/{id_usuario}",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+@app.put("/reportes/{id_reporte}/estado")
+async def update_report_status(id_reporte: int, request: Request):
+    body = await request.json()
+    response = requests.put(
+        f"{REPORT_SERVICE_URL}/reportes/{id_reporte}/estado",
+        json=body,
         headers=build_forward_headers(request),
     )
     return forward_response(response)

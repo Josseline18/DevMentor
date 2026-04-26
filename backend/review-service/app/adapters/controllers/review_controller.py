@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.application.create_resena_service import CreateResenaService
 from app.application.list_resenas_service import ListResenasService
+from app.application.delete_resena_service import DeleteResenaService
 
 router = APIRouter(prefix="/resenas", tags=["resenas"])
 
@@ -85,12 +86,14 @@ def list_resenas(
         "resenas": [_format_resena(row) for row in rows],
     }
 
-@router.delete("/resenas/{id_resena}")
-def delete_resena(id_resena: int, db: Session = Depends(get_db)):
-    # Asumiendo que tienen un repositorio de reseñas
-    repo = ReviewRepository(db)
-    eliminado = repo.delete_review(id_resena)
+@router.delete("/{id_resena}")
+def delete_resena(id_resena: int):
+    service = DeleteResenaService()
+    
+    eliminado = service.execute(id_resena)
+    
     if not eliminado:
         from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Reseña no encontrada")
-    return {"detail": "Reseña eliminada correctamente"}
+        raise HTTPException(status_code=404, detail="Resena no encontrada")
+        
+    return {"message": "Resena eliminada correctamente"}

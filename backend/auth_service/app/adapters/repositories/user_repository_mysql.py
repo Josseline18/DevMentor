@@ -109,3 +109,24 @@ class UserRepositoryMySQL(UserRepository):
         db.commit()
         db.close()
         return self.get_user_by_id(id_usuario)
+    
+    def get_all_users(self):
+        db = SessionLocal()
+        
+        query = text(
+            "SELECT id_usuario, nombre, correo, telefono, rol, estado, fecha_registro "
+            "FROM usuarios ORDER BY id_usuario DESC"
+        )
+        
+        rows = db.execute(query).fetchall()
+        db.close()
+
+        # Convertimos los resultados a diccionarios y formateamos la fecha
+        usuarios = []
+        for row in rows:
+            user_dict = dict(row._mapping)
+            if user_dict.get("fecha_registro"):
+                user_dict["fecha_registro"] = str(user_dict["fecha_registro"]).split()[0] # Solo la fecha YYYY-MM-DD
+            usuarios.append(user_dict)
+            
+        return usuarios

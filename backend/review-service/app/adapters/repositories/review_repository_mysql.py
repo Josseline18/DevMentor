@@ -132,4 +132,24 @@ class ResenaRepositoryMySQL:
             return [dict(row._mapping) for row in rows]
         finally:
             db.close()
-
+    
+    def delete_resena(self, id_resena: int) -> bool:
+        from sqlalchemy import text
+        from app.infrastructure.database import SessionLocal
+        
+        db = SessionLocal()
+        try:
+            # Primero verificamos si existe
+            query_check = text("SELECT id_resena FROM resenas WHERE id_resena = :id_resena")
+            existe = db.execute(query_check, {"id_resena": id_resena}).fetchone()
+            
+            if not existe:
+                return False
+                
+            # Si existe, la eliminamos
+            query_delete = text("DELETE FROM resenas WHERE id_resena = :id_resena")
+            db.execute(query_delete, {"id_resena": id_resena})
+            db.commit()
+            return True
+        finally:
+            db.close()

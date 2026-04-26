@@ -79,6 +79,12 @@ def update_user(id_usuario: int, data: UpdateUserRequest):
         contrasena=data.contrasena,
     )
 
+@router.get("/users")
+def get_all_users():
+    # Instanciamos el repositorio directamente
+    repo = UserRepositoryMySQL()
+    return repo.get_all_users()
+
 @router.put("/users/{id_usuario}/status")
 def update_user_status(id_usuario: int, data: UpdateStatusRequest):
     # Por rapidez, instanciamos el repositorio directamente aquí

@@ -17,3 +17,14 @@ Thumbs.db
 
 # node (por si alguien instala desde la raíz)
 node_modules/
+
+# carpetas de entornos virtuales por nombres
+usuarios/
+materias/
+advisors/
+apiGw/
+contenidos/
+reportes/
+resenas/
+
+estructura_proyecto.txt
