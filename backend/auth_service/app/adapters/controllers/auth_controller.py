@@ -26,6 +26,9 @@ class UpdateUserRequest(BaseModel):
     telefono: str | None = None
     contrasena: str | None = None
 
+class UpdateStatusRequest(BaseModel):
+    estado: str
+
 @router.post("/register")
 def register_user(data: RegisterRequest):
 
@@ -70,3 +73,13 @@ def update_user(id_usuario: int, data: UpdateUserRequest):
         telefono=data.telefono,
         contrasena=data.contrasena,
     )
+
+@router.put("/users/{id_usuario}/status")
+def update_user_status(id_usuario: int, data: UpdateStatusRequest):
+    # Por rapidez, instanciamos el repositorio directamente aquí
+    repo = UserRepositoryMySQL()
+    usuario_actualizado = repo.update_status(id_usuario, data.estado)
+    if not usuario_actualizado:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return usuario_actualizado

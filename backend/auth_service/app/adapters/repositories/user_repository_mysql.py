@@ -50,10 +50,7 @@ class UserRepositoryMySQL:
 
         db = SessionLocal()
 
-        query = text(
-            "SELECT id_usuario, nombre, correo, telefono, rol "
-            "FROM usuarios WHERE id_usuario = :id_usuario"
-        )
+        query = text("SELECT * FROM usuarios WHERE id_usuario = :id_usuario")
 
         result = db.execute(query, {"id_usuario": id_usuario}).fetchone()
 
@@ -99,4 +96,14 @@ class UserRepositoryMySQL:
         db.commit()
         db.close()
 
+        return self.get_user_by_id(id_usuario)
+    
+    def update_status(self, id_usuario, estado):
+        db = SessionLocal()
+        query = text(
+            "UPDATE usuarios SET estado = :estado WHERE id_usuario = :id_usuario"
+        )
+        db.execute(query, {"estado": estado, "id_usuario": id_usuario})
+        db.commit()
+        db.close()
         return self.get_user_by_id(id_usuario)

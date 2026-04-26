@@ -84,3 +84,13 @@ def list_resenas(
     return {
         "resenas": [_format_resena(row) for row in rows],
     }
+
+@router.delete("/resenas/{id_resena}")
+def delete_resena(id_resena: int, db: Session = Depends(get_db)):
+    # Asumiendo que tienen un repositorio de reseñas
+    repo = ReviewRepository(db)
+    eliminado = repo.delete_review(id_resena)
+    if not eliminado:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Reseña no encontrada")
+    return {"detail": "Reseña eliminada correctamente"}

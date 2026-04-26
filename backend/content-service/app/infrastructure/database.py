@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 from app.domain.content import Base
 
-DATABASE_URL = "mysql+pymysql://root:12345@localhost/content_db"
+DATABASE_URL = "mysql+pymysql://root:12345@localhost:3308/content_db"
 
 engine = create_engine(DATABASE_URL)
 

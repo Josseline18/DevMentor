@@ -19,6 +19,7 @@ MATERIA_SERVICE_URL = "http://localhost:8002"
 ADVISOR_SERVICE_URL = "http://localhost:8003"
 REVIEW_SERVICE_URL = "http://localhost:8004"
 CONTENT_SERVICE_URL = "http://localhost:8005"
+REPORT_SERVICE_URL = "http://localhost:8006"
 
 # auth_service
 
@@ -225,4 +226,22 @@ async def delete_content(id_contenido: int):
         f"{CONTENT_SERVICE_URL}/contents/{id_contenido}"
     )
 
+    return forward_response(response)
+
+@app.post("/reportes")
+async def create_report(request: Request):
+    body = await request.json()
+    response = requests.post(
+        f"{REPORT_SERVICE_URL}/reportes",
+        json=body,
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+@app.get("/reportes")
+async def get_all_reports(request: Request):
+    response = requests.get(
+        f"{REPORT_SERVICE_URL}/reportes",
+        headers=build_forward_headers(request),
+    )
     return forward_response(response)

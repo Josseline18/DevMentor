@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, JSON, Text, ForeignKey, DateTime
 from sqlalchemy.orm import sessionmaker
 from app.domain.advisor import Base
 
-DATABASE_URL = "mysql+pymysql://root:12345@localhost/asesor_db"
+DATABASE_URL = "mysql+pymysql://root:12345@localhost:3308/asesor_db"
 
 engine = create_engine(DATABASE_URL)
 
