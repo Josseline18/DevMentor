@@ -3,11 +3,25 @@ import { View,Text,ScrollView,TouchableOpacity,FlatList,Dimensions,Image} from "
 import { Card } from "react-native-paper";
 import { styles } from "../Styles/DashboardStyle";
 import { apiFetch } from "../config/api";
-import { use } from "react/cjs/react.production";
 
 const { width } = Dimensions.get("window");
 
 export default function Dashboard({ navigation }) {
+
+  const languageImageMap = {
+    "python.png": require("../../assets/images/p.jpg"),
+    "java.png": require("../../assets/images/java.png"),
+    "c++.png": require("../../assets/images/c++.png"),
+  };
+
+  const defaultCardImage = require("../../assets/images/tutorias.jpg");
+
+  const resolveImageSource = (imagen) => {
+    if (!imagen || typeof imagen !== "string") return defaultCardImage;
+
+    const normalized = imagen.trim().toLowerCase();
+    return languageImageMap[normalized] || defaultCardImage;
+  };
 
   const carouselImages = [
     require("../../assets/images/tutorias.jpg"),
@@ -30,23 +44,41 @@ export default function Dashboard({ navigation }) {
 
   useEffect(() => {
     apiFetch("/lenguajes")
-      .then((response) => response.json())
+      .then(async (response) => {
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.detail || "Error al obtener lenguajes");
+        }
+
+        return data;
+      })
       .then((data) => {
         setLenguajes(Array.isArray(data) ? data : data.lenguajes || []);
       })
       .catch((error) => {
         console.error("Error al obtener lenguajes", error);
+        setLenguajes([]);
       });
   }, []);
 
   useEffect(() => {
     apiFetch("/materias")
-      .then((response) => response.json())
+      .then(async (response) => {
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.detail || "Error al obtener materias");
+        }
+
+        return data;
+      })
       .then((data) => {
         setMaterias(Array.isArray(data) ? data : data.materias || []);
       })
       .catch((error) => {
         console.error("Error al obtener materias", error);
+        setMaterias([]);
       });
   }, []);
 
@@ -133,7 +165,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={resolveImageSource(m.imagen)} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -159,7 +191,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -185,7 +217,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -211,7 +243,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -237,7 +269,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -263,7 +295,7 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
