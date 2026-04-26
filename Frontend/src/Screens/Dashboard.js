@@ -32,7 +32,7 @@ export default function Dashboard({ navigation }) {
     apiFetch("/lenguajes")
       .then((response) => response.json())
       .then((data) => {
-        setLenguajes(data);
+        setLenguajes(Array.isArray(data) ? data : data.lenguajes || []);
       })
       .catch((error) => {
         console.error("Error al obtener lenguajes", error);
@@ -43,7 +43,7 @@ export default function Dashboard({ navigation }) {
     apiFetch("/materias")
       .then((response) => response.json())
       .then((data) => {
-        setMaterias(data);
+        setMaterias(Array.isArray(data) ? data : data.materias || []);
       })
       .catch((error) => {
         console.error("Error al obtener materias", error);
