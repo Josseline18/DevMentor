@@ -496,16 +496,32 @@ const expoConfig = Constants.expoConfig || Constants.manifest;
 
 export const API_URL =
   expoConfig?.extra?.API_URL ||
-  "https://unvoluble-pei-subrhombic.ngrok-free.dev";
+  "https://unvoluble-pei-subrhombic.ngrok-free.dev";   Cambiar el url
 
-export const apiFetch = async (endpoint) => {
+export const apiFetch = async (endpoint, options = {}) => {
   const token = getAccessToken();
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const defaultHeaders = {
+    "Content-Type": "application/json",
+  };
+
+  if (token) {
+    defaultHeaders.Authorization = `Bearer ${token}`;
+  }
 
   return fetch(`${API_URL}${endpoint}`, {
-    headers,
+    ...options,
+    headers: {
+      ...defaultHeaders,
+       ...options.headers,
+    },
   });
 };
+
+
+
+
+
 
 
 
