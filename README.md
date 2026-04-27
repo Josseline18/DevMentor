@@ -62,6 +62,12 @@ pip install -r app/requirements.txt
 uvicorn main:app --port 8006 --reload
 
 # Terminal 7
+cd backend && cd calendar-service
+source calendario/bin/activate
+pip install -r app/requirements.txt
+uvicorn app:app --reload --port 8007
+
+# Terminal 8
 cd backend/api-gateway
 python3 -m venv apiGw
 source apiGw/bin/activate
