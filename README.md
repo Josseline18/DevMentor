@@ -508,7 +508,7 @@ export const apiFetch = async (endpoint) => {
 # ------------------------------------------------------------
 
 # Calendario
-en la base de datos de db_asesor crear la tabla siguiente:
+en la base de datos de asesor_db crear la tabla siguiente:
 CREATE TABLE citas (
   id INT AUTO_INCREMENT PRIMARY KEY,
   id_perfil INT,
