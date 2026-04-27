@@ -277,6 +277,11 @@ cd backend/content-service
 source contenidos/bin/activate
 uvicorn main:app --port 8005 --reload
 
+# Terminal 7
+cd backend && cd calendar-service
+source calendario/bin/activate
+uvicorn app:app --reload --port 8007
+
 # Terminal 6
 cd backend/api-gateway
 source apiGw/bin/activate
