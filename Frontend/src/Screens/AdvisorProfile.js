@@ -114,6 +114,37 @@ export default function AdvisorProfile({ route, navigation }) {
     }
   };
 
+  const agendarCita = async () => {
+    try {
+      const response = await apiFetch("/calendario/citas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_perfil: advisor.id_perfil,
+          id_usuario: 1, // usuario logueado real
+          fecha: selectedDate,
+          hora: "15:00" // por ahora fija hasta que hagas selector de hora
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.detail || "Error al agendar cita");
+        return;
+      }
+
+      alert("Cita agendada correctamente");
+      setModalVisible(false);
+
+    } catch (error) {
+      console.log(error);
+      alert("Error de conexión");
+    }
+  };
+
   const descargarArchivo = (idContenido) => {
 
     const url =
@@ -324,6 +355,22 @@ export default function AdvisorProfile({ route, navigation }) {
                     }
                   }}
                 />
+
+                <TouchableOpacity
+                  style={{
+                    marginTop: 15,
+                    backgroundColor: "#6C63FF",
+                    padding: 12,
+                    borderRadius: 8,
+                    alignItems: "center"
+                  }}
+                  onPress={agendarCita}
+                >
+                  <Text style={{ color: "white", fontWeight: "bold" }}>
+                    Confirmar cita
+                  </Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity
                 style={styles.closeButton}
                 onPress={()=> setModalVisible(false)}

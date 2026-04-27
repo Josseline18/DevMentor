@@ -1,4 +1,5 @@
 import os
+import httpx
 
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,6 +24,7 @@ ADVISOR_SERVICE_URL = "http://localhost:8003"
 REVIEW_SERVICE_URL = "http://localhost:8004"
 CONTENT_SERVICE_URL = "http://localhost:8005"
 REPORT_SERVICE_URL = "http://localhost:8006"
+CALENDAR_SERVICE_URL = "http://localhost:8007"
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-this-secret")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
@@ -194,6 +196,24 @@ async def get_lenguajes(request: Request):
         headers=build_forward_headers(request),
     )
     return forward_response(response)
+
+# calendario
+@app.post("/calendario/citas")
+async def crear_cita(request: Request):
+    body = await request.json()
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{CALENDAR_SERVICE_URL}/calendario/citas",
+            json=body,
+            headers=build_forward_headers(request)
+        )
+
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        media_type="application/json"
+    )
 
 
 # advisor_service

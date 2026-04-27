@@ -500,3 +500,29 @@ export const apiFetch = async (endpoint) => {
 
 
 # ------------------------------------------------------------
+
+# Calendario
+en la base de datos de db_asesor crear la tabla siguiente:
+CREATE TABLE citas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_perfil INT,
+  id_usuario INT,
+  fecha DATE,
+  hora TIME,
+  estado ENUM('reservada','cancelada') DEFAULT 'reservada',
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+ 
+  FOREIGN KEY (id_perfil) REFERENCES asesorias(id_perfil),
+  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario));
+
+# crear entorno virtual del microservicio de calendario
+cd backend && cd calendar-service
+python3 -m venv calendario
+source calendario/bin/activate
+pip install -r app/requirements.txt
+uvicorn app:app --reload --port 8007
+
+
+
+
+
