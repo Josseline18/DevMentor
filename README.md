@@ -1,4 +1,4 @@
-🛠️ Fase 1: Docker en Windows
+vscode_lsp_terminal_prompt_tracker= {}
 
 1. Instalar Docker Desktop
 Descarga e instala Docker Desktop para Windows.
@@ -518,14 +518,13 @@ CREATE TABLE citas (
   estado ENUM('reservada','cancelada') DEFAULT 'reservada',
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  
-  FOREIGN KEY (id_perfil) REFERENCES asesorias(id_perfil),
-  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario));
+  FOREIGN KEY (id_perfil) REFERENCES asesorias(id_perfil));
 
 # crear entorno virtual del microservicio de calendario
 cd backend && cd calendar-service
 python3 -m venv calendario
 source calendario/bin/activate
-pip install -r app/requirements.txt
+pip install -r requirements.txt
 uvicorn app:app --reload --port 8007
 
 
