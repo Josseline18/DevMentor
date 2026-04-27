@@ -42,7 +42,21 @@ export default function AdvisorProfile({ route, navigation }) {
   const [loading, setLoading] = useState(true);
 
   const [ modalVisible, setModalVisible] = useState(false);
+  const [selectedHour, setSelectedHour] = useState("");
   const [ selectedDate, setSelectedDate] = useState('');
+
+  // de momento hay horarios definidos aqui, pero esto debe predefinirlo el asesor
+  const availableHours = [
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00"
+  ];
 
   const advisorParam = route?.params?.advisor || {};
 
@@ -125,7 +139,7 @@ export default function AdvisorProfile({ route, navigation }) {
           id_perfil: advisor.id_perfil,
           id_usuario: 1, // usuario logueado real
           fecha: selectedDate,
-          hora: "15:00" // por ahora fija hasta que hagas selector de hora
+          hora: selectedHour
         }),
       });
 
@@ -339,11 +353,12 @@ export default function AdvisorProfile({ route, navigation }) {
           <Modal
             visible={modalVisible}
             transparent={true}
-            animationType = "fade"
+            animationType="fade"
           >
-            <View style = {styles.modalOverlay}>
+            <View style={styles.modalOverlay}>
               <View style={styles.modalContent}>
                 <Text style={styles.modalTitle}>Selecciona una fecha</Text>
+
                 <Calendar
                   onDayPress={(day) => {
                     setSelectedDate(day.dateString);
@@ -351,10 +366,49 @@ export default function AdvisorProfile({ route, navigation }) {
                   markedDates={{
                     [selectedDate]: {
                       selected: true,
-                      selectedColor: '#6C63FF'
-                    }
+                      selectedColor: "#6C63FF",
+                    },
                   }}
                 />
+
+                {selectedDate && (
+                  <>
+                    <Text style={{ marginTop: 15, fontWeight: "bold" }}>
+                      Selecciona un horario
+                    </Text>
+
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        marginTop: 10,
+                      }}
+                    >
+                      {availableHours.map((hour) => (
+                        <TouchableOpacity
+                          key={hour}
+                          onPress={() => setSelectedHour(hour)}
+                          style={{
+                            backgroundColor:
+                              selectedHour === hour ? "#6C63FF" : "#E5E5E5",
+                            padding: 10,
+                            borderRadius: 8,
+                            margin: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              color: selectedHour === hour ? "white" : "black",
+                              fontWeight: "bold",
+                            }}
+                          >
+                            {hour}
+                          </Text>
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  </>
+                )}
 
                 <TouchableOpacity
                   style={{
@@ -362,7 +416,7 @@ export default function AdvisorProfile({ route, navigation }) {
                     backgroundColor: "#6C63FF",
                     padding: 12,
                     borderRadius: 8,
-                    alignItems: "center"
+                    alignItems: "center",
                   }}
                   onPress={agendarCita}
                 >
@@ -372,10 +426,10 @@ export default function AdvisorProfile({ route, navigation }) {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                style={styles.closeButton}
-                onPress={()=> setModalVisible(false)}
+                  style={styles.closeButton}
+                  onPress={() => setModalVisible(false)}
                 >
-                  <Text style={{color: 'white'}}>Cerrar</Text>
+                  <Text style={{ color: "white" }}>Cerrar</Text>
                 </TouchableOpacity>
               </View>
             </View>
