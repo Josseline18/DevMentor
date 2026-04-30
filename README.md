@@ -474,11 +474,13 @@ export const apiFetch = async (endpoint, options = {}) => {
 # --------------------------------------------------------------------
 
 USE asesor_db;
-ALTER TABLE Asesorias ADD COLUMN approved TINYINT(1) DEFAULT 0;
+ALTER TABLE asesorias ADD COLUMN approved TINYINT(1) DEFAULT 0;
+
+- Cuando se hace el cambio y no acepta el "approved", se cambia por "aprobado" en español
 
 # ---------------------------------------------------------------------
 
-source /home/cesar/DevMentor/backend/content-service/contents/bin/activate
+source backend/content-service/contenidos/bin/activate
 pip install cryptography
 
 
