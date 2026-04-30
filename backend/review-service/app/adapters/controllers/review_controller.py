@@ -47,6 +47,7 @@ def _format_resena(resena):
         "idMateria": resena["id_materia"],
         "calificacion": resena["calificacion"],
         "comentario": resena["comentario"],
+        "estado": resena.get("estado"),
         "fechaCreacion": _format_fecha(resena["fecha_creacion"]),
     }
 

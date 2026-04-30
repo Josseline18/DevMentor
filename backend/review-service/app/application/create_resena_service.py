@@ -28,6 +28,7 @@ class CreateResenaService:
             id_materia=id_materia,
             calificacion=calificacion,
             comentario=normalized_comment,
+            estado="pendiente",
         )
 
         created_resena = self.repository.create_resena(resena)

@@ -27,8 +27,8 @@ class ResenaRepositoryMySQL:
         try:
             query = text(
                 """
-                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario)
-                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario)
+                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario, estado)
+                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario, :estado)
                 """
             )
 
@@ -40,6 +40,7 @@ class ResenaRepositoryMySQL:
                     "id_materia": resena.id_materia,
                     "calificacion": resena.calificacion,
                     "comentario": resena.comentario,
+                    "estado": resena.estado,
                 },
             )
 
@@ -64,6 +65,7 @@ class ResenaRepositoryMySQL:
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
+                    r.estado,
                     r.fecha_creacion,
                     u.nombre AS nombre_usuario,
                     a.nombre AS nombre_asesor
@@ -116,6 +118,7 @@ class ResenaRepositoryMySQL:
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
+                    r.estado,
                     r.fecha_creacion,
                     u.nombre AS nombre_usuario,
                     a.nombre AS nombre_asesor
