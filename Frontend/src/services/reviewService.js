@@ -10,7 +10,7 @@ const parseErrorMessage = async (response, fallbackMessage) => {
 };
 
 export const getResenas = async () => {
-  const response = await apiFetch("/resenas");
+  const response = await apiFetch("/resenas?estado=aceptada");
 
   if (!response.ok) {
     throw new Error(await parseErrorMessage(response, "No se pudieron cargar las reseñas"));

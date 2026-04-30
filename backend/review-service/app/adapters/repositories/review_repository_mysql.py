@@ -85,7 +85,7 @@ class ResenaRepositoryMySQL:
         finally:
             db.close()
 
-    def list_resenas(self, id_usuario=None, id_usuario_auth=None, id_materia=None):
+    def list_resenas(self, id_usuario=None, id_usuario_auth=None, id_materia=None, estado=None):
         db = SessionLocal()
 
         try:
@@ -103,6 +103,10 @@ class ResenaRepositoryMySQL:
             if id_materia is not None:
                 conditions.append("r.id_materia = :id_materia")
                 params["id_materia"] = id_materia
+
+            if estado is not None:
+                conditions.append("r.estado = :estado")
+                params["estado"] = estado
 
             where_clause = ""
             if conditions:
@@ -133,6 +137,28 @@ class ResenaRepositoryMySQL:
             rows = db.execute(query, params).fetchall()
 
             return [dict(row._mapping) for row in rows]
+        finally:
+            db.close()
+
+    def update_resena_estado(self, id_resena: int, estado: str):
+        db = SessionLocal()
+
+        try:
+            query = text(
+                """
+                UPDATE resenas
+                SET estado = :estado
+                WHERE id_resena = :id_resena
+                """
+            )
+
+            result = db.execute(query, {"estado": estado, "id_resena": id_resena})
+            if result.rowcount == 0:
+                db.rollback()
+                return None
+
+            db.commit()
+            return self.get_resena_by_id(id_resena)
         finally:
             db.close()
     

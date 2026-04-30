@@ -305,6 +305,19 @@ async def list_resenas(request: Request):
 
     return forward_response(response)
 
+
+@app.put("/resenas/{id_resena}/estado")
+async def update_resena_estado(id_resena: int, request: Request):
+    body = await request.json()
+
+    response = requests.put(
+        f"{REVIEW_SERVICE_URL}/resenas/{id_resena}/estado",
+        json=body,
+        headers=build_forward_headers(request),
+    )
+
+    return forward_response(response)
+
 @app.delete("/resenas/{id_resena}")
 async def delete_resena(id_resena: int, request: Request):
     response = requests.delete(
