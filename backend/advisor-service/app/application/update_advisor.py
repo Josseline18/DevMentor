@@ -6,13 +6,14 @@ class UpdateAdvisorUseCase:
         self.repository = repository
     
     def execute(self, id_perfil: int, especialidad: str = None, 
-                area_especialidad: str = None, materias: list = None):
+                area_especialidad: str = None, materias: list = None, aprobado: bool = None):
         """Actualizar perfil de asesor"""
         advisor = self.repository.update_advisor(
             id_perfil=id_perfil,
             especialidad=especialidad,
             area_especialidad=area_especialidad,
-            materias=materias
+            materias=materias,
+            aprobado=aprobado
         )
         
         if not advisor:

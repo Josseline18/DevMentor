@@ -26,6 +26,7 @@ class UpdateAdvisorRequest(BaseModel):
     especialidad: Optional[str] = None
     area_especialidad: Optional[str] = None
     materias: Optional[List[int]] = None
+    aprobado: Optional[bool] = None
 
 # Dependencia para obtener la sesión de BD
 def get_db():
@@ -71,6 +72,32 @@ def get_advisor_by_user_id(id_usuario_auth: int, db: Session = Depends(get_db)):
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
 
+
+@router.get("/pending")
+def get_pending_advisors(db: Session = Depends(get_db)):
+    """Obtener asesores pendientes de aprobación"""
+    try:
+        repository = AdvisorRepository(db)
+        advisors = repository.get_all_advisors()
+        pending = [a.to_dict() for a in advisors if not getattr(a, 'aprobado', False)]
+        return pending
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.put("/{id_perfil}/approve")
+def approve_advisor(id_perfil: int, payload: UpdateAdvisorRequest, db: Session = Depends(get_db)):
+    """Aprobar o rechazar un asesor (aprobado: true/false)"""
+    try:
+        repository = AdvisorRepository(db)
+        use_case = UpdateAdvisorUseCase(repository)
+        return use_case.execute(
+            id_perfil=id_perfil,
+            aprobado=payload.aprobado
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
 @router.get("/{id_perfil}")
 def get_advisor_by_id(id_perfil: int, db: Session = Depends(get_db)):
     """Obtener perfil de asesor por ID de perfil"""
@@ -91,10 +118,12 @@ def update_advisor(id_perfil: int, request: UpdateAdvisorRequest, db: Session = 
             id_perfil=id_perfil,
             especialidad=request.especialidad,
             area_especialidad=request.area_especialidad,
-            materias=request.materias
+            materias=request.materias,
+            aprobado=request.aprobado
         )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
 
 @router.delete("/{id_perfil}")
 def delete_advisor(id_perfil: int, db: Session = Depends(get_db)):

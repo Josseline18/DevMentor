@@ -99,6 +99,25 @@ function AppDrawer({ visible, onClose }) {
                 <Ionicons name="person-circle-outline" size={20} color="#1E5BE0" />
                 <Text style={drawerStyles.menuText}>Ver mi cuenta</Text>
               </TouchableOpacity>
+
+              {currentUser?.rol === "Asesor" && (
+                <TouchableOpacity 
+                  style={drawerStyles.menuItem} 
+                  onPress={() => {
+                    onClose();
+                    if (navigationRef.isReady()) {
+                      navigationRef.navigate("AdvisorProfile", {
+                        advisor: {
+                          id_usuario_auth: currentUser?.id,
+                        }
+                      });
+                    }
+                  }}
+                >
+                  <Ionicons name="briefcase-outline" size={20} color="#1E5BE0" />
+                  <Text style={drawerStyles.menuText}>Ver mi perfil de asesor</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <TouchableOpacity

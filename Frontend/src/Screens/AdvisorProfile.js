@@ -65,6 +65,7 @@ export default function AdvisorProfile({ route, navigation }) {
     role: advisorParam.role || "Asesor",
     especialidad: advisorParam.especialidad || "No especificada",
     materias: Array.isArray(advisorParam.materias) ? advisorParam.materias : [],
+    aprobado: Boolean(advisorParam.aprobado),
     correo: advisorParam.correo || "No disponible",
     telefono: advisorParam.telefono || "No disponible",
     materiales: [],
@@ -215,6 +216,7 @@ export default function AdvisorProfile({ route, navigation }) {
         role: advisorProfile.area_especialidad || user?.rol || prev.role,
         especialidad: advisorProfile.especialidad || prev.especialidad,
         materias: materiasNombres.length > 0 ? materiasNombres : prev.materias,
+        aprobado: Boolean(advisorProfile.aprobado),
         correo: user?.correo || prev.correo,
         telefono: user?.telefono || prev.telefono,
         materiales: materiales, // nuevo
@@ -436,13 +438,18 @@ export default function AdvisorProfile({ route, navigation }) {
           </Modal>
           
           <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() =>
+            style={[styles.actionButton, !advisor.aprobado && styles.actionButtonDisabled]}
+            onPress={() => {
+              if (!advisor.aprobado) {
+                alert('No puedes subir archivos hasta que tu perfil como asesor sea aprobado por el administrador.');
+                return;
+              }
               navigation.navigate(
                 "UploadMaterialScreen",
                 { advisor: advisor }
-              )
-            }
+              );
+            }}
+            disabled={!advisor.aprobado}
           >
             <Ionicons
               name="cloud-upload"

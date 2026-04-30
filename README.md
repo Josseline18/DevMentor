@@ -405,36 +405,8 @@ pip install -r app/requirements.txt
 
 - Si tienen algun error en una libreria que no les carga, deben elegir o verifica que el intérprete activo sea el del servicio, es decir, elegir python.
 
-# Modifica en el api.js
 
-import Constants from "expo-constants";
-import { getAccessToken } from "../services/sessionService";
 
-const expoConfig = Constants.expoConfig || Constants.manifest;
-
-export const API_URL =
-  expoConfig?.extra?.API_URL ||
-  "https://unvoluble-pei-subrhombic.ngrok-free.dev";   Cambiar el url
-
-export const apiFetch = async (endpoint, options = {}) => {
-  const token = getAccessToken();
-
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    defaultHeaders.Authorization = `Bearer ${token}`;
-  }
-
-  return fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-       ...options.headers,
-    },
-  });
-};
 # ------------------------------------------------------------
 
 # Calendario
@@ -465,6 +437,48 @@ ADD COLUMN estado ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente'
 
 # -----------------------------------------------------------
 
+# Edit in api.js
 
+import Constants from "expo-constants";
+import { getAccessToken } from "../services/sessionService";
+
+const expoConfig = Constants.expoConfig || Constants.manifest;
+
+export const API_URL =
+  expoConfig?.extra?.API_URL ||
+  "https://unvoluble-pei-subrhombic.ngrok-free.dev";   -> cambien su url
+
+export const apiFetch = async (endpoint, options = {}) => {
+  const token = getAccessToken();
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  const defaultHeaders = isFormData
+    ? {}
+    : {
+        "Content-Type": "application/json",
+      };
+
+  if (token) {
+    defaultHeaders.Authorization = `Bearer ${token}`;
+  }
+
+  return fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      ...defaultHeaders,
+       ...options.headers,
+    },
+  });
+};
+
+# --------------------------------------------------------------------
+
+USE asesor_db;
+ALTER TABLE Asesorias ADD COLUMN approved TINYINT(1) DEFAULT 0;
+
+# ---------------------------------------------------------------------
+
+source /home/cesar/DevMentor/backend/content-service/contents/bin/activate
+pip install cryptography
 
 

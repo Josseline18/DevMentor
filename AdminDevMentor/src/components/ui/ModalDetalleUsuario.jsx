@@ -7,6 +7,7 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
   const [activeTab, setActiveTab] = useState('info');
   const [reportes, setReportes] = useState([]);
   const [cargando, setCargando] = useState(false);
+  const [advisorProfile, setAdvisorProfile] = useState(null);
 
   useEffect(() => {
     if (isOpen && usuario) {
@@ -49,11 +50,33 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
       });
 
       setReportes(reportesEnriquecidos);
+      // Si el usuario es Asesor, intentar traer su perfil de advisor
+      if (usuario.rol === 'Asesor') {
+        try {
+          const resAdvisor = await axios.get(`http://127.0.0.1:8000/advisors/user/${id}`, config);
+          setAdvisorProfile(resAdvisor.data);
+        } catch (e) {
+          setAdvisorProfile(null);
+        }
+      }
     } catch (error) {
       console.error("Error cargando datos agregados:", error);
       setReportes([]);
     } finally {
       setCargando(false);
+    }
+  };
+
+  const handleApproveAdvisor = async (aprobado) => {
+    if (!advisorProfile) return alert('No se encontró el perfil de asesor');
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.put(`http://127.0.0.1:8000/advisors/${advisorProfile.id_perfil}/approve`, { aprobado }, { headers: { 'Authorization': `Bearer ${token}` } });
+      alert(aprobado ? 'Asesor aprobado' : 'Asesor rechazado');
+      setAdvisorProfile({ ...advisorProfile, aprobado });
+    } catch (e) {
+      console.error(e);
+      alert('No se pudo actualizar el estado del asesor.');
     }
   };
 
@@ -135,14 +158,29 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
               </div>
               
               <div className="md:col-span-2 mt-4">
-                <button 
-                  onClick={() => onActualizarEstado(usuario.id_usuario, usuario.estado)}
-                  className={`w-full py-4 rounded-md font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
-                    usuario.estado === 'Activo' ? 'bg-error-container/50 text-on-error hover:bg-error-container' : 'bg-success-container/50 text-on-success hover:bg-success-container'
-                  }`}
-                >
-                  <FiPower size={16}/> {usuario.estado === 'Activo' ? 'Suspender Acceso a la Plataforma' : 'Restaurar Acceso del Usuario'}
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <button 
+                    onClick={() => onActualizarEstado(usuario.id_usuario, usuario.estado)}
+                    className={`w-full py-4 rounded-md font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${
+                      usuario.estado === 'Activo' ? 'bg-error-container/50 text-on-error hover:bg-error-container' : 'bg-success-container/50 text-on-success hover:bg-success-container'
+                    }`}
+                  >
+                    <FiPower size={16}/> {usuario.estado === 'Activo' ? 'Suspender Acceso' : 'Restaurar Acceso'}
+                  </button>
+
+                  {usuario.rol === 'Asesor' && (
+                    <div>
+                      <p className="text-[10px] font-bold text-on-surface/40 uppercase mb-2">Aprobación de Asesor</p>
+                      <div className="flex gap-2">
+                        <button onClick={() => handleApproveAdvisor(true)} className={`flex-1 py-3 rounded-md font-black text-xs uppercase tracking-widest bg-success-container/30 text-on-success`}>Aprobar</button>
+                        <button onClick={() => handleApproveAdvisor(false)} className={`flex-1 py-3 rounded-md font-black text-xs uppercase tracking-widest bg-error-container/30 text-on-error`}>Rechazar</button>
+                      </div>
+                      {advisorProfile && (
+                        <p className="mt-2 text-[11px] text-on-surface/60">Estado: {advisorProfile.aprobado ? 'Aprobado' : 'Pendiente'}</p>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           ) : (
