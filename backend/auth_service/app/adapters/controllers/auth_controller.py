@@ -1,3 +1,4 @@
+import requests
 from fastapi import APIRouter
 from pydantic import BaseModel
 from app.application.register_user_service import RegisterUserService
@@ -46,16 +47,28 @@ def register_user(data: RegisterRequest):
 
 @router.post("/login")
 def login(data: LoginRequest):
-
     use_case = AuthenticateUser(
         user_repository=UserRepositoryMySQL(),
         token_provider=JoseTokenProvider(),
     )
+    resultado = use_case.execute(data.correo, data.contrasena)
 
-    return use_case.execute(
-        data.correo,
-        data.contrasena
-    )
+    # --- NUEVO: Alerta de seguridad al correo ---
+    try:
+        requests.post(
+            "http://127.0.0.1:8008/notificar",
+            json={
+                "correo_destino": data.correo,
+                "tipo_notificacion": "ALERTA_LOGIN",
+                "datos_extra": {}
+            },
+            timeout=2
+        )
+    except Exception as e:
+        print("Aviso: No se pudo enviar la alerta de login", e)
+    # --------------------------------------------
+
+    return resultado
 
 
 @router.get("/users/{id_usuario}")
@@ -93,4 +106,20 @@ def update_user_status(id_usuario: int, data: UpdateStatusRequest):
     if not usuario_actualizado:
         from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    # --- NUEVO: Avisar al servicio de correos ---
+    if data.estado == "Suspendido":
+        try:
+            # Le mandamos los datos al nuevo servicio (que vivirá en el puerto 8008)
+            requests.post(
+                "http://127.0.0.1:8008/notificar", 
+                json={
+                    "correo_destino": usuario_actualizado["correo"],
+                    "tipo_notificacion": "CUENTA_SUSPENDIDA",
+                    "datos_extra": {"nombre": usuario_actualizado["nombre"]}
+                },
+                timeout=2 
+            )
+        except Exception as e:
+            print("Aviso: No se pudo enviar el correo de suspensión", e)
+    # --------------------------------------------
     return usuario_actualizado
