@@ -22,6 +22,18 @@ export default function Usuarios() {
     cargarUsuarios();
   }, []);
 
+  const [pendingCount, setPendingCount] = useState(0);
+
+  const cargarPendientes = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const res = await axios.get('http://127.0.0.1:8000/advisors/pending', { headers: { 'Authorization': `Bearer ${token}` } });
+      setPendingCount(Array.isArray(res.data) ? res.data.length : 0);
+    } catch (e) {
+      setPendingCount(0);
+    }
+  };
+
   const cargarUsuarios = async () => {
     setCargando(true);
     setErrorServidor(null);
@@ -37,6 +49,8 @@ export default function Usuarios() {
 
       console.log("Datos recibidos exitosamente:", res.data);
       setUsuarios(res.data);
+      // También actualizar pendientes
+      cargarPendientes();
     } catch (error) {
       console.error("Error detallado de la petición:", error);
       setErrorServidor(error.response?.data?.detail || error.message || "Error de comunicación con el API Gateway");
@@ -112,7 +126,12 @@ export default function Usuarios() {
       {/* ENCABEZADO Y HERRAMIENTAS */}
       <div className="mb-8 flex flex-col lg:flex-row justify-between items-end gap-6">
         <div>
-          <h1 className="text-3xl font-bold text-on-surface tracking-tight">Directorio Administrativo</h1>
+          <div className="flex items-center gap-3">
+            <p className="text-3xl font-bold text-on-surface tracking-tight">Directorio Administrativo</p>
+            {pendingCount > 0 && (
+              <span className="inline-flex items-center justify-center bg-error-container text-white text-xs font-black px-2 py-1 rounded">{pendingCount} pendientes</span>
+            )}
+          </div>
           <p className="text-on-surface/60 mt-1 text-sm font-medium">
             Gestión centralizada de cuentas para la plataforma AdminDevMentor.
           </p>

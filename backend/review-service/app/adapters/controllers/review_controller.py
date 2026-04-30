@@ -1,12 +1,13 @@
 from datetime import datetime, timezone
 from typing import Optional
 
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.application.create_resena_service import CreateResenaService
 from app.application.list_resenas_service import ListResenasService
 from app.application.delete_resena_service import DeleteResenaService
+from app.application.update_resena_estado_service import UpdateResenaEstadoService
 
 router = APIRouter(prefix="/resenas", tags=["resenas"])
 
@@ -19,6 +20,10 @@ class CreateResenaRequest(BaseModel):
     id_materia: int = Field(gt=0, alias="idMateria")
     calificacion: int = Field(ge=1, le=5)
     comentario: str = Field(min_length=3, max_length=2000)
+
+
+class UpdateResenaEstadoRequest(BaseModel):
+    estado: str = Field(min_length=3, max_length=10)
 
 
 def _format_fecha(fecha_creacion):
@@ -47,6 +52,7 @@ def _format_resena(resena):
         "idMateria": resena["id_materia"],
         "calificacion": resena["calificacion"],
         "comentario": resena["comentario"],
+        "estado": resena.get("estado"),
         "fechaCreacion": _format_fecha(resena["fecha_creacion"]),
     }
 
@@ -74,16 +80,38 @@ def list_resenas(
     id_usuario: Optional[int] = Query(default=None, gt=0, alias="idUsuario"),
     id_usuario_auth: Optional[int] = Query(default=None, gt=0, alias="idUsuarioAuth"),
     id_materia: Optional[int] = Query(default=None, gt=0, alias="idMateria"),
+    estado: Optional[str] = Query(default=None),
 ):
+    if estado is not None and estado not in {"pendiente", "aceptada", "rechazada"}:
+        raise HTTPException(status_code=400, detail="Estado de resena no valido")
+
     service = ListResenasService()
     rows = service.execute(
         id_usuario=id_usuario,
         id_usuario_auth=id_usuario_auth,
         id_materia=id_materia,
+        estado=estado,
     )
 
     return {
         "resenas": [_format_resena(row) for row in rows],
+    }
+
+
+@router.put("/{id_resena}/estado")
+def update_resena_estado(id_resena: int, data: UpdateResenaEstadoRequest):
+    if data.estado not in {"pendiente", "aceptada", "rechazada"}:
+        raise HTTPException(status_code=400, detail="Estado de resena no valido")
+
+    service = UpdateResenaEstadoService()
+    updated = service.execute(id_resena=id_resena, estado=data.estado)
+
+    if updated is None:
+        raise HTTPException(status_code=404, detail="Resena no encontrada")
+
+    return {
+        "message": "Estado actualizado correctamente",
+        "resena": _format_resena(updated),
     }
 
 @router.delete("/{id_resena}")
@@ -93,7 +121,6 @@ def delete_resena(id_resena: int):
     eliminado = service.execute(id_resena)
     
     if not eliminado:
-        from fastapi import HTTPException
         raise HTTPException(status_code=404, detail="Resena no encontrada")
         
     return {"message": "Resena eliminada correctamente"}

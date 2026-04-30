@@ -240,6 +240,15 @@ async def get_all_advisors(request: Request):
     return forward_response(response)
 
 
+@app.get("/advisors/pending")
+async def get_pending_advisors(request: Request):
+    response = requests.get(
+        f"{ADVISOR_SERVICE_URL}/advisors/pending",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+
 @app.get("/advisors/{id_perfil}")
 async def get_advisor_by_id(id_perfil: int, request: Request):
     response = requests.get(
@@ -268,6 +277,19 @@ async def update_advisor(id_perfil: int, request: Request):
         headers=build_forward_headers(request),
     )
     
+    return forward_response(response)
+
+
+@app.put("/advisors/{id_perfil}/approve")
+async def approve_advisor(id_perfil: int, request: Request):
+    body = await request.json()
+
+    response = requests.put(
+        f"{ADVISOR_SERVICE_URL}/advisors/{id_perfil}/approve",
+        json=body,
+        headers=build_forward_headers(request),
+    )
+
     return forward_response(response)
 
 
@@ -300,6 +322,19 @@ async def list_resenas(request: Request):
     response = requests.get(
         f"{REVIEW_SERVICE_URL}/resenas",
         params=dict(request.query_params),
+        headers=build_forward_headers(request),
+    )
+
+    return forward_response(response)
+
+
+@app.put("/resenas/{id_resena}/estado")
+async def update_resena_estado(id_resena: int, request: Request):
+    body = await request.json()
+
+    response = requests.put(
+        f"{REVIEW_SERVICE_URL}/resenas/{id_resena}/estado",
+        json=body,
         headers=build_forward_headers(request),
     )
 

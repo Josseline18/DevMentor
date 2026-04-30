@@ -10,16 +10,58 @@ export const NuevaMateriaModal = ({ isOpen, onClose }) => {
     carrera: 'Ingeniería en Desarrollo y Tecnologías de Software',
     creditos: ''
   });
+  const [mensaje, setMensaje] = useState("");
+  const [tipoMensaje, setTipoMensaje] = useState("");
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí luego enviaremos los datos a tu backend de FastAPI (materia-service)
-    console.log("Registrando materia:", formData);
-    alert("Materia registrada correctamente (Simulación)");
-    onClose(); // Cerramos el modal después de guardar
+
+    const dataToSend = {
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      semestre: parseInt(formData.semestre),
+      carrera: formData.carrera,
+      activa: formData.estado === "activo"
+    };
+
+    try {
+      const response = await fetch("http://localhost:8002/materias/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(dataToSend)
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al guardar la materia");
+      }
+
+      setMensaje("Materia registrada exitosamente");
+      setTipoMensaje("success");
+
+      setFormData({
+        nombre: '',
+        descripcion: '',
+        semestre: '',
+        carrera: ' ',
+        estado: 'activo'
+      });
+
+      setTimeout(() => {
+        setMensaje("");
+        onClose();
+      }, 1500);
+
+    } catch (error) {
+      setMensaje("Error al registrar la materia");
+      setTipoMensaje("error");
+      console.error("Error:", error);
+    }
   };
+
 
   return (
     // Backdrop con Glassmorphism
@@ -44,51 +86,99 @@ export const NuevaMateriaModal = ({ isOpen, onClose }) => {
 
         {/* Cuerpo del Formulario */}
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
-          
-          <Input 
-            id="clave"
-            label="CLAVE DE MATERIA"
-            placeholder="Ej. SO-000"
-            value={formData.clave}
-            onChange={(e) => setFormData({...formData, clave: e.target.value})}
-          />
-          
-          <Input 
-            id="nombre"
-            label="NOMBRE OFICIAL"
-            placeholder="Ej. Computación Distribuida y Redes"
-            required
-            value={formData.nombre}
-            onChange={(e) => setFormData({...formData, nombre: e.target.value})}
-          />
-          
-          {/* Selector de Carrera (Estilo adaptado al diseño de tus inputs) */}
+
+          {/* Carrera */}
           <div className="flex flex-col w-full">
             <label className="text-xs font-semibold text-on-surface uppercase tracking-wider mb-2">
-              FACULTAD / CARRERA
+              CARRERA
             </label>
-            <select 
+            <select
               className="w-full px-4 py-3 rounded-t-md outline-none transition-all duration-300 bg-surface-high border-b-2 border-outline-variant text-on-surface focus:border-primary focus:bg-surface-lowest shadow-sm appearance-none"
               value={formData.carrera}
-              onChange={(e) => setFormData({...formData, carrera: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, carrera: e.target.value })}
+              required
             >
-              <option value="Ingeniería en Desarrollo y Tecnologías de Software">Ingeniería en Desarrollo y Tecnologías de Software</option>
-              <option value="Ciencias Exactas">Ciencias Exactas</option>
-              <option value="Humanidades">Humanidades</option>
+              <option value="">Selecciona una opción</option>
+              <option value="LIDTS">LIDTS</option>
+              <option value="LSC">LSC</option>
             </select>
           </div>
 
-          <Input 
-            id="creditos"
-            label="CRÉDITOS ACADÉMICOS *"
-            type="number"
-            placeholder="0.0"
-            step="0.1"
-            value={formData.creditos}
-            onChange={(e) => setFormData({...formData, creditos: e.target.value})}
+          {/*Nombre de la carrera */}
+          <Input
+            id="nombre"
+            label="MATERIA"
+            placeholder="Ej. Taller de Desarrollo IV"
+            value={formData.nombre}
+            onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+            required
           />
 
-          {/* Pie de Acciones */}
+          {/* Descripción */}
+          <Input
+            id="descripcion"
+            label="DESCRIPCIÓN (Máx. 10 palabras)"
+            placeholder="Ej. Desarrollo de aplicaciones web modernas"
+            value={formData.descripcion}
+            onChange={(e) => {
+              const palabras = e.target.value.trim().split(/\s+/);
+              if (palabras.length <= 10) {
+                setFormData({ ...formData, descripcion: e.target.value });
+              }
+            }}
+          />
+
+          {/* Semestre */}
+          <div className="flex flex-col w-full">
+            <label className="text-xs font-semibold text-on-surface uppercase tracking-wider mb-2">
+              SEMESTRE
+            </label>
+            <select
+              className="w-full px-4 py-3 rounded-t-md outline-none transition-all duration-300 bg-surface-high border-b-2 border-outline-variant text-on-surface focus:border-primary focus:bg-surface-lowest shadow-sm appearance-none"
+              value={formData.semestre}
+              onChange={(e) => setFormData({ ...formData, semestre: e.target.value })}
+              required
+            >
+              <option value="">Selecciona semestre</option>
+              {[1,2,3,4,5,6,7,8,9].map((num) => (
+                <option key={num} value={num}>
+                  {num}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Estado */}
+          <div className="flex flex-col w-full">
+            <label className="text-xs font-semibold text-on-surface uppercase tracking-wider mb-2">
+              ESTADO
+            </label>
+            <div className="flex gap-6 items-center">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="estado"
+                  value="activo"
+                  checked={formData.estado === "activo"}
+                  onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                />
+                Activo
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="estado"
+                  value="inactivo"
+                  checked={formData.estado === "inactivo"}
+                  onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                />
+                Inactivo
+              </label>
+            </div>
+          </div>
+
+          {/* Botones */}
           <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-outline-variant/20">
             <Button type="button" variant="tertiary" onClick={onClose}>
               Cancelar
@@ -97,6 +187,7 @@ export const NuevaMateriaModal = ({ isOpen, onClose }) => {
               Registrar Materia
             </Button>
           </div>
+
         </form>
       </div>
     </div>

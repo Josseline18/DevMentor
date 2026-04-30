@@ -228,7 +228,7 @@ export default function Reportes() {
                 <tr><td colSpan="6" className="p-12 text-center text-xs font-bold text-on-surface/30 uppercase tracking-widest">No se encontraron reportes con estos criterios</td></tr>
               ) : (
                 reportesPaginados.map((reporte) => (
-                  <tr key={reporte.id_reporte} onClick={() => setReporteSeleccionado(reporte)}lassName="border-b border-outline-variant/5 hover:bg-surface-high/20 transition-colors cursor-pointer">
+                  <tr key={reporte.id_reporte} onClick={() => setReporteSeleccionado(reporte)} className="border-b border-outline-variant/5 hover:bg-surface-high/20 transition-colors cursor-pointer">
                     <td className="p-4 font-mono text-xs text-on-surface/50">#{reporte.id_reporte}</td>
                     <td className="p-4">
                       <span className="bg-surface-high px-2 py-1 rounded text-xs font-bold uppercase tracking-wider">{reporte.tipo_entidad}</span>

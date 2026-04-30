@@ -119,7 +119,7 @@ curl -X 'POST' 'http://127.0.0.1:8001/auth/register' \
   -d '{"nombre": "Alumno Avanzado", "correo": "estudiante2@unach.mx", "telefono": "9610000006", "contrasena": "12345", "rol": "Estudiante"}'
 echo ""
 
-# README Original
+# README Original (SIN ADMIN)
 
 vscode_lsp_terminal_prompt_tracker= {}
 
@@ -294,88 +294,6 @@ npx expo start --tunnel
 # Terminal 8:
 ngrok http 8000
 
------------------------------------------------------------------------------------------------------
-En el gitignore dentro de backend agregamos lo siguiente así se ignoran los entornos creados hasta el momento:
-# Ignorar todos los entornos virtuales
-**/bin/
-**/lib/
-**/include/
-**/pyvenv.cfg
-
-# Ignorar carpetas de entornos virtuales por nombre
-usuarios/
-materias/
-advisors/
-apiGw/
-
-# Python
-__pycache__/
-*.pyc
-
----------------------------------------------------------------------------------------------------------
-Y en el gitignore dentro de Frontend agregamos el archivo api.js y el .env:
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
-# dependencies
-node_modules/
-
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
-
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-
-# Metro
-.metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-# generated native folders
-/ios
-/android
-
-.env
-
-
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Virtual environments
-venv/
-env/
-.venv/
-ENV/
-*_env/
-
-# FastAPI / logs
-*.log
-
-# Configuración local de API
-src/config/api.js
 
 -------------------------------------------------------------------------------------------------------------
 # crear TABLA DENTRO DE LA BASE DE DATOS DE BD_materias de datos de lenguajes para mostrar en el dashboard
@@ -487,43 +405,6 @@ pip install -r app/requirements.txt
 
 - Si tienen algun error en una libreria que no les carga, deben elegir o verifica que el intérprete activo sea el del servicio, es decir, elegir python.
 
-# Modifica en el api.js
-
-import Constants from "expo-constants";
-import { getAccessToken } from "../services/sessionService";
-
-const expoConfig = Constants.expoConfig || Constants.manifest;
-
-export const API_URL =
-  expoConfig?.extra?.API_URL ||
-  "https://unvoluble-pei-subrhombic.ngrok-free.dev";   Cambiar el url
-
-export const apiFetch = async (endpoint, options = {}) => {
-  const token = getAccessToken();
-
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-  };
-
-  if (token) {
-    defaultHeaders.Authorization = `Bearer ${token}`;
-  }
-
-  return fetch(`${API_URL}${endpoint}`, {
-    ...options,
-    headers: {
-      ...defaultHeaders,
-       ...options.headers,
-    },
-  });
-};
-
-
-
-
-
-
-
 
 
 # ------------------------------------------------------------
@@ -548,7 +429,58 @@ source calendario/bin/activate
 pip install -r requirements.txt
 uvicorn app:app --reload --port 8007
 
+# -----------------------------------------------------------
+- Cambio en la Base de datos de "resenas_db", en la tabla resenas. Se agrego el estado de la reseña que verifica el administrador
 
+ALTER TABLE resenas 
+ADD COLUMN estado ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente';
 
+# -----------------------------------------------------------
+
+# Edit in api.js
+
+import Constants from "expo-constants";
+import { getAccessToken } from "../services/sessionService";
+
+const expoConfig = Constants.expoConfig || Constants.manifest;
+
+export const API_URL =
+  expoConfig?.extra?.API_URL ||
+  "https://unvoluble-pei-subrhombic.ngrok-free.dev";   -> cambien su url
+
+export const apiFetch = async (endpoint, options = {}) => {
+  const token = getAccessToken();
+  const isFormData = typeof FormData !== "undefined" && options.body instanceof FormData;
+
+  const defaultHeaders = isFormData
+    ? {}
+    : {
+        "Content-Type": "application/json",
+      };
+
+  if (token) {
+    defaultHeaders.Authorization = `Bearer ${token}`;
+  }
+
+  return fetch(`${API_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      ...defaultHeaders,
+       ...options.headers,
+    },
+  });
+};
+
+# --------------------------------------------------------------------
+
+USE asesor_db;
+ALTER TABLE asesorias ADD COLUMN approved TINYINT(1) DEFAULT 0;
+
+- Cuando se hace el cambio y no acepta el "approved", se cambia por "aprobado" en español
+
+# ---------------------------------------------------------------------
+
+source backend/content-service/contenidos/bin/activate
+pip install cryptography
 
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, JSON, Text, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, JSON, Text, ForeignKey, DateTime, func, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -11,6 +11,7 @@ class AdvisorProfile(Base):
     especialidad = Column(String(200), nullable=True)
     area_especialidad = Column(String(200), nullable=True)
     materias = Column(JSON, nullable=True)  # Array de IDs de materias
+    aprobado = Column(Boolean, nullable=False, default=False, server_default='0')
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
@@ -21,6 +22,7 @@ class AdvisorProfile(Base):
             "especialidad": self.especialidad,
             "area_especialidad": self.area_especialidad,
             "materias": self.materias,
+            "aprobado": bool(self.aprobado),
             "created_at": str(self.created_at),
             "updated_at": str(self.updated_at)
         }

@@ -107,6 +107,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
       if (response.ok) {
         completed = true;
         setProfileCompleted(true);
+        Alert.alert('Solicitud enviada', 'Tu perfil ha sido enviado para revisión. El administrador recibirá la solicitud y podrá aprobar o rechazar tu perfil.');
         redirectTimeoutRef.current = setTimeout(() => {
           navigation.navigate("DevMentor");
         }, 3000);

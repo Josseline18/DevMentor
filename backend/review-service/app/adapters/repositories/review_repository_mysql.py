@@ -27,8 +27,8 @@ class ResenaRepositoryMySQL:
         try:
             query = text(
                 """
-                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario)
-                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario)
+                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario, estado)
+                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario, :estado)
                 """
             )
 
@@ -40,6 +40,7 @@ class ResenaRepositoryMySQL:
                     "id_materia": resena.id_materia,
                     "calificacion": resena.calificacion,
                     "comentario": resena.comentario,
+                    "estado": resena.estado,
                 },
             )
 
@@ -64,6 +65,7 @@ class ResenaRepositoryMySQL:
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
+                    r.estado,
                     r.fecha_creacion,
                     u.nombre AS nombre_usuario,
                     a.nombre AS nombre_asesor
@@ -83,7 +85,7 @@ class ResenaRepositoryMySQL:
         finally:
             db.close()
 
-    def list_resenas(self, id_usuario=None, id_usuario_auth=None, id_materia=None):
+    def list_resenas(self, id_usuario=None, id_usuario_auth=None, id_materia=None, estado=None):
         db = SessionLocal()
 
         try:
@@ -102,6 +104,10 @@ class ResenaRepositoryMySQL:
                 conditions.append("r.id_materia = :id_materia")
                 params["id_materia"] = id_materia
 
+            if estado is not None:
+                conditions.append("r.estado = :estado")
+                params["estado"] = estado
+
             where_clause = ""
             if conditions:
                 where_clause = "WHERE " + " AND ".join(conditions)
@@ -116,6 +122,7 @@ class ResenaRepositoryMySQL:
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
+                    r.estado,
                     r.fecha_creacion,
                     u.nombre AS nombre_usuario,
                     a.nombre AS nombre_asesor
@@ -130,6 +137,28 @@ class ResenaRepositoryMySQL:
             rows = db.execute(query, params).fetchall()
 
             return [dict(row._mapping) for row in rows]
+        finally:
+            db.close()
+
+    def update_resena_estado(self, id_resena: int, estado: str):
+        db = SessionLocal()
+
+        try:
+            query = text(
+                """
+                UPDATE resenas
+                SET estado = :estado
+                WHERE id_resena = :id_resena
+                """
+            )
+
+            result = db.execute(query, {"estado": estado, "id_resena": id_resena})
+            if result.rowcount == 0:
+                db.rollback()
+                return None
+
+            db.commit()
+            return self.get_resena_by_id(id_resena)
         finally:
             db.close()
     

@@ -52,16 +52,28 @@ export default function Advisors({ navigation }) {
         data.map(async (advisor) => {
           const user = await getUserById(advisor.id_usuario_auth);
 
+          // Requerimos usuario en auth y que su rol sea 'asesor' (case-insensitive)
           if (!user) {
             console.log(
-              `[Advisors] Sin datos de auth para id_usuario_auth=${advisor.id_usuario_auth}`
+              `[Advisors] Sin auth para id_usuario_auth=${advisor.id_usuario_auth}, se descarta`
             );
+            return null;
+          }
+
+          const roleStr = user?.rol?.toString()?.toLowerCase() || "";
+          const isAuthAdvisor = roleStr.includes("asesor");
+
+          if (!isAuthAdvisor) {
+            console.log(
+              `[Advisors] Usuario ${user?.nombre || advisor?.id_usuario_auth} tiene rol ${user?.rol}, se descarta`
+            );
+            return null;
           }
 
           return {
             ...advisor,
             id: advisor.id_perfil?.toString() || String(advisor.id_usuario_auth),
-            name: user?.nombre || `Asesor #${advisor.id_usuario_auth}`,
+            name: user?.nombre || advisor?.nombre || `Asesor #${advisor.id_usuario_auth}`,
             correo: user?.correo || "No disponible",
             telefono: user?.telefono || "No disponible",
             role: user?.rol || advisor?.area_especialidad || "Asesor",
@@ -69,7 +81,8 @@ export default function Advisors({ navigation }) {
         })
       );
 
-      setAdvisors(advisorsWithUser);
+      // Filtrar los null y valores falsy
+      setAdvisors(advisorsWithUser.filter(Boolean));
     } catch (error) {
       console.log("[Advisors] Error cargando asesores:", error);
       setAdvisors([]);

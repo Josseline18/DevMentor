@@ -14,7 +14,8 @@ class AdvisorRepository:
             id_usuario_auth=id_usuario_auth,
             especialidad=especialidad,
             area_especialidad=area_especialidad,
-            materias=materias  # SQLAlchemy maneja JSON automáticamente
+            materias=materias,  # SQLAlchemy maneja JSON automáticamente
+            aprobado=False
         )
         self.db.add(advisor)
         self.db.commit()
@@ -38,7 +39,7 @@ class AdvisorRepository:
         return self.db.query(AdvisorProfile).all()
     
     def update_advisor(self, id_perfil: int, especialidad: str = None,
-                      area_especialidad: str = None, materias: list = None) -> AdvisorProfile:
+                      area_especialidad: str = None, materias: list = None, aprobado: bool = None) -> AdvisorProfile:
         """Actualizar perfil de asesor"""
         advisor = self.get_advisor_by_id(id_perfil)
         
@@ -51,6 +52,8 @@ class AdvisorRepository:
             advisor.area_especialidad = area_especialidad
         if materias:
             advisor.materias = materias
+        if aprobado is not None:
+            advisor.aprobado = aprobado
         
         self.db.commit()
         self.db.refresh(advisor)

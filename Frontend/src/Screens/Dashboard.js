@@ -14,6 +14,24 @@ export default function Dashboard({ navigation }) {
     "c++.png": require("../../assets/images/c++.png"),
   };
 
+  const materiasImageMap = {
+    "Compiladores": require("../../assets/images/compiladores.jpg"),
+    "Contabilidad y finanzas": require("../../assets/images/conta.jpg"),
+    "Economia": require("../../assets/images/economia.webp"),
+    "Interfaces humano-computadora": require("../../assets/images/interfaces.jpg"),
+    "Modelos y metodologias de desarrollo de software": require("../../assets/images/modelos.jpg"),
+    "Protocolos de enrutamiento": require("../../assets/images/protocolos.jpg"),
+    "Taller de Desarrollo 4": require("../../assets/images/taller4.jpg"),
+    "Ingles": require("../../assets/images/ingles6.jpg"),
+  };
+
+  const resolveMateriaImage = (nombre) => {
+    if (!nombre) return defaultCardImage;
+
+    const normalized = nombre.trim();
+    return materiasImageMap[normalized] || defaultCardImage;
+  };
+
   const defaultCardImage = require("../../assets/images/tutorias.jpg");
 
   const resolveImageSource = (imagen) => {
@@ -81,25 +99,6 @@ export default function Dashboard({ navigation }) {
         setMaterias([]);
       });
   }, []);
-
-
-  /*const lenguajes = [
-    {
-      nombre: "Python",
-      descripcion: "Lenguaje versátil",
-      imagen: require("../../assets/images/p.jpg")
-    },
-    {
-      nombre: "Java",
-      descripcion: "Programación orientada a objetos",
-      imagen: require("../../assets/images/java.png")
-    },
-    {
-      nombre: "C++",
-      descripcion: "Alto rendimiento",
-      imagen: require("../../assets/images/c++.png")
-    }
-  ];*/
 
   const scrollRef = useRef(null);
   const currentIndex = useRef(0);
@@ -191,7 +190,10 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={defaultCardImage} style={styles.image} />
+                    <Card.Cover 
+                      source={resolveMateriaImage(m.nombre)} 
+                      style={styles.image} 
+                    />
                     <Card.Content>
                       <Text style={styles.subject}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
