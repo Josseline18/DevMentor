@@ -483,4 +483,9 @@ ALTER TABLE asesorias ADD COLUMN approved TINYINT(1) DEFAULT 0;
 source backend/content-service/contenidos/bin/activate
 pip install cryptography
 
+# ------------------------------------------------------------------------------------------------------
+Instalar en Frontend lo siguiente (sirve para solucionar el problema al descargar los contenidos)
 
+cd Frontend
+npx expo install expo-file-system
+npx expo install expo-sharing

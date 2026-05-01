@@ -11,6 +11,9 @@ from app.application.get_contents import (
     GetContentsByPerfilUseCase
 )
 from app.application.delete_content import DeleteContentUseCase
+from fastapi import HTTPException, Request
+from fastapi import Header
+
 
 router = APIRouter(prefix="/contents")
 
@@ -26,21 +29,19 @@ def get_db():
 
 @router.post("/upload/")
 def upload_content(
+    request: Request,
     id_perfil: int = Form(...),
     id_materia: int = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
+    user_id = request.headers.get("X-User-ID")
+    
+    if not user_id:
+        raise HTTPException(status_code=401, detail="No autorizado")
 
-    repository = ContentRepository(db)
-
-    use_case = CreateContentUseCase(repository)
-
-    return use_case.execute(
-        id_perfil,
-        id_materia,
-        file
-    )
+    use_case = CreateContentUseCase(repository := ContentRepository(db))
+    return use_case.execute(id_perfil, id_materia, file)
 
 @router.get("/materia/{id_materia}")
 def get_by_materia(
@@ -71,11 +72,16 @@ def get_by_perfil(
 @router.get("/download/{id_contenido}")
 def download_content(
     id_contenido: int,
+    request: Request,
     db: Session = Depends(get_db)
 ):
+    user_id = request.headers.get("X-User-ID")
+    role = request.headers.get("X-User-Role")
+
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
     repository = ContentRepository(db)
-
     content = repository.get_by_id(id_contenido)
 
     return FileResponse(
@@ -87,11 +93,19 @@ def download_content(
 @router.delete("/{id_contenido}")
 def delete_content(
     id_contenido: int,
+    request: Request,
     db: Session = Depends(get_db)
 ):
 
-    repository = ContentRepository(db)
+    role = request.headers.get("X-User-Role")
 
+    if role not in ["admin", "asesor"]:
+        raise HTTPException(
+            status_code=403,
+            detail="No tienes permisos para eliminar contenido"
+        )
+
+    repository = ContentRepository(db)
     use_case = DeleteContentUseCase(repository)
 
     return use_case.execute(id_contenido)

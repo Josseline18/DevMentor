@@ -13,6 +13,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  LogBox,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
@@ -109,7 +110,8 @@ function AppDrawer({ visible, onClose }) {
                       navigationRef.navigate("AdvisorProfile", {
                         advisor: {
                           id_usuario_auth: currentUser?.id,
-                        }
+                        },
+                        isOwnProfile: true, 
                       });
                     }
                   }}
@@ -362,3 +364,7 @@ const appStyles = StyleSheet.create({
     resizeMode: "contain",
   },
 });
+
+LogBox.ignoreLogs([
+  "VirtualizedLists should never be nested",
+]);

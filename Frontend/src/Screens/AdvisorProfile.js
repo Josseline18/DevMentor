@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import {Calendar, LocaleConfig}  from "react-native-calendars";
 import * as Linking from "expo-linking";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from 'expo-sharing';
+import { getAccessToken, getCurrentUser } from "../services/sessionService";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { styles, colors } from "../Styles/AdvisorProfileStyle";
 import { API_URL, apiFetch } from "../config/api";
@@ -59,8 +62,11 @@ export default function AdvisorProfile({ route, navigation }) {
   ];
 
   const advisorParam = route?.params?.advisor || {};
+  const routeIsOwnProfile = route?.params?.isOwnProfile === true;
 
   const [advisor, setAdvisor] = useState({
+    id_usuario_auth: advisorParam?.id_usuario_auth || null,
+    id_perfil: advisorParam?.id_perfil || null,
     name: advisorParam.name || "Asesor",
     role: advisorParam.role || "Asesor",
     especialidad: advisorParam.especialidad || "No especificada",
@@ -75,6 +81,24 @@ export default function AdvisorProfile({ route, navigation }) {
       horasAsesoradas: 0,
     },
   });
+
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  const getUserData = () => {
+    const currentUser = getCurrentUser();
+    console.log("currentUser desde sesión:", currentUser); // para verificar las claves
+    if (currentUser) {
+      setUserRole(currentUser.rol);
+      setUserId(currentUser.id || currentUser.id_usuario || currentUser.sub);
+    }
+  };
+
+  const isMyProfile = useMemo(() => {
+    if (routeIsOwnProfile) return true; // viene del drawer
+    if (!userId || !advisor?.id_usuario_auth) return false;
+    return String(userId) === String(advisor.id_usuario_auth);
+  }, [routeIsOwnProfile, userId, advisor.id_usuario_auth]);
 
   const toggleSection = (section) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -160,12 +184,35 @@ export default function AdvisorProfile({ route, navigation }) {
     }
   };
 
-  const descargarArchivo = (idContenido) => {
+  const descargarArchivo = async (idContenido, nombreArchivo) => {
+    try {
+      const token = getAccessToken();
 
-    const url =
-      `${API_URL}/contents/download/${idContenido}`;
+      const url = `${API_URL}/contents/download/${idContenido}`;
+      const fileUri = FileSystem.documentDirectory + nombreArchivo;
 
-    Linking.openURL(url);
+      const downloadResumable = FileSystem.createDownloadResumable(
+        url,
+        fileUri,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const { uri } = await downloadResumable.downloadAsync();
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri);
+      } else {
+        alert("Archivo descargado en: " + uri);
+      }
+
+    } catch (error) {
+      console.log(error);
+      alert("Error descargando archivo");
+    }
   };
 
   const eliminarArchivo = async (idContenido) => {
@@ -230,6 +277,7 @@ export default function AdvisorProfile({ route, navigation }) {
 
   useEffect(() => {
     cargarDatosAsesor();
+    getUserData();
   }, []);
 
   const archivosPorMateria = useMemo(() => {
@@ -268,6 +316,15 @@ export default function AdvisorProfile({ route, navigation }) {
     );
   }
 
+  console.log("=== DEBUG BOTÓN SUBIR ===");
+  console.log("userRole:", userRole);
+  console.log("isMyProfile:", isMyProfile);
+  console.log("advisor.aprobado:", advisor.aprobado);
+  console.log("routeIsOwnProfile:", routeIsOwnProfile);
+  console.log("userId:", userId);
+  console.log("advisor.id_usuario_auth:", advisor.id_usuario_auth);
+  console.log("=========================");
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
@@ -437,29 +494,16 @@ export default function AdvisorProfile({ route, navigation }) {
             </View>
           </Modal>
           
-          <TouchableOpacity
-            style={[styles.actionButton, !advisor.aprobado && styles.actionButtonDisabled]}
-            onPress={() => {
-              if (!advisor.aprobado) {
-                alert('No puedes subir archivos hasta que tu perfil como asesor sea aprobado por el administrador.');
-                return;
-              }
-              navigation.navigate(
-                "UploadMaterialScreen",
-                { advisor: advisor }
-              );
-            }}
-            disabled={!advisor.aprobado}
-          >
-            <Ionicons
-              name="cloud-upload"
-              size={20}
-              color={colors.primary}
-            />
-            <Text style={styles.actionButtonText}>
-              Subir material
-            </Text>
-          </TouchableOpacity>
+          {/* SOLO MI PERFIL */}
+          {userRole === "Asesor" && isMyProfile && advisor.aprobado && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigation.navigate("UploadMaterialScreen", { advisor })}
+            >
+              <Ionicons name="cloud-upload" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Subir material</Text>
+            </TouchableOpacity>
+          )}
 
         </View>
 
@@ -505,7 +549,8 @@ export default function AdvisorProfile({ route, navigation }) {
                         style={styles.iconButton}
                         onPress={() =>
                           descargarArchivo(
-                            archivo.id_contenido
+                            archivo.id_contenido,
+                            archivo.nombre_archivo
                           )
                         }
                       >
@@ -516,21 +561,23 @@ export default function AdvisorProfile({ route, navigation }) {
                         />
                       </TouchableOpacity>
 
-                      {/* Eliminar */}
-                      <TouchableOpacity
-                        style={styles.iconButton}
-                        onPress={() =>
-                          eliminarArchivo(
-                            archivo.id_contenido
-                          )
-                        }
-                      >
-                        <Ionicons
-                          name="trash"
-                          size={18}
-                          color="red"
-                        />
-                      </TouchableOpacity>
+                      {/* Eliminar SOLO admin o asesor */}
+                      {(userRole === "admin" || (userRole === "Asesor" && isMyProfile)) && (
+                        <TouchableOpacity
+                          style={styles.iconButton}
+                          onPress={() =>
+                            eliminarArchivo(
+                              archivo.id_contenido
+                            )
+                          }
+                        >
+                          <Ionicons
+                            name="trash"
+                            size={18}
+                            color="red"
+                          />
+                        </TouchableOpacity>
+                      )}
 
                     </View>
 

@@ -94,7 +94,12 @@ export default function Advisors({ navigation }) {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate("AdvisorProfile", { advisor: item })}
+      onPress={() =>
+        navigation.navigate("AdvisorProfile", {
+          advisor: item,
+          isOwnProfile: false, 
+        })
+      }
       activeOpacity={0.7}
     >
       <Image source={require("../../assets/icons/user.png")} style={styles.avatar} />

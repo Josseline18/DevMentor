@@ -24,7 +24,7 @@
         {
             "label": "Api gateway",
             "type": "shell",
-            "command": "cd backend/api-gateway; source apiGw/bin/activate; uvicorn app:app --port 8000 --reload",
+            "command": "cd backend/api-gateway; source apiGw/bin/activate; uvicorn app:app --host 0.0.0.0 --port 8000 --reload",
             "isBackground": true,
             "icon": { "id": "layers", "color": "terminal.ansiCyan" },
             "presentation": { "reveal": "always", "panel": "dedicated" }
