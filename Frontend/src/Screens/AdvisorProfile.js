@@ -54,6 +54,7 @@ export default function AdvisorProfile({ route, navigation }) {
   const routeIsOwnProfile = route?.params?.isOwnProfile === true;
 
   const [availableHours, setAvailableHours] = useState([]);
+  const hoy = new Date().toISOString().split("T")[0];
 
   const getDisponibilidad = async (dia) => {
     try {
@@ -440,13 +441,14 @@ export default function AdvisorProfile({ route, navigation }) {
                 <Text style={styles.modalTitle}>Selecciona una fecha</Text>
 
                 <Calendar
+                  minDate={hoy}
                   onDayPress={(day) => {
                     setSelectedDate(day.dateString);
 
                     const date = new Date(day.dateString);
                     const dias = [
-                      "domingo","lunes","martes","miercoles",
-                      "jueves","viernes","sabado"
+                      "lunes","martes","miercoles",
+                      "jueves","viernes","sabado", "domingo"
                     ];
 
                     const diaSemana = dias[date.getDay()];

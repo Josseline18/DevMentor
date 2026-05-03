@@ -12,13 +12,13 @@ import { styles, colors } from "../Styles/AdvisorProfileStyle";
 import { apiFetch } from "../config/api";
 
 const diasSemana = [
+  "domingo",
   "lunes",
   "martes",
   "miércoles",
   "jueves",
   "viernes",
-  "sábado",
-  "domingo",
+  "sábado"
 ];
 
 export default function DisponibilidadScreen({ route, navigation }) {
