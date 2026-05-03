@@ -8,7 +8,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Modal,
-  StyleSheet
+  StyleSheet, 
+  TextInput
 } from "react-native";
 import {Calendar, LocaleConfig}  from "react-native-calendars";
 import * as Linking from "expo-linking";
@@ -400,14 +401,16 @@ export default function AdvisorProfile({ route, navigation }) {
         </View>
 
         <View style={styles.quickActions}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
-            activeOpacity={0.7} 
-            onPress={() => setModalVisible(true)}
-          >
-            <Ionicons name="calendar" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Agendar</Text>
-          </TouchableOpacity>
+          {userRole === "Estudiante" && (
+            <TouchableOpacity 
+              style={styles.actionButton} 
+              activeOpacity={0.7} 
+              onPress={() => setModalVisible(true)}
+            >
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Agendar</Text>
+            </TouchableOpacity>
+          )}
 
           <Modal
             visible={modalVisible}
@@ -504,6 +507,16 @@ export default function AdvisorProfile({ route, navigation }) {
               <Text style={styles.actionButtonText}>Subir material</Text>
             </TouchableOpacity>
           )}
+          {userRole === "Asesor" && isMyProfile && advisor.aprobado && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigation.navigate("Disponibilidad", { advisor })}
+            >
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Disponibilidad</Text>
+            </TouchableOpacity>
+          )}
+          
 
         </View>
 

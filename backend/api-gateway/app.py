@@ -215,6 +215,23 @@ async def crear_cita(request: Request):
         media_type="application/json"
     )
 
+@app.post("/calendario/disponibilidad-semanal")
+async def crear_disponibilidad(request: Request):
+    body = await request.json()
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{CALENDAR_SERVICE_URL}/calendario/disponibilidad",
+            json=body,
+            headers=build_forward_headers(request)
+        )
+
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        media_type="application/json"
+    )
+
 
 # advisor_service
 

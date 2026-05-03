@@ -489,3 +489,13 @@ Instalar en Frontend lo siguiente (sirve para solucionar el problema al descarga
 cd Frontend
 npx expo install expo-file-system
 npx expo install expo-sharing
+
+# En la base de datos de asesor crear la siguiente tabla:
+CREATE TABLE disponibilidades (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_perfil INT NOT NULL,
+  dia_semana VARCHAR(20) NOT NULL,
+  hora_inicio TIME,
+  hora_fin TIME,
+  activo BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);

@@ -28,7 +28,9 @@ import ReviewScreen from "./src/Screens/ReviewScreen";
 import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 import UploadMaterialScreen from "./src/Screens/UploadMaterialScreen";
 import MyAccount from "./src/Screens/MyAccount";
+import Disponibilidad from "./src/Screens/DisponibilidadScreen";
 import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService"
+
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
@@ -200,6 +202,19 @@ export default function App() {
           component={AdvisorProfile} 
           options={{
             title: "Perfil del Asesor",
+            headerLeft: () => (
+              <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
+                <Ionicons name="menu" size={24} color="#1E5BE0" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Stack.Screen
+          name="Disponibilidad" 
+          component={Disponibilidad} 
+          options={{
+            title: "Configurar Disponibilidad",
             headerLeft: () => (
               <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
                 <Ionicons name="menu" size={24} color="#1E5BE0" />
