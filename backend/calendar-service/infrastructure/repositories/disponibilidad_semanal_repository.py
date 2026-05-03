@@ -20,9 +20,33 @@ class DisponibilidadSemanalRepository:
             "dia_semana": disponibilidad.dia_semana,
             "hora_inicio": disponibilidad.hora_inicio,
             "hora_fin": disponibilidad.hora_fin,
-            "activo": disponibilidad.activo   # 👈 ESTA LÍNEA FALTABA
+            "activo": disponibilidad.activo   
         })
 
         self.db.commit()
 
         return {"mensaje": "Disponibilidad creada correctamente"}
+
+    def obtener_por_dia(self, id_perfil: int, dia_semana: str):
+    query = text("""
+        SELECT hora_inicio, hora_fin
+        FROM disponibilidades
+        WHERE id_perfil = :id_perfil
+        AND dia_semana = :dia_semana
+        AND activo = true
+    """)
+
+    result = self.db.execute(query, {
+        "id_perfil": id_perfil,
+        "dia_semana": dia_semana
+    })
+
+    rows = result.fetchall()
+
+    return [
+        {
+            "hora_inicio": str(row.hora_inicio),
+            "hora_fin": str(row.hora_fin)
+        }
+        for row in rows
+    ]

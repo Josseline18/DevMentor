@@ -232,6 +232,21 @@ async def crear_disponibilidad(request: Request):
         media_type="application/json"
     )
 
+@app.get("/calendario/disponibilidad")
+async def get_disponibilidad(request: Request):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{CALENDAR_SERVICE_URL}/calendario/disponibilidad",
+            params=dict(request.query_params),
+            headers=build_forward_headers(request)
+        )
+
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        media_type="application/json"
+    )
+
 
 # advisor_service
 

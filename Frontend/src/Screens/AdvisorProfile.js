@@ -49,21 +49,39 @@ export default function AdvisorProfile({ route, navigation }) {
   const [selectedHour, setSelectedHour] = useState("");
   const [ selectedDate, setSelectedDate] = useState('');
 
-  // de momento hay horarios definidos aqui, pero esto debe predefinirlo el asesor
-  const availableHours = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00"
-  ];
 
   const advisorParam = route?.params?.advisor || {};
   const routeIsOwnProfile = route?.params?.isOwnProfile === true;
+
+  const [availableHours, setAvailableHours] = useState([]);
+
+  const getDisponibilidad = async (dia) => {
+    try {
+      const response = await apiFetch(
+        `/calendario/disponibilidad?id_perfil=${advisor.id_perfil}&dia_semana=${dia}`
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      let horas = [];
+
+      data.forEach((rango) => {
+        let inicio = parseInt(rango.hora_inicio.split(":")[0]);
+        let fin = parseInt(rango.hora_fin.split(":")[0]);
+
+        for (let h = inicio; h < fin; h++) {
+          horas.push(`${h.toString().padStart(2, "0")}:00`);
+        }
+      });
+
+      setAvailableHours(horas);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const [advisor, setAdvisor] = useState({
     id_usuario_auth: advisorParam?.id_usuario_auth || null,
@@ -424,6 +442,16 @@ export default function AdvisorProfile({ route, navigation }) {
                 <Calendar
                   onDayPress={(day) => {
                     setSelectedDate(day.dateString);
+
+                    const date = new Date(day.dateString);
+                    const dias = [
+                      "domingo","lunes","martes","miercoles",
+                      "jueves","viernes","sabado"
+                    ];
+
+                    const diaSemana = dias[date.getDay()];
+
+                    getDisponibilidad(diaSemana);
                   }}
                   markedDates={{
                     [selectedDate]: {

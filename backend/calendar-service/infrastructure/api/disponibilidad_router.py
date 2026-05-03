@@ -8,14 +8,12 @@ from infrastructure.api.schemas import DisponibilidadSemanalCreate
 
 router = APIRouter(prefix="/calendario", tags=["Calendario"])
 
-@router.post("/disponibilidad")
-def crear_disponibilidad_semanal(
-    data: DisponibilidadSemanalCreate,
+@router.get("/disponibilidad")
+def obtener_disponibilidad(
+    id_perfil: int = Query(...),
+    dia_semana: str = Query(...),
     db: Session = Depends(get_db)
 ):
     repo = DisponibilidadSemanalRepository(db)
-    use_case = CrearDisponibilidadSemanal(repo)
 
-    use_case.ejecutar(data)
-
-    return {"mensaje": "Disponibilidad semanal creada"}
+    return repo.obtener_por_dia(id_perfil, dia_semana)
