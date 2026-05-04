@@ -602,3 +602,9 @@ ADD COLUMN token_qr VARCHAR(255) NULL;
 cd Frontend
 
 npx expo install expo-camera
+
+cd backend/calendar-service
+source calendario/bin/activate
+
+pip install httpx
+# -------------------------------------------------------------------------------------------------------

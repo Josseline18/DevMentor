@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   View, Text, StyleSheet,
   Alert, SafeAreaView, TouchableOpacity,
@@ -13,8 +13,14 @@ export default function EscanearQR({ navigation }) {
   const [scanned, setScanned]           = useState(false);
   const [loading, setLoading]           = useState(false);
 
+  // Ref para bloqueo síncrono — evita múltiples disparos del scanner
+  const procesando = useRef(false);
+
   const handleBarCodeScanned = async ({ data }) => {
-    if (scanned || loading) return;
+    // Bloqueo inmediato con ref (síncrono, no espera re-render)
+    if (procesando.current) return;
+    procesando.current = true;
+
     setScanned(true);
     setLoading(true);
 
@@ -33,12 +39,25 @@ export default function EscanearQR({ navigation }) {
         );
       } else {
         Alert.alert("QR inválido", body.detail || "No se pudo verificar", [
-          { text: "Reintentar", onPress: () => setScanned(false) },
+          {
+            text: "Reintentar",
+            onPress: () => {
+              // Resetear ambos al reintentar
+              procesando.current = false;
+              setScanned(false);
+            },
+          },
         ]);
       }
     } catch {
       Alert.alert("Error", "Error de conexión", [
-        { text: "Reintentar", onPress: () => setScanned(false) },
+        {
+          text: "Reintentar",
+          onPress: () => {
+            procesando.current = false;
+            setScanned(false);
+          },
+        },
       ]);
     } finally {
       setLoading(false);
@@ -71,7 +90,13 @@ export default function EscanearQR({ navigation }) {
         </Text>
         <View style={s.visor} />
         {scanned && !loading && (
-          <TouchableOpacity style={s.btnRescan} onPress={() => setScanned(false)}>
+          <TouchableOpacity
+            style={s.btnRescan}
+            onPress={() => {
+              procesando.current = false;
+              setScanned(false);
+            }}
+          >
             <Text style={{ color: "#fff", fontWeight: "700" }}>Escanear otro</Text>
           </TouchableOpacity>
         )}

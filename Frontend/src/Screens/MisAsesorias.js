@@ -81,7 +81,7 @@ export default function MisAsesorias() {
       <View style={s.cardHeader}>
         <Ionicons name="person-circle-outline" size={40} color={colors.primary} />
         <View style={{ marginLeft: 10, flex: 1 }}>
-          <Text style={s.alumnoText}>Alumno #{item.id_usuario}</Text>
+          <Text style={s.alumnoText}>{item.nombre_alumno}</Text>
           <Text style={s.fechaText}>{item.fecha}  •  {item.hora}</Text>
         </View>
         <View style={[s.badge, item.estado_qr === "completada" ? s.badgeOk : s.badgePendiente]}>
