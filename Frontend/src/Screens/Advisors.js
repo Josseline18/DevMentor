@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { apiFetch } from "../config/api";
 
-export default function Advisors({ navigation }) {
+export default function Advisors({ navigation, route }) {
   const [advisors, setAdvisors] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,6 +91,7 @@ export default function Advisors({ navigation }) {
     }
   };
 
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
@@ -110,9 +111,10 @@ export default function Advisors({ navigation }) {
     </TouchableOpacity>
   );
 
+  const nombreMateria = route?.params?.nombreMateria || "Asesores";
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Asesores</Text>
+      <Text style={styles.title}>{nombreMateria}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#1E5BE0" />
       ) : (
@@ -129,6 +131,7 @@ export default function Advisors({ navigation }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

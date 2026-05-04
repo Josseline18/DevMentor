@@ -499,3 +499,79 @@ CREATE TABLE disponibilidades (
   hora_fin TIME,
   activo BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+
+# Insercion de todas las materias de LIDTS
+# entrar a base de datos de docker:
+  docker exec -it admin-devmentor-mysql bash
+
+# ejecutar (las primeras dos lineas copien las dos al mismo tiempo y la tercera por aparte despues de ejecutar las primeras):
+  export LANG=C.UTF-8
+  mysql -u root -p --default-character-set=utf8mb4
+  
+  SET NAMES utf8mb4;
+
+# seleccionar la base de datos:
+  use BD_materias
+
+# insertar y borrar los datos anteriores:
+  TRUNCATE TABLE materias;
+
+  INSERT INTO materias (id, nombre, descripcion, semestre, carrera_id, activa, created_at) VALUES
+
+  (1,'Compiladores','Fases y diseño de compiladores.',6,1,1,'2026-04-30 03:39:43'),
+  (2,'Contabilidad y finanzas','Principios contables y análisis financiero.',6,1,1,'2026-04-30 03:39:43'),
+  (3,'Economía','Conceptos básicos de economía aplicada.',6,1,1,'2026-04-30 03:39:43'),
+  (4,'Interfaces humano-computadora','Diseño centrado en el usuario.',6,1,1,'2026-04-30 03:39:43'),
+  (5,'Modelos y metodologías de desarrollo de software','Metodologías ágiles y tradicionales.',6,1,1,'2026-04-30 03:39:43'),
+  (6,'Protocolos de enrutamiento','Configuración y administración de rutas.',6,1,1,'2026-04-30 03:39:43'),
+  (7,'Taller de Desarrollo 4','Proyecto práctico de desarrollo.',6,1,1,'2026-04-30 03:39:43'),
+  (8,'Inglés','Comprensión y comunicación avanzada.',6,1,1,'2026-04-30 03:39:43'),
+
+  (9,'Fundamentos de matemáticas','Bases matemáticas para el razonamiento lógico y analítico.',1,1,1,'2026-05-03 21:49:34'),
+  (10,'Matemáticas discretas','Estructuras matemáticas para la computación y lógica.',1,1,1,'2026-05-03 21:50:58'),
+  (11,'Física','Principios fundamentales del movimiento y la energía.',1,1,1,'2026-05-03 21:52:08'),
+  (12,'Metodología de la programación','Técnicas básicas para resolver problemas con código.',1,1,1,'2026-05-03 21:52:08'),
+  (13,'Programación estructurada','Programación organizada con estructuras de control.',1,1,1,'2026-05-03 21:52:08'),
+  (14,'Taller de competencias informacionales','Búsqueda, análisis y uso ético de información.',1,1,1,'2026-05-03 21:52:08'),
+
+  (15,'Cálculo diferencial','Estudio de límites, derivadas y aplicaciones.',2,1,1,'2026-05-03 21:53:42'),
+  (16,'Álgebra lineal','Vectores, matrices y sistemas de ecuaciones.',2,1,1,'2026-05-03 21:53:42'),
+  (17,'Programación orientada a objetos','Clases, objetos, herencia y encapsulamiento.',2,1,1,'2026-05-03 21:53:42'),
+  (18,'Estructura de datos','Organización eficiente de datos en memoria.',2,1,1,'2026-05-03 21:53:42'),
+  (19,'Electricidad y electrónica','Fundamentos de circuitos y componentes electrónicos.',2,1,1,'2026-05-03 21:53:42'),
+  (20,'Taller de metodología de la investigación','Proceso científico y elaboración de proyectos.',2,1,1,'2026-05-03 21:53:42'),
+
+  (21,'Cálculo integral','Integrales y aplicaciones en ingeniería.',3,1,1,'2026-05-03 21:55:13'),
+  (22,'Métodos numéricos','Algoritmos para resolver problemas matemáticos.',3,1,1,'2026-05-03 21:55:13'),
+  (23,'Programación avanzada','Técnicas avanzadas y optimización de código.',3,1,1,'2026-05-03 21:55:13'),
+  (25,'Sistemas digitales','Diseño y análisis de circuitos digitales.',3,1,1,'2026-05-03 21:55:13'),
+  (26,'Diseño de bases de datos','Modelado y creación de bases relacionales.',3,1,1,'2026-05-03 21:55:13'),
+  (27,'Taller de desarrollo 1','Proyecto práctico de desarrollo de software.',3,1,1,'2026-05-03 21:55:13'),
+
+  (28,'Ecuaciones diferenciales','Modelado matemático con ecuaciones diferenciales.',4,1,1,'2026-05-03 21:56:11'),
+  (29,'Probabilidad y estadística','Análisis de datos y variables aleatorias.',4,1,1,'2026-05-03 21:56:11'),
+  (30,'Programación distribuida y en paralelo','Sistemas concurrentes y procesamiento paralelo.',4,1,1,'2026-05-03 21:56:11'),
+  (31,'Estudio de las organizaciones','Estructura y funcionamiento empresarial.',4,1,1,'2026-05-03 21:56:11'),
+  (32,'Arquitectura de computadoras','Diseño y funcionamiento del hardware.',4,1,1,'2026-05-03 21:56:11'),
+  (33,'Administración de bases de datos','Gestión y optimización de bases de datos.',4,1,1,'2026-05-03 21:56:11'),
+  (34,'Taller de desarrollo 2','Desarrollo práctico de proyectos de software.',4,1,1,'2026-05-03 21:56:11'),
+
+  (35,'Teoría matemática de la computación','Autómatas, lenguajes formales y complejidad.',5,1,1,'2026-05-03 21:57:49'),
+  (36,'Investigación de operaciones','Optimización y toma de decisiones cuantitativas.',5,1,1,'2026-05-03 21:57:49'),
+  (37,'Calidad en los procesos de desarrollo de software','Modelos y métricas para asegurar calidad.',5,1,1,'2026-05-03 21:57:49'),
+  (38,'Traductores de bajo nivel','Compiladores, ensambladores y análisis léxico.',5,1,1,'2026-05-03 21:57:49'),
+  (39,'Fundamentos de redes','Protocolos, modelos OSI y comunicación de datos.',5,1,1,'2026-05-03 21:57:49'),
+  (40,'Tópicos avanzados de bases de datos','Optimización y tecnologías avanzadas de datos.',5,1,1,'2026-05-03 21:57:49'),
+  (41,'Taller de desarrollo 3','Proyecto integrador de desarrollo de software.',5,1,1,'2026-05-03 21:57:49'),
+
+  (42,'Desarrollo de aplicaciones web y móviles','Creación de apps web y móviles.',7,1,1,'2026-05-03 21:58:36'),
+  (43,'Sistemas operativos','Gestión de procesos, memoria y archivos.',7,1,1,'2026-05-03 21:58:36'),
+  (44,'Conmutadores y redes inalámbricas','Configuración de switches y redes WiFi.',7,1,1,'2026-05-03 21:58:36'),
+  (45,'Inteligencia artificial','Algoritmos inteligentes y aprendizaje automático.',7,1,1,'2026-05-03 21:58:36'),
+
+  (46,'Administración de sistemas operativos','Configuración y gestión avanzada de sistemas.',8,1,1,'2026-05-03 21:59:04'),
+  (47,'Cómputo distribuido','Sistemas distribuidos y procesamiento remoto.',8,1,1,'2026-05-03 21:59:04'),
+  (48,'Graficación','Modelado y renderizado de gráficos computacionales.',8,1,1,'2026-05-03 21:59:04'),
+  (49,'Taller de investigación en las ciencias computacionales','Desarrollo de proyectos de investigación aplicada.',8,1,1,'2026-05-03 21:59:04'),
+
+  (50,'Taller de elaboración del informe de investigación','Redacción y presentación formal del proyecto final.',9,1,1,'2026-05-03 21:59:25');

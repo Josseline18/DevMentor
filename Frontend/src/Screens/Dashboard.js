@@ -17,12 +17,42 @@ export default function Dashboard({ navigation }) {
   const materiasImageMap = {
     "Compiladores": require("../../assets/images/compiladores.jpg"),
     "Contabilidad y finanzas": require("../../assets/images/conta.jpg"),
-    "Economia": require("../../assets/images/economia.webp"),
+    "Economía": require("../../assets/images/economia.webp"),
     "Interfaces humano-computadora": require("../../assets/images/interfaces.jpg"),
-    "Modelos y metodologias de desarrollo de software": require("../../assets/images/modelos.jpg"),
+    "Modelos y metodologías de desarrollo de software": require("../../assets/images/modelos.jpg"),
     "Protocolos de enrutamiento": require("../../assets/images/protocolos.jpg"),
     "Taller de Desarrollo 4": require("../../assets/images/taller4.jpg"),
-    "Ingles": require("../../assets/images/ingles6.jpg"),
+    "Inglés": require("../../assets/images/ingles6.jpg"),
+    "Taller de elaboración del informe de investigación": require("../../assets/images/tesis9.webp"),
+    "Administración de sistemas operativos": require("../../assets/images/SO8.jpg"),
+    "Cómputo distribuido": require("../../assets/images/distribuido.webp"),
+    "Graficación" : require("../../assets/images/graficacion.webp"),
+    "Taller de investigación en las ciencias computacionales" : require("../../assets/images/computacionales8.jpg"),
+    "Sistemas operativos": require("../../assets/images/SO8.jpg"),
+    "Desarrollo de aplicaciones web y móviles": require("../../assets/images/movil.jpg"),
+    "Conmutadores y redes inalámbricas" : require("../../assets/images/conmutadores.webp"),
+    "Inteligencia artificial": require("../../assets/images/AI.jpg"),
+    "Teoría matemática de la computación": require("../../assets/images/teoria5.jpg"),
+    "Investigación de operaciones": require("../../assets/images/operaciones.jpg"),
+    "Calidad en los procesos de desarrollo de software": require("../../assets/images/calidad.jpg"),
+    "Traductores de bajo nivel": require("../../assets/images/traductores.jpg"),
+    "Fundamentos de redes": require("../../assets/images/redes5.jpg"),
+    "Tópicos avanzados de bases de datos": require("../../assets/images/baseDatos.webp"),
+    "Taller de desarrollo 3": require("../../assets/images/taller3.webp"),
+    "Ecuaciones diferenciales": require("../../assets/images/diferenciales.jpg"),
+    "Probabilidad y estadística" : require("../../assets/images/estadistica.jpeg"),
+    "Programación distribuida y en paralelo" : require("../../assets/images/paralelo.jpg"),
+    "Estudio de las organizaciones" : require("../../assets/images/organizaciones.jpg"),
+    "Arquitectura de computadoras" : require("../../assets/images/arqui.webp"),
+    "Administración de bases de datos" : require("../../assets/images/DB.webp"),
+    "Taller de desarrollo 2" : require("../../assets/images/taller3.webp"),
+    "Cálculo integral" : require("../../assets/images/integral.jpg"),
+    "Métodos numéricos" : require("../../assets/images/metodos.jpg"),
+    "Programación avanzada" : require("../../assets/images/programacion.jpg"),
+    "Sistemas digitales" : require("../../assets/images/digitales.jpg"),
+    "Diseño de bases de datos" : require("../../assets/images/diseñoBD.jpg"),
+    "Taller de desarrollo 1" : require("../../assets/images/taller1.webp"),
+    
   };
 
   const resolveMateriaImage = (nombre) => {
@@ -164,9 +194,105 @@ export default function Dashboard({ navigation }) {
                   onPress={() => navigation.navigate("Asesores")}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={resolveImageSource(m.imagen)} style={styles.image} />
+                    <Card.Cover 
+                    source={resolveMateriaImage(m.nombre)} 
+                    style={styles.image} 
+                    />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 9° semestre LIDTS</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias9.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover 
+                      source={resolveMateriaImage(m.nombre)} 
+                      style={styles.image} 
+                    />
+                    <Card.Content>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
+                      <Text style={styles.description} >{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 8° semestre LIDTS</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias8.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover 
+                      source={resolveMateriaImage(m.nombre)} 
+                      style={styles.image} 
+                    />
+                    <Card.Content>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
+                      <Text style={styles.description}>{m.descripcion}</Text>
+                    </Card.Content>
+                  </Card>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+
+            <View style={styles.sectionHeader}>
+              <View style={styles.line} />
+              <Text style={styles.sectionTitle}>Materias 7° semestre LIDTS</Text>
+            </View>
+
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 6, paddingRight: 20 }}
+            >
+              {materias7.map((m, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
+                >
+                  <Card style={styles.card}>
+                    <Card.Cover 
+                      source={resolveMateriaImage(m.nombre)} 
+                      style={styles.image} 
+                    />
+                    <Card.Content>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -187,7 +313,9 @@ export default function Dashboard({ navigation }) {
               {materias6.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
                     <Card.Cover 
@@ -195,7 +323,7 @@ export default function Dashboard({ navigation }) {
                       style={styles.image} 
                     />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -205,7 +333,7 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 5° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 5° semestre LIDTS</Text>
             </View>
 
             <ScrollView
@@ -216,12 +344,17 @@ export default function Dashboard({ navigation }) {
               {materias5.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={defaultCardImage} style={styles.image} />
+                    <Card.Cover 
+                    source={resolveMateriaImage(m.nombre)} 
+                    style={styles.image}  
+                    />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -231,7 +364,7 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 4° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 4° semestre LIDTS</Text>
             </View>
 
             <ScrollView
@@ -242,12 +375,17 @@ export default function Dashboard({ navigation }) {
               {materias4.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={defaultCardImage} style={styles.image} />
+                    <Card.Cover 
+                    source={resolveMateriaImage(m.nombre)} 
+                    style={styles.image}  
+                    />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -257,7 +395,7 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 3° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 3° semestre LIDTS</Text>
             </View>
 
             <ScrollView
@@ -268,12 +406,17 @@ export default function Dashboard({ navigation }) {
               {materias3.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={defaultCardImage} style={styles.image} />
+                    <Card.Cover 
+                    source={resolveMateriaImage(m.nombre)} 
+                    style={styles.image}  
+                    />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -283,7 +426,7 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 2° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 2° semestre LIDTS</Text>
             </View>
 
             <ScrollView
@@ -294,12 +437,14 @@ export default function Dashboard({ navigation }) {
               {materias2.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
                     <Card.Cover source={defaultCardImage} style={styles.image} />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
@@ -309,7 +454,7 @@ export default function Dashboard({ navigation }) {
 
             <View style={styles.sectionHeader}>
               <View style={styles.line} />
-              <Text style={styles.sectionTitle}>Materias 1° semestre</Text>
+              <Text style={styles.sectionTitle}>Materias 1° semestre LIDTS</Text>
             </View>
 
             <ScrollView
@@ -320,12 +465,14 @@ export default function Dashboard({ navigation }) {
               {materias1.map((m, index) => (
                 <TouchableOpacity
                   key={index}
-                  onPress={() => navigation.navigate("Asesores")}
+                  onPress={() => navigation.navigate("Asesores", {
+                    nombreMateria: m.nombre
+                  })}
                 >
                   <Card style={styles.card}>
                     <Card.Cover source={m.imagen} style={styles.image} />
                     <Card.Content>
-                      <Text style={styles.subject}>{m.nombre}</Text>
+                      <Text style={styles.subject}numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
                     </Card.Content>
                   </Card>
