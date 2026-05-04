@@ -56,7 +56,7 @@ export default function AdvisorProfile({ route, navigation }) {
   const [availableHours, setAvailableHours] = useState([]);
   const hoy = new Date().toISOString().split("T")[0];
 
-  const getDisponibilidad = async (dia) => {
+  const getDisponibilidad = async (dia, fechaSeleccionada) => {
     try {
       const response = await apiFetch(
         `/calendario/disponibilidad?id_perfil=${advisor.id_perfil}&dia_semana=${dia}`
@@ -65,6 +65,11 @@ export default function AdvisorProfile({ route, navigation }) {
       if (!response.ok) return;
 
       const data = await response.json();
+
+      if (!data || data.length === 0) {
+        setAvailableHours([]);
+        return;
+      }
 
       let horas = [];
 
@@ -77,10 +82,42 @@ export default function AdvisorProfile({ route, navigation }) {
         }
       });
 
-      setAvailableHours(horas);
+      const citas = await getCitasPorFecha(fechaSeleccionada);
+      
+      const horasOcupadas = citas.map((cita) =>
+        cita.hora.slice(0, 5)
+      );
+      
+      const horasDisponibles = horas.filter(
+        (hora) => !horasOcupadas.includes(hora)
+      );
+
+      setAvailableHours(horasDisponibles);
 
     } catch (err) {
       console.log(err);
+    }
+  };
+
+  const getCitasPorFecha = async (fecha) => {
+    try {
+      const response = await apiFetch(
+        `/calendario/citas/asesor/${advisor.id_perfil}`
+      );
+
+      if (!response.ok) return [];
+
+      const citas = await response.json();
+
+      const citasDelDia = citas.filter(
+        (cita) => cita.fecha === fecha
+      );
+
+      return citasDelDia;
+
+    } catch (error) {
+      console.log(error);
+      return [];
     }
   };
 
@@ -444,6 +481,7 @@ export default function AdvisorProfile({ route, navigation }) {
                   minDate={hoy}
                   onDayPress={(day) => {
                     setSelectedDate(day.dateString);
+                    setSelectedHour("");
 
                     const date = new Date(day.dateString);
                     const dias = [
@@ -453,7 +491,7 @@ export default function AdvisorProfile({ route, navigation }) {
 
                     const diaSemana = dias[date.getDay()];
 
-                    getDisponibilidad(diaSemana);
+                    getDisponibilidad(diaSemana, day.dateString);
                   }}
                   markedDates={{
                     [selectedDate]: {
@@ -473,6 +511,7 @@ export default function AdvisorProfile({ route, navigation }) {
                       style={{
                         flexDirection: "row",
                         flexWrap: "wrap",
+
                         marginTop: 10,
                       }}
                     >
@@ -505,11 +544,12 @@ export default function AdvisorProfile({ route, navigation }) {
                 <TouchableOpacity
                   style={{
                     marginTop: 15,
-                    backgroundColor: "#6C63FF",
-                    padding: 12,
+                    backgroundColor: 
+                      availableHours.length === 0 ? "#ccc" : "#6C63FF",                    padding: 12,
                     borderRadius: 8,
                     alignItems: "center",
                   }}
+                  disable={availableHours.length === 0}
                   onPress={agendarCita}
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
