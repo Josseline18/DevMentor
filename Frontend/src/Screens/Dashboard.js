@@ -9,9 +9,9 @@ const { width } = Dimensions.get("window");
 export default function Dashboard({ navigation }) {
 
   const languageImageMap = {
-    "python.png": require("../../assets/images/p.jpg"),
-    "java.png": require("../../assets/images/java.png"),
-    "c++.png": require("../../assets/images/c++.png"),
+    "Python": require("../../assets/images/python.jpg"),
+    "Java": require("../../assets/images/java.webp"),
+    "C++": require("../../assets/images/c++.png"),
   };
 
   const materiasImageMap = {
@@ -52,7 +52,18 @@ export default function Dashboard({ navigation }) {
     "Sistemas digitales" : require("../../assets/images/digitales.jpg"),
     "Diseño de bases de datos" : require("../../assets/images/diseñoBD.jpg"),
     "Taller de desarrollo 1" : require("../../assets/images/taller1.webp"),
-    
+    "Cálculo diferencial" : require("../../assets/images/diferencial.jpg"),
+    "Álgebra lineal" : require("../../assets/images/algebra.jpg"),
+    "Programación orientada a objetos" : require("../../assets/images/objetos.png"),
+    "Estructura de datos" : require("../../assets/images/estructura.jpg"),
+    "Electricidad y electrónica" : require("../../assets/images/electricidad.jpg"),
+    "Taller de metodología de la investigación" : require("../../assets/images/metodologia.jpg"),
+    "Fundamentos de matemáticas" : require("../../assets/images/fundamentos.webp"),
+    "Matemáticas discretas" : require("../../assets/images/discretas.jpg"),
+    "Física" : require("../../assets/images/fisica.jpg"),
+    "Metodología de la programación" : require("../../assets/images/programacion1.jpg"),
+    "Programación estructurada" : require("../../assets/images/estructurada.jpg"),
+    "Taller de competencias informacionales" : require("../../assets/images/competencias.gif"),    
   };
 
   const resolveMateriaImage = (nombre) => {
@@ -67,7 +78,7 @@ export default function Dashboard({ navigation }) {
   const resolveImageSource = (imagen) => {
     if (!imagen || typeof imagen !== "string") return defaultCardImage;
 
-    const normalized = imagen.trim().toLowerCase();
+    const normalized = imagen.trim();
     return languageImageMap[normalized] || defaultCardImage;
   };
 
@@ -195,7 +206,7 @@ export default function Dashboard({ navigation }) {
                 >
                   <Card style={styles.card}>
                     <Card.Cover 
-                    source={resolveMateriaImage(m.nombre)} 
+                    source={resolveImageSource(m.nombre)} 
                     style={styles.image} 
                     />
                     <Card.Content>
@@ -442,7 +453,10 @@ export default function Dashboard({ navigation }) {
                   })}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={defaultCardImage} style={styles.image} />
+                    <Card.Cover 
+                    source={resolveMateriaImage(m.nombre)} 
+                    style={styles.image}  
+                    />
                     <Card.Content>
                       <Text style={styles.subject} numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
@@ -470,7 +484,10 @@ export default function Dashboard({ navigation }) {
                   })}
                 >
                   <Card style={styles.card}>
-                    <Card.Cover source={m.imagen} style={styles.image} />
+                    <Card.Cover 
+                      source={resolveMateriaImage(m.nombre)} 
+                      style={styles.image} 
+                    />
                     <Card.Content>
                       <Text style={styles.subject}numberOfLines={1}>{m.nombre}</Text>
                       <Text style={styles.description}>{m.descripcion}</Text>
