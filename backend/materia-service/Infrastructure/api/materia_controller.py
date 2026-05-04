@@ -7,6 +7,7 @@ from Application.use_cases.get_materias import GetMateriasUseCase
 from Application.use_cases.update_materia import UpdateMateriaUseCase
 from Application.use_cases.delete_materia import DeleteMateriaUseCase
 from Infrastructure.api.schemas.materia_schema import MateriaCreateSchema
+from Infrastructure.api.schemas.materia_schema import MateriaUpdateSchema
 
 router = APIRouter(prefix="/materias")
 
@@ -52,20 +53,27 @@ def get_materias(db: Session = Depends(get_db)):
     use_case = GetMateriasUseCase(repository)
     return use_case.execute()
 
+from Infrastructure.api.schemas.materia_schema import MateriaUpdateSchema
+
 @router.put("/{materia_id}")
 def update_materia(
     materia_id: int,
-    nombre: str,
-    carrera_id: int,
-    activa: bool = True,
+    materia: MateriaUpdateSchema,
     db: Session = Depends(get_db)
 ):
     use_case = UpdateMateriaUseCase(db)
-    materia = use_case.execute(materia_id, nombre, carrera_id, activa)
-    
-    if not materia:
+
+    updated = use_case.execute(
+        materia_id,
+        materia.nombre,
+        materia.carrera_id,
+        materia.activa
+    )
+
+    if not updated:
         raise HTTPException(status_code=404, detail="Materia no encontrada")
-    return materia
+
+    return updated
 
 @router.delete("/{materia_id}")
 def delete_materia(
@@ -79,3 +87,5 @@ def delete_materia(
         raise HTTPException(status_code=404, detail="Materia no encontrada")
 
     return {"message: Materia eliminada exitosamente"}
+
+

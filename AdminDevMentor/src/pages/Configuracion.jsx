@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
 import { NuevaMateriaModal } from '../components/ui/NuevaMateriaModal';
 
@@ -6,12 +6,88 @@ export default function Configuracion() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' o 'moderacion'
 
-  // Datos de prueba simulando lo que vendrá del backend
-  const materiasOficiales = [
-    { id: '001', nombre: 'Taller de Desarrollo 4', carrera: 'Ingeniería en Desarrollo de Software', estado: 'Activa' },
-    { id: '002', nombre: 'Cálculo Integral', carrera: 'Ciencias Exactas', estado: 'Activa' },
-    { id: '003', nombre: 'Ética Profesional', carrera: 'Humanidades', estado: 'Inactiva' },
-  ];
+  const [materiasOficiales, setMateriasOficiales] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [materiaSeleccionada, setMateriaSeleccionada] = useState(null);
+
+  const [mensaje, setMensaje] = useState("");
+  console.log("Mensaje actual:", mensaje);
+
+  const toggleEstado = async (materia) => {
+    try {
+      const nuevoEstado = Number(materia.activa) === 1 ? false : true;
+
+      const response = await fetch(
+        `http://localhost:8002/materias/${materia.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            nombre: materia.nombre,
+            carrera_id: materia.carrera_id,
+            activa: nuevoEstado
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error al actualizar");
+      }
+
+      const updated = await response.json();
+
+      setMateriasOficiales((prev) =>
+        prev.map((m) =>
+          m.id === materia.id
+            ? { ...m, activa: updated.activa ? 1 : 0 }
+            : m
+        )
+      );
+      setMensaje("Estado actualizado correctamente");
+
+      setTimeout(() => {
+        setMensaje("");
+      }, 3000);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdicionExitosa = async () => {
+    setMensaje("Materia actualizada correctamente");
+
+    setTimeout(() => {
+      setMensaje("");
+    }, 3000);
+
+    const response = await fetch("http://localhost:8002/materias");
+    const data = await response.json();
+    setMateriasOficiales(data);
+  };
+
+  useEffect(() => {
+    const fetchMaterias = async () => {
+      try {
+        const response = await fetch("http://localhost:8002/materias");
+
+        if (!response.ok) throw new Error("Error al obtener materias");
+
+        const data = await response.json();
+
+        setMateriasOficiales(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMaterias();
+  }, []);
 
   return (
     <div className="animate-fade-in max-w-7xl mx-auto">
@@ -51,6 +127,12 @@ export default function Configuracion() {
       {/* Contenido de la pestaña actual */}
       {activeTab === 'catalogo' && (
         <div className="bg-surface-lowest p-8 rounded-md shadow-cloud">
+
+          {mensaje && (
+            <div className="mb-4 p-3 rounded-lg bg-green-100 text-green-700 font-medium">
+              {mensaje}
+            </div>
+          )}
           
           {/* Cabecera de la tabla */}
           <div className="flex justify-between items-center mb-6">
@@ -77,20 +159,28 @@ export default function Configuracion() {
                   <tr key={index} className="border-b border-outline-variant/10 hover:bg-surface-high/20 transition-colors">
                     <td className="p-4 text-on-surface/60">{materia.id}</td>
                     <td className="p-4 font-bold text-on-surface">{materia.nombre}</td>
-                    <td className="p-4 text-on-surface/80">{materia.carrera}</td>
+                    <td className="p-4 text-on-surface/80">{materia.carrera_id === 1 ? "LIDTS" : "LSC"}</td>
                     <td className="p-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                        materia.estado === 'Activa' 
+                        Number(materia.activa) === 1 
                           ? 'bg-success-container/30 text-on-success' 
                           : 'bg-outline-variant/20 text-on-surface/60'
                       }`}>
-                        {materia.estado}
+                        {Number(materia.activa) === 1 ? 'Activa' : 'Inactiva'}
                       </span>
                     </td>
                     <td className="p-4 text-right flex flex-col gap-1 items-end">
-                      <button className="text-primary hover:underline font-medium text-sm">Editar</button>
-                      <button className="text-primary hover:underline font-medium text-sm">
-                        {materia.estado === 'Activa' ? 'Desactivar' : 'Activar'}
+                      <button onClick={() => {
+                        setMateriaSeleccionada(materia);
+                        setModalOpen(true);
+                      }}>
+                        Editar
+                      </button>
+                      <button
+                        onClick={() => toggleEstado(materia)}
+                        className="text-primary hover:underline font-medium text-sm"
+                      >
+                        {Number(materia.activa) === 1 ? 'Desactivar' : 'Activar'}
                       </button>
                     </td>
                   </tr>
@@ -101,10 +191,11 @@ export default function Configuracion() {
         </div>
       )}
 
-      {/* Renderizado del Modal */}
-      <NuevaMateriaModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <NuevaMateriaModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        materia={materiaSeleccionada}
+        onSuccess={handleEdicionExitosa}
       />
 
     </div>

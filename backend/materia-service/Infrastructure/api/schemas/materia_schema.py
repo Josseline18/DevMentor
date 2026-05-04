@@ -6,3 +6,8 @@ class MateriaCreateSchema(BaseModel):
     semestre: int
     carrera: str   
     activa: bool
+
+class MateriaUpdateSchema(BaseModel):
+    nombre: str
+    carrera_id: int
+    activa: bool
