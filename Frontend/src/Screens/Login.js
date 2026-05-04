@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import { Asset } from "expo-asset";
 import styles from "../Styles/RegistroStyle";
-import { API_URL } from "../config/api";
-import { setAccessToken, setCurrentUser } from "../services/sessionService";
+import { API_URL,apiFetch } from "../config/api";
+import { setAccessToken, setCurrentUser, updateCurrentUser } from "../services/sessionService";
 
 export default function Login({ navigation }) {
 
@@ -76,6 +76,16 @@ export default function Login({ navigation }) {
         rol: usuario.rol,
       });
       setAccessToken(accessToken);
+
+      if (usuario.rol === "Asesor") {
+        try {
+          const perfilRes = await apiFetch(`/advisors/user/${usuario.id}`);
+          if (perfilRes.ok) {
+            const perfilData = await perfilRes.json();
+            updateCurrentUser({ id_perfil: perfilData.id_perfil });
+          }
+        } catch {}
+      }
 
       setLoginSuccess(true);
       redirectTimeoutRef.current = setTimeout(() => {

@@ -182,7 +182,7 @@ export default function AdvisorProfile({ route, navigation }) {
         },
         body: JSON.stringify({
           id_perfil: advisor.id_perfil,
-          id_usuario: 1, // usuario logueado real
+          id_usuario: userId, // usuario logueado real
           fecha: selectedDate,
           hora: selectedHour
         }),

@@ -29,6 +29,8 @@ import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 import UploadMaterialScreen from "./src/Screens/UploadMaterialScreen";
 import MyAccount from "./src/Screens/MyAccount";
 import Disponibilidad from "./src/Screens/DisponibilidadScreen";
+import MisAsesorias from "./src/Screens/MisAsesorias";
+import EscanearQR   from "./src/Screens/EscanearQR";
 import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService"
 
 
@@ -122,6 +124,23 @@ function AppDrawer({ visible, onClose }) {
                   <Text style={drawerStyles.menuText}>Ver mi perfil de asesor</Text>
                 </TouchableOpacity>
               )}
+
+              {/* Mis asesorías — solo Asesores */}
+              {currentUser?.rol === "Asesor" && (
+                <TouchableOpacity style={drawerStyles.menuItem} onPress={() => goTo("MisAsesorias")}>
+                  <Ionicons name="calendar-outline" size={20} color="#1E5BE0" />
+                  <Text style={drawerStyles.menuText}>Mis asesorías</Text>
+                </TouchableOpacity>
+              )}
+
+              {/* Escanear QR — solo Estudiantes */}
+              {currentUser?.rol === "Estudiante" && (
+                <TouchableOpacity style={drawerStyles.menuItem} onPress={() => goTo("EscanearQR")}>
+                  <Ionicons name="qr-code-outline" size={20} color="#1E5BE0" />
+                  <Text style={drawerStyles.menuText}>Escanear QR</Text>
+                </TouchableOpacity>
+              )}
+
             </View>
 
             <TouchableOpacity
@@ -264,6 +283,25 @@ export default function App() {
           name="Register" 
           component={Register} 
           options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="MisAsesorias"
+          component={MisAsesorias}
+          options={{
+            title: "Mis asesorías",
+            headerLeft: () => (
+              <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
+                <Ionicons name="menu" size={24} color="#1E5BE0" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Stack.Screen
+          name="EscanearQR"
+          component={EscanearQR}
+          options={{ title: "Escanear QR", headerShown: false }}
         />
 
       </Stack.Navigator>

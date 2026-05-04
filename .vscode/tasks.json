@@ -12,6 +12,7 @@
                 "Content Service",
                 "Report Service",
                 "Calendar Service",
+                "QR Service",
                 "ngrok"
 
             ],
@@ -91,6 +92,14 @@
             "command": "ngrok http 8000",
             "isBackground": true,
             "icon": { "id": "terminal", "color": "terminal.ansiRed" },
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        },
+        {
+            "label": "QR Service",
+            "type": "shell",
+            "command": "cd backend/qr-service; source qr/bin/activate; uvicorn main:app --port 8008 --reload",
+            "isBackground": true,
+            "icon": { "id": "symbol-function", "color": "terminal.ansiGreen" },
             "presentation": { "reveal": "always", "panel": "dedicated" }
         }
     ]

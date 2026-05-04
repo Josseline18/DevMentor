@@ -277,21 +277,26 @@ cd backend/content-service
 source contenidos/bin/activate
 uvicorn main:app --port 8005 --reload
 
-# Terminal 7
+# Terminal 6
 cd backend && cd calendar-service
 source calendario/bin/activate
 uvicorn app:app --reload --port 8007
 
-# Terminal 6
+# Terminal 7
+cd backend/qr-service
+source qr/bin/activate
+uvicorn main:app --port 8008 --reload
+
+# Terminal 8
 cd backend/api-gateway
 source apiGw/bin/activate
 uvicorn app:app --port 8000 --reload
 
-# Terminal 7:
+# Terminal 9:
 cd Frontend
 npx expo start --tunnel
 
-# Terminal 8:
+# Terminal 10:
 ngrok http 8000
 
 
@@ -575,3 +580,25 @@ CREATE TABLE disponibilidades (
   (49,'Taller de investigación en las ciencias computacionales','Desarrollo de proyectos de investigación aplicada.',8,1,1,'2026-05-03 21:59:04'),
 
   (50,'Taller de elaboración del informe de investigación','Redacción y presentación formal del proyecto final.',9,1,1,'2026-05-03 21:59:25');
+
+# ------------------------------------------------------------------------------------------------------
+- Microservicio de QR
+
+- Crear entorno e instalar dependencias
+
+cd backend/qr-service
+python3 -m venv qr
+source qr/bin/activate
+pip install -r requirements.txt
+
+- Modificar la base de datos
+use asesor_db;
+
+ALTER TABLE citas 
+ADD COLUMN estado_qr ENUM('pendiente','completada') DEFAULT 'pendiente',
+ADD COLUMN token_qr VARCHAR(255) NULL;
+
+- instalar dependencia
+cd Frontend
+
+npx expo install expo-camera
