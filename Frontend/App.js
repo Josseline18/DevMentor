@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
+  Dimensions,
   Image,
   Modal,
   Pressable,
@@ -36,6 +37,14 @@ import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService"
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
+
+const { width: screenWidth } = Dimensions.get("window");
+const BASE_WIDTH = 390;
+const scaleByWidth = (size) => (screenWidth / BASE_WIDTH) * size;
+const clampScale = (size, min, max) => {
+  const scaled = scaleByWidth(size);
+  return Math.min(Math.max(scaled, min), max);
+};
 
 function AppDrawer({ visible, onClose }) {
   const currentUser = getCurrentUser();
@@ -408,13 +417,18 @@ const appStyles = StyleSheet.create({
   },
   reviewsIconButton: {
     marginRight: 8,
-    padding: 8,
-    borderRadius: 999,
+    width: clampScale(42, 36, 48),
+    height: clampScale(42, 36, 48),
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "transparent",
   },
   reviewsIcon: { //tamaño del icono de reseñas
-    width: 27,
-    height: 27,
+    width: clampScale(42, 36, 48),
+    height: clampScale(42, 36, 48),
     resizeMode: "contain",
+    backgroundColor: "transparent",
   },
 });
 
