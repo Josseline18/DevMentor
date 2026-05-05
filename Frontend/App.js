@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
+  Dimensions,
   Image,
   Modal,
   Pressable,
@@ -13,6 +14,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  LogBox,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Asset } from "expo-asset";
@@ -27,10 +29,22 @@ import ReviewScreen from "./src/Screens/ReviewScreen";
 import WriteReviewScreen from "./src/Screens/WriteReviewScreen";
 import UploadMaterialScreen from "./src/Screens/UploadMaterialScreen";
 import MyAccount from "./src/Screens/MyAccount";
+import Disponibilidad from "./src/Screens/DisponibilidadScreen";
+import MisAsesorias from "./src/Screens/MisAsesorias";
+import EscanearQR   from "./src/Screens/EscanearQR";
 import { clearCurrentUser, getCurrentUser } from "./src/services/sessionService"
+
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef();
+
+const { width: screenWidth } = Dimensions.get("window");
+const BASE_WIDTH = 390;
+const scaleByWidth = (size) => (screenWidth / BASE_WIDTH) * size;
+const clampScale = (size, min, max) => {
+  const scaled = scaleByWidth(size);
+  return Math.min(Math.max(scaled, min), max);
+};
 
 function AppDrawer({ visible, onClose }) {
   const currentUser = getCurrentUser();
@@ -109,7 +123,8 @@ function AppDrawer({ visible, onClose }) {
                       navigationRef.navigate("AdvisorProfile", {
                         advisor: {
                           id_usuario_auth: currentUser?.id,
-                        }
+                        },
+                        isOwnProfile: true, 
                       });
                     }
                   }}
@@ -118,6 +133,23 @@ function AppDrawer({ visible, onClose }) {
                   <Text style={drawerStyles.menuText}>Ver mi perfil de asesor</Text>
                 </TouchableOpacity>
               )}
+
+              {/* Mis asesorías — solo Asesores */}
+              {currentUser?.rol === "Asesor" && (
+                <TouchableOpacity style={drawerStyles.menuItem} onPress={() => goTo("MisAsesorias")}>
+                  <Ionicons name="calendar-outline" size={20} color="#1E5BE0" />
+                  <Text style={drawerStyles.menuText}>Mis asesorías</Text>
+                </TouchableOpacity>
+              )}
+
+              {/* Escanear QR — solo Estudiantes */}
+              {currentUser?.rol === "Estudiante" && (
+                <TouchableOpacity style={drawerStyles.menuItem} onPress={() => goTo("EscanearQR")}>
+                  <Ionicons name="qr-code-outline" size={20} color="#1E5BE0" />
+                  <Text style={drawerStyles.menuText}>Escanear QR</Text>
+                </TouchableOpacity>
+              )}
+
             </View>
 
             <TouchableOpacity
@@ -207,6 +239,19 @@ export default function App() {
         />
 
         <Stack.Screen
+          name="Disponibilidad" 
+          component={Disponibilidad} 
+          options={{
+            title: "Configurar Disponibilidad",
+            headerLeft: () => (
+              <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
+                <Ionicons name="menu" size={24} color="#1E5BE0" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Stack.Screen
           name="MiCuenta"
           component={MyAccount}
           options={{
@@ -247,6 +292,25 @@ export default function App() {
           name="Register" 
           component={Register} 
           options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="MisAsesorias"
+          component={MisAsesorias}
+          options={{
+            title: "Mis asesorías",
+            headerLeft: () => (
+              <TouchableOpacity onPress={openDrawer} style={appStyles.menuButton}>
+                <Ionicons name="menu" size={24} color="#1E5BE0" />
+              </TouchableOpacity>
+            ),
+          }}
+        />
+
+        <Stack.Screen
+          name="EscanearQR"
+          component={EscanearQR}
+          options={{ title: "Escanear QR", headerShown: false }}
         />
 
       </Stack.Navigator>
@@ -353,12 +417,21 @@ const appStyles = StyleSheet.create({
   },
   reviewsIconButton: {
     marginRight: 8,
-    padding: 8,
-    borderRadius: 999,
+    width: clampScale(42, 36, 48),
+    height: clampScale(42, 36, 48),
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "transparent",
   },
   reviewsIcon: { //tamaño del icono de reseñas
-    width: 27,
-    height: 27,
+    width: clampScale(42, 36, 48),
+    height: clampScale(42, 36, 48),
     resizeMode: "contain",
+    backgroundColor: "transparent",
   },
 });
+
+LogBox.ignoreLogs([
+  "VirtualizedLists should never be nested",
+]);

@@ -14,3 +14,9 @@ class CitaRepositoryPort(ABC):
     @abstractmethod
     def obtener_por_fecha(self, id_perfil: int, fecha: str):
         pass
+
+    @abstractmethod
+    def obtener_por_perfil(self, id_perfil: int): pass 
+
+    @abstractmethod
+    def cancelar(self, id_cita: int): pass

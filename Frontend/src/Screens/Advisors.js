@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { apiFetch } from "../config/api";
 
-export default function Advisors({ navigation }) {
+export default function Advisors({ navigation, route }) {
   const [advisors, setAdvisors] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,10 +91,16 @@ export default function Advisors({ navigation }) {
     }
   };
 
+  
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={styles.card}
-      onPress={() => navigation.navigate("AdvisorProfile", { advisor: item })}
+      onPress={() =>
+        navigation.navigate("AdvisorProfile", {
+          advisor: item,
+          isOwnProfile: false, 
+        })
+      }
       activeOpacity={0.7}
     >
       <Image source={require("../../assets/icons/user.png")} style={styles.avatar} />
@@ -105,9 +111,10 @@ export default function Advisors({ navigation }) {
     </TouchableOpacity>
   );
 
+  const nombreMateria = route?.params?.nombreMateria || "Asesores";
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Asesores</Text>
+      <Text style={styles.title}>{nombreMateria}</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#1E5BE0" />
       ) : (
@@ -124,6 +131,7 @@ export default function Advisors({ navigation }) {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

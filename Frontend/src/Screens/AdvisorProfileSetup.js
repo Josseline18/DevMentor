@@ -223,7 +223,7 @@ export default function AdvisorProfileSetup({ route, navigation }) {
                 data={materiasDisponibles}
                 renderItem={renderMateriaItem}
                 keyExtractor={(item) => item.id.toString()}
-                scrollEnabled={false}
+                nestedScrollEnabled={true} 
                 style={styles.materiasList}
               />
             )}

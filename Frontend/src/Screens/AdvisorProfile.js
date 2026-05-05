@@ -8,10 +8,14 @@ import {
   SafeAreaView,
   ActivityIndicator,
   Modal,
-  StyleSheet
+  StyleSheet, 
+  TextInput
 } from "react-native";
 import {Calendar, LocaleConfig}  from "react-native-calendars";
 import * as Linking from "expo-linking";
+import * as FileSystem from "expo-file-system/legacy";
+import * as Sharing from 'expo-sharing';
+import { getAccessToken, getCurrentUser } from "../services/sessionService";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { styles, colors } from "../Styles/AdvisorProfileStyle";
 import { API_URL, apiFetch } from "../config/api";
@@ -45,22 +49,81 @@ export default function AdvisorProfile({ route, navigation }) {
   const [selectedHour, setSelectedHour] = useState("");
   const [ selectedDate, setSelectedDate] = useState('');
 
-  // de momento hay horarios definidos aqui, pero esto debe predefinirlo el asesor
-  const availableHours = [
-    "09:00",
-    "10:00",
-    "11:00",
-    "12:00",
-    "13:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00"
-  ];
 
   const advisorParam = route?.params?.advisor || {};
+  const routeIsOwnProfile = route?.params?.isOwnProfile === true;
+
+  const [availableHours, setAvailableHours] = useState([]);
+  const hoy = new Date().toISOString().split("T")[0];
+
+  const getDisponibilidad = async (dia, fechaSeleccionada) => {
+    try {
+      const response = await apiFetch(
+        `/calendario/disponibilidad?id_perfil=${advisor.id_perfil}&dia_semana=${dia}`
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      if (!data || data.length === 0) {
+        setAvailableHours([]);
+        return;
+      }
+
+      let horas = [];
+
+      data.forEach((rango) => {
+        let inicio = parseInt(rango.hora_inicio.split(":")[0]);
+        let fin = parseInt(rango.hora_fin.split(":")[0]);
+
+        for (let h = inicio; h < fin; h++) {
+          horas.push(`${h.toString().padStart(2, "0")}:00`);
+        }
+      });
+
+      const citas = await getCitasPorFecha(fechaSeleccionada);
+      
+      const horasOcupadas = citas.map((cita) =>
+        cita.hora.slice(0, 5)
+      );
+      
+      const horasDisponibles = horas.filter(
+        (hora) => !horasOcupadas.includes(hora)
+      );
+
+      setAvailableHours(horasDisponibles);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getCitasPorFecha = async (fecha) => {
+    try {
+      const response = await apiFetch(
+        `/calendario/citas/asesor/${advisor.id_perfil}`
+      );
+
+      if (!response.ok) return [];
+
+      const citas = await response.json();
+
+      const citasDelDia = citas.filter(
+        (cita) => cita.fecha === fecha
+      );
+
+      return citasDelDia;
+
+    } catch (error) {
+      console.log(error);
+      return [];
+    }
+  };
 
   const [advisor, setAdvisor] = useState({
+    id_usuario_auth: advisorParam?.id_usuario_auth || null,
+    id_perfil: advisorParam?.id_perfil || null,
     name: advisorParam.name || "Asesor",
     role: advisorParam.role || "Asesor",
     especialidad: advisorParam.especialidad || "No especificada",
@@ -75,6 +138,24 @@ export default function AdvisorProfile({ route, navigation }) {
       horasAsesoradas: 0,
     },
   });
+
+  const [userId, setUserId] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+
+  const getUserData = () => {
+    const currentUser = getCurrentUser();
+    console.log("currentUser desde sesión:", currentUser); // para verificar las claves
+    if (currentUser) {
+      setUserRole(currentUser.rol);
+      setUserId(currentUser.id || currentUser.id_usuario || currentUser.sub);
+    }
+  };
+
+  const isMyProfile = useMemo(() => {
+    if (routeIsOwnProfile) return true; // viene del drawer
+    if (!userId || !advisor?.id_usuario_auth) return false;
+    return String(userId) === String(advisor.id_usuario_auth);
+  }, [routeIsOwnProfile, userId, advisor.id_usuario_auth]);
 
   const toggleSection = (section) => {
     setExpandedSection(expandedSection === section ? null : section);
@@ -138,7 +219,7 @@ export default function AdvisorProfile({ route, navigation }) {
         },
         body: JSON.stringify({
           id_perfil: advisor.id_perfil,
-          id_usuario: 1, // usuario logueado real
+          id_usuario: userId, // usuario logueado real
           fecha: selectedDate,
           hora: selectedHour
         }),
@@ -160,12 +241,35 @@ export default function AdvisorProfile({ route, navigation }) {
     }
   };
 
-  const descargarArchivo = (idContenido) => {
+  const descargarArchivo = async (idContenido, nombreArchivo) => {
+    try {
+      const token = getAccessToken();
 
-    const url =
-      `${API_URL}/contents/download/${idContenido}`;
+      const url = `${API_URL}/contents/download/${idContenido}`;
+      const fileUri = FileSystem.documentDirectory + nombreArchivo;
 
-    Linking.openURL(url);
+      const downloadResumable = FileSystem.createDownloadResumable(
+        url,
+        fileUri,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const { uri } = await downloadResumable.downloadAsync();
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(uri);
+      } else {
+        alert("Archivo descargado en: " + uri);
+      }
+
+    } catch (error) {
+      console.log(error);
+      alert("Error descargando archivo");
+    }
   };
 
   const eliminarArchivo = async (idContenido) => {
@@ -230,6 +334,7 @@ export default function AdvisorProfile({ route, navigation }) {
 
   useEffect(() => {
     cargarDatosAsesor();
+    getUserData();
   }, []);
 
   const archivosPorMateria = useMemo(() => {
@@ -268,6 +373,15 @@ export default function AdvisorProfile({ route, navigation }) {
     );
   }
 
+  console.log("=== DEBUG BOTÓN SUBIR ===");
+  console.log("userRole:", userRole);
+  console.log("isMyProfile:", isMyProfile);
+  console.log("advisor.aprobado:", advisor.aprobado);
+  console.log("routeIsOwnProfile:", routeIsOwnProfile);
+  console.log("userId:", userId);
+  console.log("advisor.id_usuario_auth:", advisor.id_usuario_auth);
+  console.log("=========================");
+  
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView
@@ -343,14 +457,16 @@ export default function AdvisorProfile({ route, navigation }) {
         </View>
 
         <View style={styles.quickActions}>
-          <TouchableOpacity 
-            style={styles.actionButton} 
-            activeOpacity={0.7} 
-            onPress={() => setModalVisible(true)}
-          >
-            <Ionicons name="calendar" size={20} color={colors.primary} />
-            <Text style={styles.actionButtonText}>Agendar</Text>
-          </TouchableOpacity>
+          {userRole === "Estudiante" && (
+            <TouchableOpacity 
+              style={styles.actionButton} 
+              activeOpacity={0.7} 
+              onPress={() => setModalVisible(true)}
+            >
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Agendar</Text>
+            </TouchableOpacity>
+          )}
 
           <Modal
             visible={modalVisible}
@@ -362,8 +478,20 @@ export default function AdvisorProfile({ route, navigation }) {
                 <Text style={styles.modalTitle}>Selecciona una fecha</Text>
 
                 <Calendar
+                  minDate={hoy}
                   onDayPress={(day) => {
                     setSelectedDate(day.dateString);
+                    setSelectedHour("");
+
+                    const date = new Date(day.dateString);
+                    const dias = [
+                      "lunes","martes","miercoles",
+                      "jueves","viernes","sabado", "domingo"
+                    ];
+
+                    const diaSemana = dias[date.getDay()];
+
+                    getDisponibilidad(diaSemana, day.dateString);
                   }}
                   markedDates={{
                     [selectedDate]: {
@@ -383,6 +511,7 @@ export default function AdvisorProfile({ route, navigation }) {
                       style={{
                         flexDirection: "row",
                         flexWrap: "wrap",
+
                         marginTop: 10,
                       }}
                     >
@@ -415,11 +544,12 @@ export default function AdvisorProfile({ route, navigation }) {
                 <TouchableOpacity
                   style={{
                     marginTop: 15,
-                    backgroundColor: "#6C63FF",
-                    padding: 12,
+                    backgroundColor: 
+                      availableHours.length === 0 ? "#ccc" : "#6C63FF",                    padding: 12,
                     borderRadius: 8,
                     alignItems: "center",
                   }}
+                  disable={availableHours.length === 0}
                   onPress={agendarCita}
                 >
                   <Text style={{ color: "white", fontWeight: "bold" }}>
@@ -437,29 +567,26 @@ export default function AdvisorProfile({ route, navigation }) {
             </View>
           </Modal>
           
-          <TouchableOpacity
-            style={[styles.actionButton, !advisor.aprobado && styles.actionButtonDisabled]}
-            onPress={() => {
-              if (!advisor.aprobado) {
-                alert('No puedes subir archivos hasta que tu perfil como asesor sea aprobado por el administrador.');
-                return;
-              }
-              navigation.navigate(
-                "UploadMaterialScreen",
-                { advisor: advisor }
-              );
-            }}
-            disabled={!advisor.aprobado}
-          >
-            <Ionicons
-              name="cloud-upload"
-              size={20}
-              color={colors.primary}
-            />
-            <Text style={styles.actionButtonText}>
-              Subir material
-            </Text>
-          </TouchableOpacity>
+          {/* SOLO MI PERFIL */}
+          {userRole === "Asesor" && isMyProfile && advisor.aprobado && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigation.navigate("UploadMaterialScreen", { advisor })}
+            >
+              <Ionicons name="cloud-upload" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Subir material</Text>
+            </TouchableOpacity>
+          )}
+          {userRole === "Asesor" && isMyProfile && advisor.aprobado && (
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => navigation.navigate("Disponibilidad", { advisor })}
+            >
+              <Ionicons name="calendar" size={20} color={colors.primary} />
+              <Text style={styles.actionButtonText}>Disponibilidad</Text>
+            </TouchableOpacity>
+          )}
+          
 
         </View>
 
@@ -505,7 +632,8 @@ export default function AdvisorProfile({ route, navigation }) {
                         style={styles.iconButton}
                         onPress={() =>
                           descargarArchivo(
-                            archivo.id_contenido
+                            archivo.id_contenido,
+                            archivo.nombre_archivo
                           )
                         }
                       >
@@ -516,21 +644,23 @@ export default function AdvisorProfile({ route, navigation }) {
                         />
                       </TouchableOpacity>
 
-                      {/* Eliminar */}
-                      <TouchableOpacity
-                        style={styles.iconButton}
-                        onPress={() =>
-                          eliminarArchivo(
-                            archivo.id_contenido
-                          )
-                        }
-                      >
-                        <Ionicons
-                          name="trash"
-                          size={18}
-                          color="red"
-                        />
-                      </TouchableOpacity>
+                      {/* Eliminar SOLO admin o asesor */}
+                      {(userRole === "admin" || (userRole === "Asesor" && isMyProfile)) && (
+                        <TouchableOpacity
+                          style={styles.iconButton}
+                          onPress={() =>
+                            eliminarArchivo(
+                              archivo.id_contenido
+                            )
+                          }
+                        >
+                          <Ionicons
+                            name="trash"
+                            size={18}
+                            color="red"
+                          />
+                        </TouchableOpacity>
+                      )}
 
                     </View>
 

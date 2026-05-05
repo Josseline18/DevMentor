@@ -44,7 +44,8 @@ export const styles = StyleSheet.create({
     marginRight: 15,
     marginBottom: 20,
     borderRadius: 12,
-    overflow: "hidden"
+    overflow: "hidden",
+    minHeight: 230,
   },
 
   image: {

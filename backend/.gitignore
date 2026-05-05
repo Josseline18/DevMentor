@@ -12,6 +12,7 @@ advisors/
 resenas/
 apiGw/
 contenidos/
+qr/
 
 # Python
 __pycache__/

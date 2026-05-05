@@ -25,6 +25,7 @@ REVIEW_SERVICE_URL = "http://localhost:8004"
 CONTENT_SERVICE_URL = "http://localhost:8005"
 REPORT_SERVICE_URL = "http://localhost:8006"
 CALENDAR_SERVICE_URL = "http://localhost:8007"
+QR_SERVICE_URL = "http://localhost:8008"
 
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-this-secret")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
@@ -206,6 +207,38 @@ async def crear_cita(request: Request):
         response = await client.post(
             f"{CALENDAR_SERVICE_URL}/calendario/citas",
             json=body,
+            headers=build_forward_headers(request)
+        )
+
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        media_type="application/json"
+    )
+
+@app.post("/calendario/disponibilidad-semanal")
+async def crear_disponibilidad(request: Request):
+    body = await request.json()
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            f"{CALENDAR_SERVICE_URL}/calendario/disponibilidad",
+            json=body,
+            headers=build_forward_headers(request)
+        )
+
+    return Response(
+        content=response.content,
+        status_code=response.status_code,
+        media_type="application/json"
+    )
+
+@app.get("/calendario/disponibilidad")
+async def get_disponibilidad(request: Request):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            f"{CALENDAR_SERVICE_URL}/calendario/disponibilidad",
+            params=dict(request.query_params),
             headers=build_forward_headers(request)
         )
 
@@ -455,6 +488,54 @@ async def update_report_status(id_reporte: int, request: Request):
     response = requests.put(
         f"{REPORT_SERVICE_URL}/reportes/{id_reporte}/estado",
         json=body,
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+# calendar: nuevos endpoints 
+@app.get("/calendario/citas/asesor/{id_perfil}")
+async def get_citas_asesor(id_perfil: int, request: Request):
+    response = requests.get(
+        f"{CALENDAR_SERVICE_URL}/calendario/citas/asesor/{id_perfil}",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+
+@app.patch("/calendario/citas/{id_cita}/cancelar")
+async def cancelar_cita_gateway(id_cita: int, request: Request):
+    response = requests.patch(
+        f"{CALENDAR_SERVICE_URL}/calendario/citas/{id_cita}/cancelar",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+
+# qr-service 
+@app.post("/qr/generar/{id_cita}")
+async def generar_qr(id_cita: int, request: Request):
+    response = requests.post(
+        f"{QR_SERVICE_URL}/qr/generar/{id_cita}",
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+
+@app.post("/qr/verificar")
+async def verificar_qr(request: Request):
+    body = await request.json()
+    response = requests.post(
+        f"{QR_SERVICE_URL}/qr/verificar",
+        json=body,
+        headers=build_forward_headers(request),
+    )
+    return forward_response(response)
+
+
+@app.get("/qr/estado/{id_cita}")
+async def estado_qr(id_cita: int, request: Request):
+    response = requests.get(
+        f"{QR_SERVICE_URL}/qr/estado/{id_cita}",
         headers=build_forward_headers(request),
     )
     return forward_response(response)
