@@ -1,40 +1,49 @@
+import os
+import smtplib
+import httpx
+from email.message import EmailMessage
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from typing import Dict, Any
 
+SMTP_SERVER = "smtp.gmail.com"
+SMTP_PORT = 587
+SENDER_EMAIL = "notificaciones.devmentor@gmail.com"
+SENDER_PASSWORD = "soldaqwptxkohyzw"
+
 app = FastAPI(title="Notification Service - DevMentor")
 
-# Modelo de datos que esperamos recibir de otros microservicios
 class NotificationRequest(BaseModel):
     correo_destino: str
     tipo_notificacion: str
     datos_extra: Dict[str, Any] = {}
 
 def enviar_correo_real(destino: str, asunto: str, cuerpo: str):
-    """
-    Simulador de envío de correos. 
-    Aquí es donde integrarías smtplib, AWS SES, SendGrid, etc.
-    """
-    print(f"\n{'='*60}")
-    print(f"📧 ENVIANDO CORREO A: {destino}")
-    print(f"📌 ASUNTO: {asunto}")
-    print(f"📝 CUERPO:\n{cuerpo}")
-    print(f"{'='*60}\n")
+    msg = EmailMessage()
+    msg.set_content(cuerpo)
+    msg["Subject"] = asunto
+    msg["From"] = SENDER_EMAIL
+    msg["To"] = destino
+
+    try:
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(SENDER_EMAIL, SENDER_PASSWORD)
+            server.send_message(msg)
+    except Exception as e:
+        print(e)
 
 @app.post("/notificar")
 async def procesar_notificacion(req: NotificationRequest, background_tasks: BackgroundTasks):
     asunto = ""
     cuerpo = ""
 
-    # ==========================================
-    # LÓGICA DE PLANTILLAS DE CORREO
-    # ==========================================
     if req.tipo_notificacion == "ALERTA_LOGIN":
-        asunto = "Alerta de Seguridad: Nuevo inicio de sesión"
+        asunto = "Alerta de Seguridad: Nuevo inicio de sesion"
         cuerpo = (
             "Hola,\n\n"
-            "Hemos detectado un nuevo inicio de sesión en tu cuenta de Administrador en DevMentor.\n"
-            "Si no fuiste tú, por favor contacta a soporte de inmediato para asegurar tu cuenta."
+            "Hemos detectado un nuevo inicio de sesion en tu cuenta de Administrador en DevMentor.\n"
+            "Si no fuiste tu, por favor contacta a soporte de inmediato para asegurar tu cuenta."
         )
 
     elif req.tipo_notificacion == "CUENTA_SUSPENDIDA":
@@ -43,23 +52,17 @@ async def procesar_notificacion(req: NotificationRequest, background_tasks: Back
         cuerpo = (
             f"Hola {nombre},\n\n"
             "Te informamos que tu acceso a la plataforma DevMentor ha sido suspendido "
-            "debido a reportes de comportamiento que violan nuestras políticas comunitarias.\n\n"
-            "Si crees que esto es un error, por favor contacta a la administración de la UNACH."
+            "debido a reportes de comportamiento que violan nuestras politicas comunitarias.\n\n"
+            "Si crees que esto es un error, por favor contacta a la administracion de la UNACH."
         )
         
-    # TODO: Aquí puedes agregar "TUTORIA_CANCELADA" en el futuro usando elif
-
     else:
-        # Si nos mandan un tipo de notificación que no conocemos, lanzamos error
-        raise HTTPException(status_code=400, detail="Tipo de notificación no registrado en el sistema")
+        raise HTTPException(status_code=400, detail="Tipo de notificacion no registrado")
 
-    # ==========================================
-    # ENCOLAR LA TAREA (No bloquea el servidor)
-    # ==========================================
     background_tasks.add_task(enviar_correo_real, req.correo_destino, asunto, cuerpo)
 
     return {
         "status": "success", 
-        "mensaje": "Notificación encolada exitosamente", 
+        "mensaje": "Notificacion encolada exitosamente", 
         "tipo": req.tipo_notificacion
     }

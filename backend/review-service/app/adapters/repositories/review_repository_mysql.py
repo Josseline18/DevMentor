@@ -1,7 +1,5 @@
 from sqlalchemy import text
-
 from app.infrastructure.database import SessionLocal
-
 
 class ResenaRepositoryMySQL:
     def user_exists(self, id_usuario):
@@ -27,8 +25,8 @@ class ResenaRepositoryMySQL:
         try:
             query = text(
                 """
-                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario, estado)
-                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario, :estado)
+                INSERT INTO resenas (id_usuario, id_asesor, id_materia, calificacion, comentario, estado)
+                VALUES (:id_usuario, :id_asesor, :id_materia, :calificacion, :comentario, :estado)
                 """
             )
 
@@ -36,7 +34,7 @@ class ResenaRepositoryMySQL:
                 query,
                 {
                     "id_usuario": resena.id_usuario,
-                    "id_usuario_auth": resena.id_usuario_auth,
+                    "id_asesor": resena.id_usuario_auth,
                     "id_materia": resena.id_materia,
                     "calificacion": resena.calificacion,
                     "comentario": resena.comentario,
@@ -56,12 +54,11 @@ class ResenaRepositoryMySQL:
 
         try:
             query = text(
-                f"""
+                """
                 SELECT
                     r.id_resena,
                     r.id_usuario,
-                    r.id_usuario_auth,
-                    r.id_usuario_auth AS id_asesor,
+                    r.id_asesor AS id_usuario_auth,
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
@@ -71,7 +68,7 @@ class ResenaRepositoryMySQL:
                     a.nombre AS nombre_asesor
                 FROM resenas r
                 LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
-                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_asesor
                 WHERE r.id_resena = :id_resena
                 """
             )
@@ -97,7 +94,7 @@ class ResenaRepositoryMySQL:
                 params["id_usuario"] = id_usuario
 
             if id_usuario_auth is not None:
-                conditions.append("r.id_usuario_auth = :id_usuario_auth")
+                conditions.append("r.id_asesor = :id_usuario_auth")
                 params["id_usuario_auth"] = id_usuario_auth
 
             if id_materia is not None:
@@ -117,8 +114,7 @@ class ResenaRepositoryMySQL:
                 SELECT
                     r.id_resena,
                     r.id_usuario,
-                    r.id_usuario_auth,
-                    r.id_usuario_auth AS id_asesor,
+                    r.id_asesor AS id_usuario_auth,
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
@@ -128,7 +124,7 @@ class ResenaRepositoryMySQL:
                     a.nombre AS nombre_asesor
                 FROM resenas r
                 LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
-                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_asesor
                 {where_clause}
                 ORDER BY r.fecha_creacion DESC, r.id_resena DESC
                 """
@@ -163,19 +159,14 @@ class ResenaRepositoryMySQL:
             db.close()
     
     def delete_resena(self, id_resena: int) -> bool:
-        from sqlalchemy import text
-        from app.infrastructure.database import SessionLocal
-        
         db = SessionLocal()
         try:
-            # Primero verificamos si existe
             query_check = text("SELECT id_resena FROM resenas WHERE id_resena = :id_resena")
             existe = db.execute(query_check, {"id_resena": id_resena}).fetchone()
             
             if not existe:
                 return False
                 
-            # Si existe, la eliminamos
             query_delete = text("DELETE FROM resenas WHERE id_resena = :id_resena")
             db.execute(query_delete, {"id_resena": id_resena})
             db.commit()
