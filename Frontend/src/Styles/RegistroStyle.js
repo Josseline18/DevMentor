@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#ffffff", 
   },
 
   background: {
@@ -14,6 +15,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(244, 247, 252, 0.65)",
     justifyContent: "center",
+  },
+
+  // 
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    paddingVertical: 30,
   },
 
   formContainer: {

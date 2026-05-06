@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  SafeAreaView,
   View,
   Text,
   TextInput,
   TouchableOpacity,
   Alert,
   ActivityIndicator,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Checkbox from "expo-checkbox";
 import styles from "../Styles/RegistroStyle";
 import { API_URL } from "../config/api";
@@ -33,7 +36,6 @@ export default function Register({ navigation }) {
       }
     };
   }, []);
-
 
   const registrarUsuario = async () => {
 
@@ -139,123 +141,130 @@ export default function Register({ navigation }) {
       }, 2500);
 
     } catch (error) {
-
       console.log(error);
       Alert.alert("Error", "No se pudo registrar el usuario");
-
     }
-
   };
 
   if (registerSuccess) {
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.formContainer}>
-          <ActivityIndicator size="large" color="#2196F3" />
-          <Text style={[styles.title, { marginTop: 16 }]}>Registro completado</Text>
-          <Text style={styles.label}>Preparando tu acceso...</Text>
+      <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+        <View style={styles.overlay}>
+          <View style={styles.formContainer}>
+            <ActivityIndicator size="large" color="#2196F3" />
+            <Text style={[styles.title, { marginTop: 16 }]}>Registro completado</Text>
+            <Text style={styles.label}>Preparando tu acceso...</Text>
+          </View>
         </View>
       </SafeAreaView>
     );
   }
 
-
   return (
-    <SafeAreaView style={styles.container}>
-
-      <View style={styles.formContainer}>
-
-        <Text style={styles.title}>Registro</Text>
-
-        <Text style={styles.label}>Nombre</Text>
-        <TextInput
-          style={styles.input}
-          value={nombre}
-          onChangeText={setNombre}
-        />
-
-        <Text style={styles.label}>Correo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="nombre@unach.mx"
-          value={correo}
-          onChangeText={setCorreo}
-        />
-
-        <Text style={styles.label}>Telefono</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="000-000-0000"
-          value={telefono}
-          onChangeText={setTelefono}
-        />
-
-        <Text style={styles.label}>Contraseña</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Crea una contraseña"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirma la contraseña"
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-
-        <Text style={styles.label}>Rol</Text>
-
-        <View style={styles.checkboxContainer}>
-
-          <View style={styles.checkboxItem}>
-            <Checkbox
-              value={estudiante}
-              onValueChange={() => {
-                setEstudiante(true);
-                setAsesor(false);
-              }}
-            />
-            <Text style={styles.checkboxLabel}>Estudiante</Text>
-          </View>
-
-          <View style={styles.checkboxItem}>
-            <Checkbox
-              value={asesor}
-              onValueChange={() => {
-                setAsesor(true);
-                setEstudiante(false);
-              }}
-            />
-            <Text style={styles.checkboxLabel}>Asesor</Text>
-          </View>
-
-        </View>
-
-        <View style={styles.registerContainer}>
-          <Text style={styles.registerText}>
-            Ya tienes una cuenta?{" "}
-            <Text
-              style={styles.registerLink}
-              onPress={() => navigation.navigate("Login")}
-            >
-              Inicia sesión
-            </Text>
-          </Text>
-        </View>
-
-        <TouchableOpacity
-          style={styles.button}
-          onPress={registrarUsuario}
+    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <Text style={styles.buttonText}>Registrarse</Text>
-        </TouchableOpacity>
+          <View style={styles.formContainer}>
 
-      </View>
+            <Text style={styles.title}>Registro</Text>
 
+            <Text style={styles.label}>Nombre</Text>
+            <TextInput
+              style={styles.input}
+              value={nombre}
+              onChangeText={setNombre}
+            />
+
+            <Text style={styles.label}>Correo</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="nombre@unach.mx"
+              value={correo}
+              onChangeText={setCorreo}
+            />
+
+            <Text style={styles.label}>Telefono</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="000-000-0000"
+              value={telefono}
+              onChangeText={setTelefono}
+            />
+
+            <Text style={styles.label}>Contraseña</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Crea una contraseña"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Confirma la contraseña"
+              secureTextEntry
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+            />
+
+            <Text style={styles.label}>Rol</Text>
+
+            <View style={styles.checkboxContainer}>
+
+              <View style={styles.checkboxItem}>
+                <Checkbox
+                  value={estudiante}
+                  onValueChange={() => {
+                    setEstudiante(true);
+                    setAsesor(false);
+                  }}
+                />
+                <Text style={styles.checkboxLabel}>Estudiante</Text>
+              </View>
+
+              <View style={styles.checkboxItem}>
+                <Checkbox
+                  value={asesor}
+                  onValueChange={() => {
+                    setAsesor(true);
+                    setEstudiante(false);
+                  }}
+                />
+                <Text style={styles.checkboxLabel}>Asesor</Text>
+              </View>
+
+            </View>
+
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>
+                Ya tienes una cuenta?{" "}
+                <Text
+                  style={styles.registerLink}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  Inicia sesión
+                </Text>
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={registrarUsuario}
+            >
+              <Text style={styles.buttonText}>Registrarse</Text>
+            </TouchableOpacity>
+
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
