@@ -13,6 +13,7 @@
                 "Report Service",
                 "Calendar Service",
                 "QR Service",
+                "Notification Service",
                 "ngrok"
 
             ],
@@ -100,6 +101,14 @@
             "command": "cd backend/qr-service; source qr/bin/activate; uvicorn main:app --port 8008 --reload",
             "isBackground": true,
             "icon": { "id": "symbol-function", "color": "terminal.ansiGreen" },
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        },
+        {
+            "label": "Notification Service",
+            "type": "shell",
+            "command": "cd backend/notification-service; source notificaciones/bin/activate; uvicorn main:app --port 8009 --reload",
+            "isBackground": true,
+            "icon": { "id": "bell", "color": "terminal.ansiMagenta" },
             "presentation": { "reveal": "always", "panel": "dedicated" }
         }
     ]
