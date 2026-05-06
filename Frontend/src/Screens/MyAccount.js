@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import Checkbox from "expo-checkbox";
 import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system/legacy";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 import { apiFetch } from "../config/api";
@@ -28,7 +29,7 @@ export default function MyAccount() {
   const [saving, setSaving] = useState(false);
 
   const [profileImageUri, setProfileImageUri] = useState(
-    currentUser?.profileImageUri || ""
+    currentUser?.foto_perfil || currentUser?.profileImageUri || ""
   );
 
   const [nombre, setNombre] = useState(currentUser?.nombre || "");
@@ -65,11 +66,13 @@ export default function MyAccount() {
           setNombre(userData?.nombre || "");
           setCorreo(userData?.correo || "");
           setTelefono(userData?.telefono || "");
+          setProfileImageUri(userData?.foto_perfil || "");
 
           updateCurrentUser({
             nombre: userData?.nombre || currentUser?.nombre,
             correo: userData?.correo || currentUser?.correo,
             telefono: userData?.telefono || currentUser?.telefono,
+            foto_perfil: userData?.foto_perfil || "",
           });
         }
 
@@ -115,9 +118,23 @@ export default function MyAccount() {
 
       if (result.canceled || !result.assets?.length) return;
 
-      const imageUri = result.assets[0].uri;
-      setProfileImageUri(imageUri);
-      updateCurrentUser({ profileImageUri: imageUri });
+      const imageAsset = result.assets[0];
+      if (imageAsset.size && imageAsset.size > 2 * 1024 * 1024) {
+        Alert.alert("Error", "Selecciona una imagen menor a 2 MB");
+        return;
+      }
+
+      const mimeType = imageAsset.mimeType || "image/jpeg";
+      const base64Content = await FileSystem.readAsStringAsync(imageAsset.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const imageDataUrl = `data:${mimeType};base64,${base64Content}`;
+
+      setProfileImageUri(imageDataUrl);
+      updateCurrentUser({
+        profileImageUri: imageDataUrl,
+        foto_perfil: imageDataUrl,
+      });
     } catch (error) {
       Alert.alert("Error", "No se pudo seleccionar la imagen");
     }
@@ -170,6 +187,7 @@ export default function MyAccount() {
         nombre: nombre.trim(),
         correo: correo.trim(),
         telefono: telefono.trim(),
+        foto_perfil: profileImageUri || null,
       };
 
       if (password) {
@@ -246,7 +264,8 @@ export default function MyAccount() {
         nombre: userData?.nombre || nombre.trim(),
         correo: userData?.correo || correo.trim(),
         telefono: userData?.telefono || telefono.trim(),
-        profileImageUri,
+        profileImageUri: userData?.foto_perfil || profileImageUri,
+        foto_perfil: userData?.foto_perfil || profileImageUri,
       });
 
       setPassword("");

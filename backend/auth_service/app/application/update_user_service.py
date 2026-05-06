@@ -18,6 +18,7 @@ class UpdateUserService:
         correo: str = None,
         telefono: str = None,
         contrasena: str = None,
+        foto_perfil: str = None,
     ):
         existing_user = self.repository.get_user_by_id(id_usuario)
 
@@ -42,6 +43,7 @@ class UpdateUserService:
             correo=normalized_correo,
             telefono=telefono.strip() if telefono is not None else None,
             contrasena=password_hash,
+            foto_perfil=foto_perfil.strip() if foto_perfil is not None else None,
         )
 
         if not updated_user:
@@ -53,4 +55,5 @@ class UpdateUserService:
             "correo": updated_user["correo"],
             "telefono": updated_user["telefono"],
             "rol": updated_user["rol"],
+            "foto_perfil": updated_user.get("foto_perfil"),
         }

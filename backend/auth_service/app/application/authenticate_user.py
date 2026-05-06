@@ -41,5 +41,6 @@ class AuthenticateUser:
                 "nombre": user["nombre"],
                 "correo": user["correo"],
                 "rol": user["rol"],
+                "foto_perfil": user.get("foto_perfil"),
             },
         }

@@ -63,7 +63,7 @@ class UserRepositoryMySQL(UserRepository):
 
         return None
 
-    def update_user(self, id_usuario, nombre=None, correo=None, telefono=None, contrasena=None):
+    def update_user(self, id_usuario, nombre=None, correo=None, telefono=None, contrasena=None, foto_perfil=None):
 
         db = SessionLocal()
 
@@ -85,6 +85,10 @@ class UserRepositoryMySQL(UserRepository):
         if contrasena is not None:
             set_clauses.append("contrasena = :contrasena")
             params["contrasena"] = contrasena
+
+        if foto_perfil is not None:
+            set_clauses.append("foto_perfil = :foto_perfil")
+            params["foto_perfil"] = foto_perfil
 
         if not set_clauses:
             db.close()

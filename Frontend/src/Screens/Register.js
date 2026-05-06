@@ -110,6 +110,8 @@ export default function Register({ navigation }) {
               nombre: loginData.usuario.nombre,
               correo: loginData.usuario.correo,
               rol: loginData.usuario.rol,
+              foto_perfil: loginData.usuario.foto_perfil || "",
+              profileImageUri: loginData.usuario.foto_perfil || "",
             });
             setAccessToken(loginData.access_token);
 

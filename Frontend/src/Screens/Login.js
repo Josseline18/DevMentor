@@ -74,6 +74,8 @@ export default function Login({ navigation }) {
         nombre: usuario.nombre,
         correo: usuario.correo,
         rol: usuario.rol,
+        foto_perfil: usuario.foto_perfil || "",
+        profileImageUri: usuario.foto_perfil || "",
       });
       setAccessToken(accessToken);
 

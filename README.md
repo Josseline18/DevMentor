@@ -608,3 +608,7 @@ source calendario/bin/activate
 
 pip install httpx
 # -------------------------------------------------------------------------------------------------------
+columna para guardar la foto de perfil
+
+USE asesorias;
+ALTER TABLE usuarios ADD COLUMN foto_perfil LONGTEXT NULL;
