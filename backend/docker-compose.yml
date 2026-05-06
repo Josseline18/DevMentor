@@ -1,0 +1,86 @@
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: admin-devmentor-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+    ports:
+      - "3306:3306"
+
+  # API GATEWAY (El único expuesto al exterior)
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8000:8000" 
+    depends_on:
+      - auth_service 
+      - advisor-service
+      - calendar-service
+      - content-service
+      - materia-service
+      - notification-service
+      - qr-service
+      - report-service
+      - review-service
+
+
+  # MICROSERVICIOS
+
+  auth_service:
+    build: ./auth_service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesorias
+      JWT_SECRET: Taller2026
+    depends_on:
+      - mysql_db
+
+  advisor-service:
+    build: ./advisor-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
+    depends_on:
+      - mysql_db
+
+  calendar-service:
+    build: ./calendar-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
+    depends_on:
+      - mysql_db
+
+  content-service:
+    build: ./content-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/content_db
+    depends_on:
+      - mysql_db
+
+  materia-service:
+    build: ./materia-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/BD_materias
+    depends_on:
+      - mysql_db
+
+  qr-service:
+    build: ./qr-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
+    depends_on:
+      - mysql_db
+
+  report-service:
+    build: ./report-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/reportes_db
+    depends_on:
+      - mysql_db
+
+  review-service:
+    build: ./review-service
+    environment:
+      DATABASE_URL: mysql+pymysql://root:12345@mysql_db/resenas_db
+    depends_on:
+      - mysql_db
