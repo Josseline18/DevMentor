@@ -129,7 +129,7 @@ export default function Login({ navigation }) {
     >
       <View style={styles.overlay}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Bienvenido!</Text>
+          <Text style={styles.title}>Bienvenido</Text>
 
           <TextInput
             style={styles.input}
