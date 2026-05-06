@@ -74,6 +74,8 @@ export default function Login({ navigation }) {
         nombre: usuario.nombre,
         correo: usuario.correo,
         rol: usuario.rol,
+        foto_perfil: usuario.foto_perfil || "",
+        profileImageUri: usuario.foto_perfil || "",
       });
       setAccessToken(accessToken);
 
@@ -127,7 +129,7 @@ export default function Login({ navigation }) {
     >
       <View style={styles.overlay}>
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Bienvenido!</Text>
+          <Text style={styles.title}>Bienvenido</Text>
 
           <TextInput
             style={styles.input}

@@ -26,6 +26,7 @@ class UpdateUserRequest(BaseModel):
     correo: str | None = None
     telefono: str | None = None
     contrasena: str | None = None
+    foto_perfil: str | None = None
 
 class UpdateStatusRequest(BaseModel):
     estado: str
@@ -78,6 +79,7 @@ def update_user(id_usuario: int, data: UpdateUserRequest):
         correo=data.correo,
         telefono=data.telefono,
         contrasena=data.contrasena,
+        foto_perfil=data.foto_perfil,
     )
 
 @router.get("/users")

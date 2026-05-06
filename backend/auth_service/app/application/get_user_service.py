@@ -19,4 +19,5 @@ class GetUserService:
             "correo": user["correo"],
             "telefono": user["telefono"],
             "rol": user["rol"],
+            "foto_perfil": user.get("foto_perfil"),
         }

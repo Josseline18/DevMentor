@@ -25,6 +25,7 @@ class LoginUserService:
                 "id": user["id_usuario"],
                 "nombre": user["nombre"],
                 "correo": user["correo"],
-                "rol": user["rol"]
+                "rol": user["rol"],
+                "foto_perfil": user.get("foto_perfil"),
             }
         }
