@@ -9,7 +9,7 @@ export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
     nombre: '',
     descripcion: '',
     semestre: '',
-    carrera: 'LIDTS',
+    carrera: '',
     estado: 'activo'
   });
 
@@ -96,14 +96,38 @@ export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
 
           {/* Carrera */}
-          <select
-            value={formData.carrera}
-            onChange={(e) => setFormData({ ...formData, carrera: e.target.value })}
-            required
-          >
-            <option value="LIDTS">LIDTS</option>
-            <option value="LSC">LSC</option>
-          </select>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold uppercase tracking-wide text-on-surface">
+              Carrera
+            </label>
+
+            <select
+              value={formData.carrera}
+              onChange={(e) => setFormData({ ...formData, carrera: e.target.value })}
+              required
+              className="
+                w-full
+                h-10
+                px-3
+                rounded-md
+                border border-outline-variant/40
+                bg-surface-lowest
+                text-sm
+                font-medium
+                text-on-surface
+                focus:outline-none
+                focus:ring-2
+                focus:ring-primary/40
+                focus:border-primary
+                transition
+                duration-200
+              "
+            >
+              <option value="">Selecciona carrera</option>
+              <option value="LIDTS">LIDTS</option>
+              <option value="LSC">LSC</option>
+            </select>
+          </div>
 
           {/* Nombre */}
           <Input
@@ -121,16 +145,39 @@ export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
           />
 
           {/* Semestre */}
-          <select
-            value={formData.semestre}
-            onChange={(e) => setFormData({ ...formData, semestre: e.target.value })}
-            required
-          >
-            <option value="">Selecciona</option>
-            {[1,2,3,4,5,6,7,8,9].map(num => (
-              <option key={num} value={num}>{num}</option>
-            ))}
-          </select>
+          <div className="flex flex-col gap-1">
+            <label className="text-xs font-bold uppercase tracking-wide text-on-surface">
+              Semestre
+            </label>
+
+            <select
+              value={formData.semestre}
+              onChange={(e) => setFormData({ ...formData, semestre: e.target.value })}
+              required
+              className="
+                w-full
+                h-10
+                px-3
+                rounded-md
+                border border-outline-variant/40
+                bg-surface-lowest
+                text-sm
+                font-medium
+                text-on-surface
+                focus:outline-none
+                focus:ring-2
+                focus:ring-primary/40
+                focus:border-primary
+                transition
+                duration-200
+              "
+            >
+              <option value="">Seleccione el semestre</option>
+              {[1,2,3,4,5,6,7,8,9].map(num => (
+                <option key={num} value={num}>{num}</option>
+              ))}
+            </select>
+          </div>
 
           {/* Estado */}
           <div>

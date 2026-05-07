@@ -3,7 +3,7 @@ import { Button } from '../components/ui/Button';
 import { NuevaMateriaModal } from '../components/ui/NuevaMateriaModal';
 
 export default function Configuracion() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  //const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('catalogo'); // 'catalogo' o 'moderacion'
 
   const [materiasOficiales, setMateriasOficiales] = useState([]);
@@ -13,7 +13,7 @@ export default function Configuracion() {
   const [materiaSeleccionada, setMateriaSeleccionada] = useState(null);
 
   const [mensaje, setMensaje] = useState("");
-  console.log("Mensaje actual:", mensaje);
+ 
 
   const toggleEstado = async (materia) => {
     try {
@@ -137,7 +137,7 @@ export default function Configuracion() {
           {/* Cabecera de la tabla */}
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-on-surface">Materias Oficiales</h2>
-            <Button variant="primary" onClick={() => setIsModalOpen(true)}>
+            <Button variant="primary" onClick={() => setModalOpen(true)}>
               + Agregar Materia
             </Button>
           </div>
