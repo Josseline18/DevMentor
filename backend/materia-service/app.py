@@ -24,3 +24,4 @@ app.add_middleware(
 Base.metadata.create_all(bind=engine)
 
 app.include_router(router)
+app.include_router(lenguaje_router)

@@ -1,12 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiTrendingUp, FiClock, FiUserX, FiShield, FiCode } from 'react-icons/fi';
+import { NuevoLenguajeModal } from '../components/ui/NuevoLenguajeModal';
+import { Button } from '../components/ui/Button';
 
 export default function Dashboard() {
   // 1. ESTADOS DE REACT PARA MANEJAR LA API
   const [lenguajes, setLenguajes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [lenguajeSeleccionado, setLenguajeSeleccionado] = useState(null);
+
+  const cargarDatosDashboard = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/dashboard");
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Error cargando datos:", error);
+    }
+  };
 
   // 2. PETICIÓN PROTEGIDA AL BACKEND
   useEffect(() => {
@@ -100,6 +114,9 @@ export default function Dashboard() {
           {/* DATOS DINÁMICOS: Tabla de Lenguajes conectada al Backend */}
           <div className="bg-surface-lowest p-6 rounded-md shadow-cloud mt-2">
             <div className="flex justify-between items-center mb-6">
+              <Button onClick={() => setModalOpen(true)}>
+                + Agregar Lenguaje
+              </Button>
               <h3 className="text-lg font-bold text-on-surface">Lenguajes de Programación Activos</h3>
               <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded">Vía API Gateway</span>
             </div>
@@ -162,6 +179,14 @@ export default function Dashboard() {
         </div>
 
       </div>
+
+      <NuevoLenguajeModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        lenguaje={lenguajeSeleccionado}
+        onSuccess={cargarDatosDashboard}
+      />
+
     </div>
   );
 }

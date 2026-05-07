@@ -612,3 +612,23 @@ columna para guardar la foto de perfil
 
 USE asesorias;
 ALTER TABLE usuarios ADD COLUMN foto_perfil LONGTEXT NULL;
+
+# --------------------------------------------------
+# datos con tildes en lenguajes
+# entrar a docker 
+docker exec -it admin-devmentor-mysql bash
+
+export LANG=C.UTF-8
+mysql -u root -p --default-character-set=utf8mb4
+
+SET NAMES utf8mb4;
+
+use BD_materias;
+
+UPDATE lenguajes
+SET descripcion = "Lenguaje versátil y fácil de aprender"
+WHERE id=1;
+
+UPDATE lenguajes
+SET descripcion = "Orientado a objetos y robusto"
+WHERE id=2;
