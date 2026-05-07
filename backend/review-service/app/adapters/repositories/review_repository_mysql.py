@@ -25,8 +25,8 @@ class ResenaRepositoryMySQL:
         try:
             query = text(
                 """
-                INSERT INTO resenas (id_usuario, id_asesor, id_materia, calificacion, comentario, estado)
-                VALUES (:id_usuario, :id_asesor, :id_materia, :calificacion, :comentario, :estado)
+                INSERT INTO resenas (id_usuario, id_usuario_auth, id_materia, calificacion, comentario, estado)
+                VALUES (:id_usuario, :id_usuario_auth, :id_materia, :calificacion, :comentario, :estado)
                 """
             )
 
@@ -34,7 +34,7 @@ class ResenaRepositoryMySQL:
                 query,
                 {
                     "id_usuario": resena.id_usuario,
-                    "id_asesor": resena.id_usuario_auth,
+                    "id_usuario_auth": resena.id_usuario_auth,
                     "id_materia": resena.id_materia,
                     "calificacion": resena.calificacion,
                     "comentario": resena.comentario,
@@ -58,7 +58,7 @@ class ResenaRepositoryMySQL:
                 SELECT
                     r.id_resena,
                     r.id_usuario,
-                    r.id_asesor AS id_usuario_auth,
+                    r.id_usuario_auth,
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
@@ -68,7 +68,7 @@ class ResenaRepositoryMySQL:
                     a.nombre AS nombre_asesor
                 FROM resenas r
                 LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
-                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_asesor
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
                 WHERE r.id_resena = :id_resena
                 """
             )
@@ -94,7 +94,7 @@ class ResenaRepositoryMySQL:
                 params["id_usuario"] = id_usuario
 
             if id_usuario_auth is not None:
-                conditions.append("r.id_asesor = :id_usuario_auth")
+                conditions.append("r.id_usuario_auth = :id_usuario_auth")
                 params["id_usuario_auth"] = id_usuario_auth
 
             if id_materia is not None:
@@ -114,7 +114,7 @@ class ResenaRepositoryMySQL:
                 SELECT
                     r.id_resena,
                     r.id_usuario,
-                    r.id_asesor AS id_usuario_auth,
+                    r.id_usuario_auth,
                     r.id_materia,
                     r.calificacion,
                     r.comentario,
@@ -124,7 +124,7 @@ class ResenaRepositoryMySQL:
                     a.nombre AS nombre_asesor
                 FROM resenas r
                 LEFT JOIN asesorias.usuarios u ON u.id_usuario = r.id_usuario
-                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_asesor
+                LEFT JOIN asesorias.usuarios a ON a.id_usuario = r.id_usuario_auth
                 {where_clause}
                 ORDER BY r.fecha_creacion DESC, r.id_resena DESC
                 """
