@@ -121,7 +121,7 @@ USE resenas_db;
 CREATE TABLE IF NOT EXISTS resenas (
     id_resena INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario INT NOT NULL,
-    id_asesor INT NOT NULL,
+    id_usuario_auth INT NOT NULL,
     id_materia INT NOT NULL,
     calificacion TINYINT NOT NULL CHECK (calificacion BETWEEN 1 AND 5),
     comentario TEXT NOT NULL,
@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS resenas (
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO resenas (id_resena, id_usuario, id_asesor, id_materia, calificacion, comentario, estado) VALUES 
+INSERT INTO resenas (id_resena, id_usuario, id_usuario_auth, id_materia, calificacion, comentario, estado) VALUES 
 (1, 5, 3, 1, 5, 'Excelente asesoría, comprendí todo a la perfección.', 'aceptada'),
 (2, 6, 3, 1, 1, 'Pésimo servicio, el asesor me gritó.', 'pendiente'),
 (3, 6, 4, 3, 1, 'Visiten mi sitio web de apuestas deportivas para ganar dinero rápido.', 'pendiente');
