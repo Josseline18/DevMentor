@@ -24,6 +24,54 @@ export default function Usuarios() {
 
   const [pendingCount, setPendingCount] = useState(0);
 
+  const obtenerEstadoVisible = (user) => {
+    if (user.rol === 'Asesor') {
+      return user.estado_aprobacion || 'Pendiente';
+    }
+
+    return user.estado || 'Activo';
+  };
+
+  const obtenerClaseEstado = (user) => {
+    const estadoVisible = obtenerEstadoVisible(user);
+
+    if (user.rol === 'Asesor') {
+      if (estadoVisible === 'Aprobado') {
+        return 'bg-success-container/30 text-on-success';
+      }
+
+      if (estadoVisible === 'Rechazado') {
+        return 'bg-on-error text-white shadow-sm';
+      }
+
+      return 'bg-warning-container/30 text-on-surface';
+    }
+
+    return estadoVisible === 'Activo'
+      ? 'bg-success-container/30 text-on-success'
+      : 'bg-on-error text-white shadow-sm';
+  };
+
+  const obtenerClaseFila = (user) => {
+    if (user.rol === 'Asesor') {
+      const estadoVisible = obtenerEstadoVisible(user);
+
+      if (estadoVisible === 'Pendiente') {
+        return 'bg-warning-container/5 hover:bg-warning-container/10';
+      }
+
+      if (estadoVisible === 'Rechazado') {
+        return 'bg-error-container/5 grayscale-[0.35] opacity-85';
+      }
+
+      return 'hover:bg-primary/5 hover:scale-[1.002]';
+    }
+
+    return user.estado === 'Suspendido'
+      ? 'bg-error-container/5 grayscale-[0.5] opacity-80'
+      : 'hover:bg-primary/5 hover:scale-[1.002]';
+  };
+
   const cargarPendientes = async () => {
     try {
       const token = localStorage.getItem('adminToken');
@@ -43,12 +91,35 @@ export default function Usuarios() {
       // LOG DE DEPURACIÓN PARA DESARROLLO
       console.log("Intentando conectar al Gateway con token:", token ? "Token presente" : "TOKEN FALTANTE");
 
-      const res = await axios.get('http://127.0.0.1:8000/auth/users', {
-        headers: { 'Authorization': `Bearer ${token}` }
+      const [resUsuarios, resAsesores] = await Promise.allSettled([
+        axios.get('http://127.0.0.1:8000/auth/users', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        }),
+        axios.get('http://127.0.0.1:8000/advisors', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        })
+      ]);
+
+      const usuariosObtenidos = resUsuarios.status === 'fulfilled' ? resUsuarios.value.data || [] : [];
+      const asesoresObtenidos = resAsesores.status === 'fulfilled' ? resAsesores.value.data || [] : [];
+      const asesoresPorUsuario = new Map(asesoresObtenidos.map((asesor) => [asesor.id_usuario_auth, asesor]));
+
+      const usuariosEnriquecidos = usuariosObtenidos.map((user) => {
+        const asesor = asesoresPorUsuario.get(user.id_usuario);
+
+        if (!asesor) {
+          return user;
+        }
+
+        return {
+          ...user,
+          estado_aprobacion: asesor.estado_aprobacion || (asesor.aprobado ? 'Aprobado' : 'Pendiente'),
+          id_perfil_asesor: asesor.id_perfil,
+        };
       });
 
-      console.log("Datos recibidos exitosamente:", res.data);
-      setUsuarios(res.data);
+      console.log("Datos recibidos exitosamente:", usuariosEnriquecidos);
+      setUsuarios(usuariosEnriquecidos);
       // También actualizar pendientes
       cargarPendientes();
     } catch (error) {
@@ -71,7 +142,7 @@ export default function Usuarios() {
       const coincideRol = filtroRol === 'Todos' || user.rol === filtroRol;
       
       // Filtro C: Por Estado de Cuenta
-      const coincideEstado = filtroEstado === 'Todos' || user.estado === filtroEstado;
+      const coincideEstado = filtroEstado === 'Todos' || obtenerEstadoVisible(user) === filtroEstado;
 
       return coincideBusqueda && coincideRol && coincideEstado;
     });
@@ -170,6 +241,9 @@ export default function Usuarios() {
               <option value="Todos">CUALQUIER ESTADO</option>
               <option value="Activo">ACTIVOS</option>
               <option value="Suspendido">SUSPENDIDOS</option>
+              <option value="Aprobado">APROBADOS</option>
+              <option value="Pendiente">PENDIENTES</option>
+              <option value="Rechazado">RECHAZADOS</option>
             </select>
           </div>
         </div>
@@ -195,11 +269,7 @@ export default function Usuarios() {
                 <tr 
                   key={user.id_usuario} 
                   onClick={() => setUsuarioSeleccionado(user)}
-                  className={`border-b border-outline-variant/5 cursor-pointer transition-all ${
-                    user.estado === 'Suspendido' 
-                      ? 'bg-error-container/5 grayscale-[0.5] opacity-80' 
-                      : 'hover:bg-primary/5 hover:scale-[1.002]'
-                  }`}
+                  className={`border-b border-outline-variant/5 cursor-pointer transition-all ${obtenerClaseFila(user)}`}
                 >
                   <td className="p-5">
                     <div className="flex items-center gap-4">
@@ -221,12 +291,8 @@ export default function Usuarios() {
                     </div>
                   </td>
                   <td className="p-5 text-right">
-                    <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                      user.estado === 'Activo' 
-                        ? 'bg-success-container/30 text-on-success' 
-                        : 'bg-on-error text-white shadow-sm'
-                    }`}>
-                      {user.estado}
+                    <span className={`inline-block px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${obtenerClaseEstado(user)}`}>
+                      {obtenerEstadoVisible(user)}
                     </span>
                   </td>
                 </tr>

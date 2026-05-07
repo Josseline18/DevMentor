@@ -15,7 +15,7 @@ class AdvisorRepository:
             especialidad=especialidad,
             area_especialidad=area_especialidad,
             materias=materias,  # SQLAlchemy maneja JSON automáticamente
-            aprobado=False
+            estado_aprobacion='Pendiente'
         )
         self.db.add(advisor)
         self.db.commit()
@@ -39,7 +39,8 @@ class AdvisorRepository:
         return self.db.query(AdvisorProfile).all()
     
     def update_advisor(self, id_perfil: int, especialidad: str = None,
-                      area_especialidad: str = None, materias: list = None, aprobado: bool = None) -> AdvisorProfile:
+                      area_especialidad: str = None, materias: list = None, aprobado: bool = None,
+                      estado_aprobacion: str = None) -> AdvisorProfile:
         """Actualizar perfil de asesor"""
         advisor = self.get_advisor_by_id(id_perfil)
         
@@ -53,7 +54,9 @@ class AdvisorRepository:
         if materias:
             advisor.materias = materias
         if aprobado is not None:
-            advisor.aprobado = aprobado
+            advisor.estado_aprobacion = 'Aprobado' if aprobado else 'Rechazado'
+        if estado_aprobacion:
+            advisor.estado_aprobacion = estado_aprobacion
         
         self.db.commit()
         self.db.refresh(advisor)

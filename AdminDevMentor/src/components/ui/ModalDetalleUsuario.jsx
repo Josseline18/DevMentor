@@ -71,9 +71,9 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
     if (!advisorProfile) return alert('No se encontró el perfil de asesor');
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`http://127.0.0.1:8000/advisors/${advisorProfile.id_perfil}/approve`, { aprobado }, { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await axios.put(`http://127.0.0.1:8000/advisors/${advisorProfile.id_perfil}/approve`, { aprobado }, { headers: { 'Authorization': `Bearer ${token}` } });
       alert(aprobado ? 'Asesor aprobado' : 'Asesor rechazado');
-      setAdvisorProfile({ ...advisorProfile, aprobado });
+      setAdvisorProfile(res.data);
     } catch (e) {
       console.error(e);
       alert('No se pudo actualizar el estado del asesor.');
@@ -103,6 +103,8 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
   };
 
   if (!isOpen || !usuario) return null;
+
+  const estadoAprobacion = advisorProfile?.estado_aprobacion || (advisorProfile?.aprobado ? 'Aprobado' : 'Pendiente');
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-on-surface/40 backdrop-blur-md animate-fade-in p-4">
@@ -176,7 +178,7 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
                         <button onClick={() => handleApproveAdvisor(false)} className={`flex-1 py-3 rounded-md font-black text-xs uppercase tracking-widest bg-error-container/30 text-on-error`}>Rechazar</button>
                       </div>
                       {advisorProfile && (
-                        <p className="mt-2 text-[11px] text-on-surface/60">Estado: {advisorProfile.aprobado ? 'Aprobado' : 'Pendiente'}</p>
+                        <p className="mt-2 text-[11px] text-on-surface/60">Estado: {estadoAprobacion}</p>
                       )}
                     </div>
                   )}

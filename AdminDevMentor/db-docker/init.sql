@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS asesorias (
     especialidad VARCHAR(200),
     area_especialidad VARCHAR(200),
     materias JSON,
-    aprobado TINYINT(1) DEFAULT 0,
+    estado_aprobacion ENUM('Pendiente', 'Aprobado', 'Rechazado') DEFAULT 'Pendiente',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -104,9 +104,9 @@ CREATE TABLE IF NOT EXISTS citas (
     FOREIGN KEY (id_perfil) REFERENCES asesorias(id_perfil)
 );
 
-INSERT INTO asesorias (id_perfil, id_usuario_auth, especialidad, area_especialidad, materias, aprobado) VALUES 
-(1, 3, 'Desarrollo Backend', 'Python y Arquitecturas Limpias', '[1, 2]', 1),
-(2, 4, 'Infraestructura', 'Redes y Docker', '[3]', 1);
+INSERT INTO asesorias (id_perfil, id_usuario_auth, especialidad, area_especialidad, materias, estado_aprobacion) VALUES 
+(1, 3, 'Desarrollo Backend', 'Python y Arquitecturas Limpias', '[1, 2]', 'Aprobado'),
+(2, 4, 'Infraestructura', 'Redes y Docker', '[3]', 'Aprobado');
 
 INSERT INTO citas (id_perfil, id_usuario, fecha, hora, estado, estado_qr, token_qr) VALUES
 (1, 5, '2026-05-10', '10:00:00', 'reservada', 'pendiente', 'token_falso_123'),

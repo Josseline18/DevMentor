@@ -27,6 +27,7 @@ class UpdateAdvisorRequest(BaseModel):
     area_especialidad: Optional[str] = None
     materias: Optional[List[int]] = None
     aprobado: Optional[bool] = None
+    estado_aprobacion: Optional[str] = None
 
 # Dependencia para obtener la sesión de BD
 def get_db():
@@ -79,7 +80,7 @@ def get_pending_advisors(db: Session = Depends(get_db)):
     try:
         repository = AdvisorRepository(db)
         advisors = repository.get_all_advisors()
-        pending = [a.to_dict() for a in advisors if not getattr(a, 'aprobado', False)]
+        pending = [a.to_dict() for a in advisors if getattr(a, 'estado_aprobacion', 'Pendiente') == 'Pendiente']
         return pending
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -93,7 +94,8 @@ def approve_advisor(id_perfil: int, payload: UpdateAdvisorRequest, db: Session =
         use_case = UpdateAdvisorUseCase(repository)
         return use_case.execute(
             id_perfil=id_perfil,
-            aprobado=payload.aprobado
+            aprobado=payload.aprobado,
+            estado_aprobacion=payload.estado_aprobacion
         )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
@@ -119,7 +121,8 @@ def update_advisor(id_perfil: int, request: UpdateAdvisorRequest, db: Session = 
             especialidad=request.especialidad,
             area_especialidad=request.area_especialidad,
             materias=request.materias,
-            aprobado=request.aprobado
+            aprobado=request.aprobado,
+            estado_aprobacion=request.estado_aprobacion
         )
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
