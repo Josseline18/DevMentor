@@ -1,7 +1,7 @@
 services:
   mysql_db:
     image: mysql:8.0
-    container_name: admin-devmentor-mysql
+    container_name: admin-micros-mysql
     environment:
       MYSQL_ROOT_PASSWORD: 12345
     ports:
@@ -20,7 +20,6 @@ services:
       - calendar-service
       - content-service
       - materia-service
-      - notification-service
       - qr-service
       - report-service
       - review-service
