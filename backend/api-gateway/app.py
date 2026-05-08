@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
 import requests
+import httpx
 
 app = FastAPI()
 

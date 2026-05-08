@@ -632,3 +632,9 @@ WHERE id=1;
 UPDATE lenguajes
 SET descripcion = "Orientado a objetos y robusto"
 WHERE id=2;
+
+# -------------------------------------------------------------------------------------------------------
+- Solucionar error con importación en api-gateway
+cd backend/api-gateway
+source apiGw/bin/activate
+pip install -r requirements.txt
