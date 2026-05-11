@@ -17,16 +17,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-AUTH_SERVICE_URL = "http://localhost:8001"
-MATERIA_SERVICE_URL = "http://localhost:8002"
-ADVISOR_SERVICE_URL = "http://localhost:8003"
-REVIEW_SERVICE_URL = "http://localhost:8004"
-CONTENT_SERVICE_URL = "http://localhost:8005"
-REPORT_SERVICE_URL = "http://localhost:8006"
-CALENDAR_SERVICE_URL = "http://localhost:8007"
-QR_SERVICE_URL = "http://localhost:8008"
+AUTH_SERVICE_URL = os.getenv("AUTH_SERVICE_URL", "http://localhost:8001")
+MATERIA_SERVICE_URL = os.getenv("MATERIA_SERVICE_URL", "http://localhost:8002")
+ADVISOR_SERVICE_URL = os.getenv("ADVISOR_SERVICE_URL", "http://localhost:8003")
+REVIEW_SERVICE_URL = os.getenv("REVIEW_SERVICE_URL", "http://localhost:8004")
+CONTENT_SERVICE_URL = os.getenv("CONTENT_SERVICE_URL", "http://localhost:8005")
+REPORT_SERVICE_URL = os.getenv("REPORT_SERVICE_URL", "http://localhost:8006")
+CALENDAR_SERVICE_URL = os.getenv("CALENDAR_SERVICE_URL", "http://localhost:8007")
+QR_SERVICE_URL = os.getenv("QR_SERVICE_URL", "http://localhost:8008")
 
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "change-this-secret")
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY") or os.getenv(
+    "JWT_SECRET",
+    "change-this-secret",
+)
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM", "HS256")
 
 PUBLIC_ROUTES = {

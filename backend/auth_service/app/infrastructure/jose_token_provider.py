@@ -9,7 +9,10 @@ from app.domain.token_provider import TokenProvider
 class JoseTokenProvider(TokenProvider):
 
     def __init__(self):
-        self.secret_key = os.getenv("JWT_SECRET_KEY", "change-this-secret")
+        self.secret_key = os.getenv("JWT_SECRET_KEY") or os.getenv(
+            "JWT_SECRET",
+            "change-this-secret",
+        )
         self.algorithm = os.getenv("JWT_ALGORITHM", "HS256")
         self.expire_minutes = int(os.getenv("JWT_EXPIRE_MINUTES", "60"))
 

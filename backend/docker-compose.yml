@@ -6,6 +6,13 @@ services:
       MYSQL_ROOT_PASSWORD: 12345
     ports:
       - "3306:3306"
+    volumes:
+      - ../AdminDevMentor/db-docker/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-p12345"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   # API GATEWAY (El único expuesto al exterior)
 
@@ -14,6 +21,17 @@ services:
     container_name: api-gateway
     ports:
       - "8000:8000" 
+    environment:
+      - AUTH_SERVICE_URL=http://auth_service:8001
+      - MATERIA_SERVICE_URL=http://materia-service:8002
+      - ADVISOR_SERVICE_URL=http://advisor-service:8003
+      - REVIEW_SERVICE_URL=http://review-service:8004
+      - CONTENT_SERVICE_URL=http://content-service:8005
+      - REPORT_SERVICE_URL=http://report-service:8006
+      - CALENDAR_SERVICE_URL=http://calendar-service:8007
+      - QR_SERVICE_URL=http://qr-service:8008
+      - JWT_SECRET_KEY=Taller2026
+      - JWT_ALGORITHM=HS256
     depends_on:
       - auth_service 
       - advisor-service
@@ -33,53 +51,61 @@ services:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesorias
       JWT_SECRET: Taller2026
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   advisor-service:
     build: ./advisor-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   calendar-service:
     build: ./calendar-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   content-service:
     build: ./content-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/content_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   materia-service:
     build: ./materia-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/BD_materias
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   qr-service:
     build: ./qr-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/asesor_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   report-service:
     build: ./report-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/reportes_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy
 
   review-service:
     build: ./review-service
     environment:
       DATABASE_URL: mysql+pymysql://root:12345@mysql_db/resenas_db
     depends_on:
-      - mysql_db
+      mysql_db:
+        condition: service_healthy

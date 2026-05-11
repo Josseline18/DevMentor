@@ -1,9 +1,14 @@
+import os
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.domain.content import Base
 
-DATABASE_URL = "mysql+pymysql://root:12345@localhost:3308/content_db"
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "mysql+pymysql://root:12345@mysql_db:3306/content_db",
+)
 
 engine = create_engine(DATABASE_URL)
 
