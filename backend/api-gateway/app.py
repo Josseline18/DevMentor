@@ -1,8 +1,12 @@
 import os
+from datetime import time
+from typing import List, Optional
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from jose import JWTError, jwt
+from pydantic import BaseModel, ConfigDict, Field
 import requests
 import httpx
 
@@ -42,6 +46,210 @@ PUBLIC_PATH_PREFIXES = {
     "/redoc",
     "/openapi.json",
 }
+
+
+class LoginRequest(BaseModel):
+    correo: str
+    contrasena: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "correo": "admin1@unach.mx",
+                    "contrasena": "12345",
+                }
+            ]
+        }
+    }
+
+
+class RegisterRequest(BaseModel):
+    nombre: str
+    correo: str
+    telefono: str
+    contrasena: str
+    rol: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "nombre": "Admin Principal",
+                    "correo": "admin1@unach.mx",
+                    "telefono": "9610000001",
+                    "contrasena": "12345",
+                    "rol": "Administrador",
+                }
+            ]
+        }
+    }
+
+
+class UpdateUserRequest(BaseModel):
+    nombre: Optional[str] = None
+    correo: Optional[str] = None
+    telefono: Optional[str] = None
+    contrasena: Optional[str] = None
+    foto_perfil: Optional[str] = None
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "nombre": "Admin Actualizado",
+                    "telefono": "9610000099",
+                    "foto_perfil": "data:image/png;base64,iVBORw0KGgoAAA...",
+                }
+            ]
+        }
+    }
+
+
+class UpdateStatusRequest(BaseModel):
+    estado: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "estado": "Activo",
+                }
+            ]
+        }
+    }
+
+
+class CreateAdvisorRequest(BaseModel):
+    id_usuario_auth: int
+    especialidad: str
+    area_especialidad: str
+    materias: Optional[List[int]] = None
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id_usuario_auth": 3,
+                    "especialidad": "Programacion",
+                    "area_especialidad": "Backend",
+                    "materias": [1, 2, 3],
+                }
+            ]
+        }
+    }
+
+
+class UpdateAdvisorRequest(BaseModel):
+    especialidad: Optional[str] = None
+    area_especialidad: Optional[str] = None
+    materias: Optional[List[int]] = None
+    aprobado: Optional[bool] = None
+    estado_aprobacion: Optional[str] = None
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "aprobado": True,
+                    "estado_aprobacion": "Aprobado",
+                }
+            ]
+        }
+    }
+
+
+class CreateResenaRequest(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    id_usuario: int = Field(gt=0, alias="idUsuario")
+    id_usuario_auth: int = Field(gt=0, alias="idUsuarioAuth")
+    id_materia: int = Field(gt=0, alias="idMateria")
+    calificacion: int = Field(ge=1, le=5)
+    comentario: str = Field(min_length=3, max_length=2000)
+
+    model_config = ConfigDict(
+        populate_by_name=True,
+        json_schema_extra={
+            "examples": [
+                {
+                    "idUsuario": 5,
+                    "idUsuarioAuth": 3,
+                    "idMateria": 2,
+                    "calificacion": 5,
+                    "comentario": "Excelente asesoria.",
+                }
+            ]
+        },
+    )
+
+
+class UpdateResenaEstadoRequest(BaseModel):
+    estado: str = Field(min_length=3, max_length=10)
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "estado": "aceptada",
+                }
+            ]
+        }
+    }
+
+
+class CitaCreateRequest(BaseModel):
+    id_perfil: int
+    id_usuario: int
+    fecha: str
+    hora: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id_perfil": 10,
+                    "id_usuario": 5,
+                    "fecha": "2026-05-11",
+                    "hora": "10:30",
+                }
+            ]
+        }
+    }
+
+
+class DisponibilidadSemanalRequest(BaseModel):
+    id_perfil: int
+    dia_semana: str
+    hora_inicio: time
+    hora_fin: time
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "id_perfil": 10,
+                    "dia_semana": "Lunes",
+                    "hora_inicio": "09:00",
+                    "hora_fin": "12:00",
+                }
+            ]
+        }
+    }
+
+
+class VerificarQrRequest(BaseModel):
+    token_qr: str
+
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "token_qr": "cita-uuid-123456",
+                }
+            ]
+        }
+    }
 
 
 def is_public_route(request: Request) -> bool:
@@ -116,8 +324,8 @@ def forward_response(response):
 
 
 @app.post("/auth/login")
-async def login(request: Request):
-    body = await request.json()
+async def login(payload: LoginRequest, request: Request):
+    body = payload.model_dump()
 
     response = requests.post(
         f"{AUTH_SERVICE_URL}/auth/login",
@@ -129,8 +337,8 @@ async def login(request: Request):
 
 
 @app.post("/auth/register")
-async def register(request: Request):
-    body = await request.json()
+async def register(payload: RegisterRequest, request: Request):
+    body = payload.model_dump()
 
     response = requests.post(
         f"{AUTH_SERVICE_URL}/auth/register",
@@ -151,8 +359,8 @@ async def get_user_by_id(id_usuario: int, request: Request):
 
 
 @app.put("/auth/users/{id_usuario}")
-async def update_user(id_usuario: int, request: Request):
-    body = await request.json()
+async def update_user(id_usuario: int, payload: UpdateUserRequest, request: Request):
+    body = payload.model_dump(exclude_none=True)
 
     response = requests.put(
         f"{AUTH_SERVICE_URL}/auth/users/{id_usuario}",
@@ -171,8 +379,8 @@ async def get_all_users(request: Request):
     return forward_response(response)
 
 @app.put("/auth/users/{id_usuario}/status")
-async def update_user_status(id_usuario: int, request: Request):
-    body = await request.json()
+async def update_user_status(id_usuario: int, payload: UpdateStatusRequest, request: Request):
+    body = payload.model_dump()
     response = requests.put(
         f"{AUTH_SERVICE_URL}/auth/users/{id_usuario}/status",
         json=body,
@@ -202,8 +410,8 @@ async def get_lenguajes(request: Request):
 
 # calendario
 @app.post("/calendario/citas")
-async def crear_cita(request: Request):
-    body = await request.json()
+async def crear_cita(payload: CitaCreateRequest, request: Request):
+    body = payload.model_dump()
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -219,8 +427,8 @@ async def crear_cita(request: Request):
     )
 
 @app.post("/calendario/disponibilidad-semanal")
-async def crear_disponibilidad(request: Request):
-    body = await request.json()
+async def crear_disponibilidad(payload: DisponibilidadSemanalRequest, request: Request):
+    body = payload.model_dump()
 
     async with httpx.AsyncClient() as client:
         response = await client.post(
@@ -254,8 +462,8 @@ async def get_disponibilidad(request: Request):
 # advisor_service
 
 @app.post("/advisors")
-async def create_advisor(request: Request):
-    body = await request.json()
+async def create_advisor(payload: CreateAdvisorRequest, request: Request):
+    body = payload.model_dump()
     
     response = requests.post(
         f"{ADVISOR_SERVICE_URL}/advisors/",
@@ -303,8 +511,8 @@ async def get_advisor_by_user_id(id_usuario_auth: int, request: Request):
 
 
 @app.put("/advisors/{id_perfil}")
-async def update_advisor(id_perfil: int, request: Request):
-    body = await request.json()
+async def update_advisor(id_perfil: int, payload: UpdateAdvisorRequest, request: Request):
+    body = payload.model_dump(exclude_none=True)
     
     response = requests.put(
         f"{ADVISOR_SERVICE_URL}/advisors/{id_perfil}",
@@ -316,8 +524,8 @@ async def update_advisor(id_perfil: int, request: Request):
 
 
 @app.put("/advisors/{id_perfil}/approve")
-async def approve_advisor(id_perfil: int, request: Request):
-    body = await request.json()
+async def approve_advisor(id_perfil: int, payload: UpdateAdvisorRequest, request: Request):
+    body = payload.model_dump(exclude_none=True)
 
     response = requests.put(
         f"{ADVISOR_SERVICE_URL}/advisors/{id_perfil}/approve",
@@ -340,8 +548,8 @@ async def delete_advisor(id_perfil: int, request: Request):
 # review_service
 
 @app.post("/resenas")
-async def create_resena(request: Request):
-    body = await request.json()
+async def create_resena(payload: CreateResenaRequest, request: Request):
+    body = payload.model_dump(by_alias=True)
 
     response = requests.post(
         f"{REVIEW_SERVICE_URL}/resenas",
@@ -364,8 +572,12 @@ async def list_resenas(request: Request):
 
 
 @app.put("/resenas/{id_resena}/estado")
-async def update_resena_estado(id_resena: int, request: Request):
-    body = await request.json()
+async def update_resena_estado(
+    id_resena: int,
+    payload: UpdateResenaEstadoRequest,
+    request: Request,
+):
+    body = payload.model_dump()
 
     response = requests.put(
         f"{REVIEW_SERVICE_URL}/resenas/{id_resena}/estado",
@@ -524,8 +736,8 @@ async def generar_qr(id_cita: int, request: Request):
 
 
 @app.post("/qr/verificar")
-async def verificar_qr(request: Request):
-    body = await request.json()
+async def verificar_qr(payload: VerificarQrRequest, request: Request):
+    body = payload.model_dump()
     response = requests.post(
         f"{QR_SERVICE_URL}/qr/verificar",
         json=body,

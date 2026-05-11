@@ -58,8 +58,5 @@ ENV/
 # FastAPI / logs
 *.log
 
-# Configuración local de API
-src/config/api.js
-
 #se agrego el app.json, deberan crear ese archivo en su VSC, el codigo esta en README
 app.json
