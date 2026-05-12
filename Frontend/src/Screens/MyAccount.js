@@ -58,7 +58,7 @@ export default function MyAccount() {
       try {
         const [userResponse, materiasResponse] = await Promise.all([
           apiFetch(`/auth/users/${currentUser.id}`),
-          isAdvisor ? apiFetch("/materias") : Promise.resolve(null),
+          isAdvisor ? apiFetch("/materias/") : Promise.resolve(null),
         ]);
 
         if (userResponse?.ok) {

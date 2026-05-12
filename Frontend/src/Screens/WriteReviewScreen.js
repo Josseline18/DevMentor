@@ -103,7 +103,7 @@ export default function WriteReviewScreen({ navigation }) {
   useEffect(() => {
     const cargarMaterias = async () => {
       try {
-        const response = await apiFetch("/materias");
+        const response = await apiFetch("/materias/");
         const data = await response.json();
         if (response.ok && Array.isArray(data)) {
           setMateriasDisponibles(data);

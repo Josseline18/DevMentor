@@ -5,7 +5,7 @@ const expoConfig = Constants.expoConfig || Constants.manifest;
 
 export const API_URL =
   expoConfig?.extra?.API_URL ||
-  "http://54.173.214.233:8000";   
+  "http://52.200.79.153:8000";   
 
 export const apiFetch = async (endpoint, options = {}) => {
   const token = getAccessToken();

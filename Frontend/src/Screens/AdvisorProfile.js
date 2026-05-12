@@ -184,7 +184,7 @@ export default function AdvisorProfile({ route, navigation }) {
   };
 
   const getMateriasMap = async () => {
-    const response = await apiFetch("/materias");
+    const response = await apiFetch("/materias/");
     if (!response.ok) return {};
 
     const materias = await response.json();

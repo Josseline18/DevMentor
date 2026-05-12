@@ -122,7 +122,7 @@ export default function Dashboard({ navigation }) {
   }, []);
 
   useEffect(() => {
-    apiFetch("/materias")
+    apiFetch("/materias/")
       .then(async (response) => {
         const data = await response.json();
 

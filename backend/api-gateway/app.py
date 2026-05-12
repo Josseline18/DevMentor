@@ -394,7 +394,7 @@ async def update_user_status(id_usuario: int, payload: UpdateStatusRequest, requ
 @app.get("/materias")
 async def get_materias(request: Request):
     response = requests.get(
-        f"{MATERIA_SERVICE_URL}/materias",
+        f"{MATERIA_SERVICE_URL}/materias/",
         headers=build_forward_headers(request),
     )
     return forward_response(response)
