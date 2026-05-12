@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { FiCheck, FiStar, FiXCircle } from 'react-icons/fi';
-
-const API_BASE = 'http://127.0.0.1:8000';
+import API_BASE_URL from '../config/api';
 
 const formatDate = (value) => {
   if (!value) return 'sin fecha';
@@ -38,7 +37,7 @@ export default function Resenas() {
     setError('');
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get(`${API_BASE}/resenas`, {
+      const res = await axios.get(`${API_BASE_URL}/resenas`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -66,7 +65,7 @@ export default function Resenas() {
     try {
       const token = localStorage.getItem('adminToken');
       await axios.put(
-        `${API_BASE}/resenas/${id}/estado`,
+        `${API_BASE_URL}/resenas/${id}/estado`,
         { estado: 'aceptada' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -87,7 +86,7 @@ export default function Resenas() {
     setProcesandoId(id);
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.delete(`${API_BASE}/resenas/${id}`, {
+      await axios.delete(`${API_BASE_URL}/resenas/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/ui/Button';
 import { NuevaMateriaModal } from '../components/ui/NuevaMateriaModal';
+import API_BASE_URL from '../config/api';
 
 export default function Configuracion() {
   //const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,7 +21,7 @@ export default function Configuracion() {
       const nuevoEstado = Number(materia.activa) === 1 ? false : true;
 
       const response = await fetch(
-        `http://localhost:8002/materias/${materia.id}`,
+        `${API_BASE_URL.replace(':8000', ':8002')}/materias/${materia.id}`,
         {
           method: "PUT",
           headers: {
@@ -64,7 +65,7 @@ export default function Configuracion() {
       setMensaje("");
     }, 3000);
 
-    const response = await fetch("http://localhost:8002/materias");
+    const response = await fetch(`${API_BASE_URL.replace(':8000', ':8002')}/materias`);
     const data = await response.json();
     setMateriasOficiales(data);
   };
@@ -72,7 +73,7 @@ export default function Configuracion() {
   useEffect(() => {
     const fetchMaterias = async () => {
       try {
-        const response = await fetch("http://localhost:8002/materias");
+        const response = await fetch(`${API_BASE_URL.replace(':8000', ':8002')}/materias`);
 
         if (!response.ok) throw new Error("Error al obtener materias");
 

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiClock, FiUserX, FiCheckCircle, FiCode } from 'react-icons/fi';
 import { NuevoLenguajeModal } from '../components/ui/NuevoLenguajeModal';
 import { Button } from '../components/ui/Button';
+import API_BASE_URL from '../config/api';
 
 export default function Dashboard() {
   // 1. ESTADOS DE REACT PARA MANEJAR LA API (Nuestro código)
@@ -28,10 +29,10 @@ export default function Dashboard() {
       const config = { headers: { Authorization: `Bearer ${token}` } };
       
       const [resLenguajes, resUsuarios, resReportes, resResenas] = await Promise.all([
-        axios.get('http://127.0.0.1:8000/lenguajes', config).catch(() => ({ data: [] })),
-        axios.get('http://127.0.0.1:8000/auth/users', config).catch(() => ({ data: [] })),
-        axios.get('http://127.0.0.1:8000/reportes', config).catch(() => ({ data: [] })),
-        axios.get('http://127.0.0.1:8000/resenas', config).catch(() => ({ data: { resenas: [] } }))
+        axios.get(`${API_BASE_URL}/lenguajes`, config).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/auth/users`, config).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/reportes`, config).catch(() => ({ data: [] })),
+        axios.get(`${API_BASE_URL}/resenas`, config).catch(() => ({ data: { resenas: [] } }))
       ]);
       
       setLenguajes(resLenguajes.data || []);

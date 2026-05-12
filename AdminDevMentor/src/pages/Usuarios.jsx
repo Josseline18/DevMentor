@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { FiSearch, FiFilter, FiShield, FiUser, FiAlertCircle } from 'react-icons/fi';
 import { ModalDetalleUsuario } from '../components/ui/ModalDetalleUsuario';
+import API_BASE_URL from '../config/api';
 
 export default function Usuarios() {
   // 1. ESTADOS PRINCIPALES
@@ -75,7 +76,7 @@ export default function Usuarios() {
   const cargarPendientes = async () => {
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.get('http://127.0.0.1:8000/advisors/pending', { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await axios.get(`${API_BASE_URL}/advisors/pending`, { headers: { 'Authorization': `Bearer ${token}` } });
       setPendingCount(Array.isArray(res.data) ? res.data.length : 0);
     } catch (e) {
       setPendingCount(0);
@@ -92,10 +93,10 @@ export default function Usuarios() {
       console.log("Intentando conectar al Gateway con token:", token ? "Token presente" : "TOKEN FALTANTE");
 
       const [resUsuarios, resAsesores] = await Promise.allSettled([
-        axios.get('http://127.0.0.1:8000/auth/users', {
+        axios.get(`${API_BASE_URL}/auth/users`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        axios.get('http://127.0.0.1:8000/advisors', {
+        axios.get(`${API_BASE_URL}/advisors`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ]);
@@ -153,7 +154,7 @@ export default function Usuarios() {
     const nuevoEstado = estadoActual === 'Activo' ? 'Suspendido' : 'Activo';
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`http://127.0.0.1:8000/auth/users/${id}/status`, 
+      await axios.put(`${API_BASE_URL}/auth/users/${id}/status`, 
         { estado: nuevoEstado },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );

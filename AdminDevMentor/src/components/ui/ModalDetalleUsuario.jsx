@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiX, FiShield, FiUser, FiCalendar, FiPhone, FiPower } from 'react-icons/fi';
 import { ReporteItem } from './ReporteItem';
+import API_BASE_URL from '../../config/api';
 
 export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEstado }) => {
   const [activeTab, setActiveTab] = useState('info');
@@ -24,10 +25,10 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
 
       // Peticiones en paralelo al Gateway
       const [resReportes, resResenasAutor, resResenasAsesor, resContenidos] = await Promise.allSettled([
-        axios.get(`http://127.0.0.1:8000/reportes/usuario/${id}`, config),
-        axios.get(`http://127.0.0.1:8000/resenas?idUsuario=${id}`, config),
-        axios.get(`http://127.0.0.1:8000/resenas?idUsuarioAuth=${id}`, config),
-        axios.get(`http://127.0.0.1:8000/contents/perfil/${id}`, config)
+        axios.get(`${API_BASE_URL}/reportes/usuario/${id}`, config),
+        axios.get(`${API_BASE_URL}/resenas?idUsuario=${id}`, config),
+        axios.get(`${API_BASE_URL}/resenas?idUsuarioAuth=${id}`, config),
+        axios.get(`${API_BASE_URL}/contents/perfil/${id}`, config)
       ]);
 
       // Extraer datos si las peticiones fueron exitosas
@@ -53,7 +54,7 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
       // Si el usuario es Asesor, intentar traer su perfil de advisor
       if (usuario.rol === 'Asesor') {
         try {
-          const resAdvisor = await axios.get(`http://127.0.0.1:8000/advisors/user/${id}`, config);
+          const resAdvisor = await axios.get(`${API_BASE_URL}/advisors/user/${id}`, config);
           setAdvisorProfile(resAdvisor.data);
         } catch (e) {
           setAdvisorProfile(null);
@@ -71,7 +72,7 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
     if (!advisorProfile) return alert('No se encontró el perfil de asesor');
     try {
       const token = localStorage.getItem('adminToken');
-      const res = await axios.put(`http://127.0.0.1:8000/advisors/${advisorProfile.id_perfil}/approve`, { aprobado }, { headers: { 'Authorization': `Bearer ${token}` } });
+      const res = await axios.put(`${API_BASE_URL}/advisors/${advisorProfile.id_perfil}/approve`, { aprobado }, { headers: { 'Authorization': `Bearer ${token}` } });
       alert(aprobado ? 'Asesor aprobado' : 'Asesor rechazado');
       setAdvisorProfile(res.data);
     } catch (e) {
@@ -87,7 +88,7 @@ export const ModalDetalleUsuario = ({ usuario, isOpen, onClose, onActualizarEsta
       const token = localStorage.getItem('adminToken');
       const url = tipo === 'Resena' ? `/resenas/${id_entidad}` : `/contents/${id_entidad}`;
       
-      await axios.delete(`http://127.0.0.1:8000${url}`, {
+      await axios.delete(`${API_BASE_URL}${url}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       

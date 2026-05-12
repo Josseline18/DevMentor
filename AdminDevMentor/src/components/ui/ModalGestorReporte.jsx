@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiX } from 'react-icons/fi';
 import { ReporteItem } from './ReporteItem';
+import API_BASE_URL from '../../config/api';
 
 export const ModalGestorReporte = ({ reporteInicial, isOpen, onClose, onActualizarReporteEnTabla }) => {
   const [reporteCompleto, setReporteCompleto] = useState(null);
@@ -23,17 +24,17 @@ export const ModalGestorReporte = ({ reporteInicial, isOpen, onClose, onActualiz
       let reporteEnriquecido = { ...rep };
 
       // OBTENEMOS EL USUARIO
-      const resUsuarios = await axios.get('http://127.0.0.1:8000/auth/users', config);
+      const resUsuarios = await axios.get(`${API_BASE_URL}/auth/users`, config);
       const usuarioEncontrado = resUsuarios.data.find(u => u.id_usuario === rep.id_usuario_objetivo);
       setUsuarioObjetivo(usuarioEncontrado);
 
       // OBTENEMOS LA EVIDENCIA (Añadimos validación para evitar el error 422 de "undefined")
       if (rep.id_usuario_objetivo) {
         if (rep.tipo_entidad === 'Resena') {
-          const resResenas = await axios.get(`http://127.0.0.1:8000/resenas?idUsuario=${rep.id_usuario_objetivo}`, config);
+          const resResenas = await axios.get(`${API_BASE_URL}/resenas?idUsuario=${rep.id_usuario_objetivo}`, config);
           reporteEnriquecido.detalleExtra = resResenas.data.resenas.find(r => r.idResena === rep.id_entidad) || null;
         } else if (rep.tipo_entidad === 'Contenido') {
-          const resContenidos = await axios.get(`http://127.0.0.1:8000/contents/perfil/${rep.id_usuario_objetivo}`, config);
+          const resContenidos = await axios.get(`${API_BASE_URL}/contents/perfil/${rep.id_usuario_objetivo}`, config);
           reporteEnriquecido.detalleExtra = resContenidos.data.find(c => c.id_contenido === rep.id_entidad) || null;
         }
       }

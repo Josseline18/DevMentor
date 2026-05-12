@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from './Button';
 import { Input } from './Input';
 import { FiX } from 'react-icons/fi';
+import API_BASE_URL from '../../config/api';
 
 export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
 
@@ -44,7 +45,7 @@ export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
       };
 
       if (materia) {
-        await fetch(`http://localhost:8002/materias/${materia.id}`, {
+        await fetch(`${API_BASE_URL.replace(':8000', ':8002')}/materias/${materia.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -54,7 +55,7 @@ export const NuevaMateriaModal = ({ isOpen, onClose, materia, onSuccess }) => {
           }),
         });
       } else {
-        await fetch("http://localhost:8002/materias/", {
+        await fetch(`${API_BASE_URL.replace(':8000', ':8002')}/materias/`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(bodyData),

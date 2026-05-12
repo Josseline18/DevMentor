@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { FiX } from "react-icons/fi";
+import API_BASE_URL from '../../config/api';
 
 export const NuevoLenguajeModal = ({ isOpen, onClose, lenguaje, onSuccess }) => {
 
@@ -27,7 +28,7 @@ export const NuevoLenguajeModal = ({ isOpen, onClose, lenguaje, onSuccess }) => 
     e.preventDefault();
 
     try {
-      const response = await fetch("http://127.0.0.1:8002/lenguajes/", {
+      const response = await fetch(`${API_BASE_URL.replace(':8000', ':8002')}/lenguajes/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

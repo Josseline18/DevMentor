@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { FiMessageSquare, FiFileText, FiUser, FiTrash2, FiPower, FiXCircle } from 'react-icons/fi';
+import API_BASE_URL from '../../config/api';
 
 export const ReporteItem = ({ reporte, usuario, onActualizarReporteLocal }) => {
   const [procesando, setProcesando] = useState(false);
@@ -13,7 +14,7 @@ export const ReporteItem = ({ reporte, usuario, onActualizarReporteLocal }) => {
   const cambiarEstadoBD = async (nuevoEstado) => {
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`http://127.0.0.1:8000/reportes/${reporte.id_reporte}/estado`, 
+      await axios.put(`${API_BASE_URL}/reportes/${reporte.id_reporte}/estado`, 
         { estado: nuevoEstado },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -48,7 +49,7 @@ export const ReporteItem = ({ reporte, usuario, onActualizarReporteLocal }) => {
     try {
       const token = localStorage.getItem('adminToken');
       const url = reporte.tipo_entidad === 'Resena' ? `/resenas/${reporte.id_entidad}` : `/contents/${reporte.id_entidad}`;
-      await axios.delete(`http://127.0.0.1:8000${url}`, { headers: { 'Authorization': `Bearer ${token}` } });
+      await axios.delete(`${API_BASE_URL}${url}`, { headers: { 'Authorization': `Bearer ${token}` } });
       
       // Eliminación exitosa: Auto-resolvemos el reporte
       await cambiarEstadoBD('Resuelto');
@@ -67,7 +68,7 @@ export const ReporteItem = ({ reporte, usuario, onActualizarReporteLocal }) => {
     setProcesando(true);
     try {
       const token = localStorage.getItem('adminToken');
-      await axios.put(`http://127.0.0.1:8000/auth/users/${usuario.id_usuario}/status`, 
+      await axios.put(`${API_BASE_URL}/auth/users/${usuario.id_usuario}/status`, 
         { estado: 'Suspendido' },
         { headers: { 'Authorization': `Bearer ${token}` } }
       );

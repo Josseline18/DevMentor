@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { FiArrowLeft } from 'react-icons/fi';
+import API_BASE_URL from '../config/api';
 
 export default function Login() {
   const [paso, setPaso] = useState(1);
@@ -30,7 +31,7 @@ export default function Login() {
     setErrorMensaje('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         correo: credenciales.correo,
         contrasena: credenciales.contrasena
       });

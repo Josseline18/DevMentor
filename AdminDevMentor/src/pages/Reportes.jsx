@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FiSearch, FiFilter, FiCalendar, FiArrowUp, FiArrowDown } from 'react-icons/fi';
 import { Paginacion } from '../components/ui/Paginacion';
 import { ModalGestorReporte } from '../components/ui/ModalGestorReporte';
+import API_BASE_URL from '../config/api';
 
 export default function Reportes() {
   // 1. ESTADOS DE DATOS
@@ -36,7 +37,7 @@ export default function Reportes() {
     try {
       const token = localStorage.getItem('adminToken');
       // Asegúrate de que el endpoint /reportes exista en tu API Gateway
-      const res = await axios.get('http://127.0.0.1:8000/reportes/', {
+      const res = await axios.get(`${API_BASE_URL}/reportes/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       setReportesBase(res.data);
